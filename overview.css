@@ -1,0 +1,1337 @@
+html,
+body {
+    width: 100%;
+    scroll-behavior: smooth;
+}
+
+.navbar {
+    position: static;
+    background-color: #fff;
+    width: 100%;
+    height: 70px;
+    margin-top: -7px;
+    border-radius: 5px;
+    box-shadow: 1px 1px 10px rgb(158, 152, 152);
+}
+
+a:link {
+    text-decoration: none;
+}
+
+.logo {
+    margin-left: 160px;
+    margin-top: 16px;
+}
+
+.C-logo {
+    display: flex;
+}
+
+.logo-name-color {
+    color: black;
+}
+
+.logo-name {
+    margin-top: 0px;
+    font-family: Arimo;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    font-size: 13px;
+    line-height: 18px;
+}
+
+.logo-name-style {
+    font-weight: bold;
+    font-weight: 500;
+}
+
+#money {
+    background-color: #fff;
+    color: #2294f2;
+}
+
+.Menu-links {
+    font-size: 15px;
+    font-family: Arimo;
+    align-items: center;
+    display: flex;
+    margin-left: 350px;
+    margin-top: 0px;
+    margin-right: 10px;
+    gap: 40px;
+}
+
+
+#Home-buttons-more {
+    font-size: 25px;
+    color: #2294f2;
+    font-weight: 400;
+    transition: 0.3s;
+}
+
+#Home-buttons-more:hover {
+    color: coral;
+    text-shadow: 0px 1px 1px grey;
+}
+
+#About-us-buttons-more {
+    color: #2294f2;
+    font-size: 25px;
+    font-weight: 400;
+    transition: 0.3s;
+}
+
+#About-us-buttons-more:hover {
+    color: coral;
+    text-shadow: 0px 1px 1px grey;
+}
+
+#services-buttons-more {
+    color: #2294f2;
+    font-size: 25px;
+    font-weight: 400;
+    transition: 0.3s;
+}
+
+#services-buttons-more:hover {
+    color: coral;
+    text-shadow: 0px 1px 1px grey;
+}
+
+
+.drop-down-in-nav {
+    display: inline-block;
+}
+
+.drop-down-in-nav a {
+    transition: 0.3s;
+    display: block;
+    color: black;
+    text-decoration: none;
+    padding: 10px 15px;
+}
+
+.drop-down-in-nav .content-of-services {
+    font-size: 22px;
+    transition: 0.3s;
+    display: inline-block;
+    display: none;
+    position: absolute;
+    background-color: #d5e8f5;
+    min-width: 100px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 8px rgb(186, 186, 186);
+}
+
+.drop-down-in-nav:hover .content-of-services {
+    display: block;
+}
+
+.drop-down-in-nav .content-link-link:hover {
+    background-color: #008cff;
+    color: white;
+}
+
+#Contact-us-buttons-more {
+    font-size: 25px;
+    color: #2294f2;
+    font-weight: 400;
+    transition: 0.3s;
+}
+
+#Contact-us-buttons-more:hover {
+    color: coral;
+    text-shadow: 0px 1px 1px grey;
+}
+
+#apply-now-reach {
+    margin-top: -5px;
+    font-family: Arimo;
+    font-size: 20px;
+    font-weight: 700;
+    padding: 15px 23px 15px 23px;
+    border-radius: 6px;
+    border-style: solid;
+    border-style: groove;
+    border-width: 1px;
+    background-color: #2294f2;
+    color: #fff;
+    border-color: #8cc8f9;
+    transition: 0.3s;
+    opacity: 0.8;
+}
+
+#apply-now-reach:hover {
+    opacity: 1;
+    background-color: #008cff;
+    transform: scale(1.1);
+}
+
+.Apply-button-reach {
+    margin-top: 12px;
+    margin-left: 30px;
+}
+
+.guiding-you-over {
+    background-color: #fff;
+    width: 100%;
+    height: 400px;
+    font-family: Inter;
+    margin-top: -10px;
+}
+
+#Hero-section-header {
+    font-size: 30px;
+    margin-left: 50px;
+    color: #008cff;
+    font-weight: 500;
+}
+
+
+.hero-content {
+    margin-bottom: 50px;
+    padding: 50px 2px 3px 2px;
+
+}
+
+.about-us-header {
+    font-weight: 700;
+    margin-left: 50px;
+    margin-top: -30px;
+    font-size: 50px;
+
+}
+
+#know-about-us-style {
+    background-color: #fff;
+    color: #008cff;
+}
+
+.overview-header-main-content {
+    font-family: Inter;
+    font-size:22px;
+    font-weight: 400;
+    margin-left: 50px;
+    line-height: 25px;
+    margin-top: 40px;
+    color: #474b61;
+}
+
+#about-us-buttons-more {
+    font-size: 25px;
+    color: coral;
+    text-shadow: 0px 1px 1px grey;
+    font-weight: 400;
+}
+
+.contact-us-button-on-overview {
+    margin-left: 180px;
+    margin-top: 50px;
+}
+
+.contact-us-button-for-overview {
+    border: 1px solid;
+    border-color: #008cff;
+    background-color: #008cff;
+    color: #fff;
+    border-radius: 30px;
+    font-family: Inter;
+    font-weight: 600;
+    font-size: 22px;
+    padding: 18px 20px 18px 20px;
+
+    transition: 0.3s;
+
+}
+
+.contact-us-button-for-overview:hover {
+    background-color: #fff;
+    color: #008cff;
+}
+
+.Happy-family-image-for-overview {
+    margin-left: 720px;
+    margin-top: -370px;
+    width: 600px;
+    height: 380px;
+    border-radius: 40px;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.Happy-family-image-for-overview:hover {
+    opacity: 0.8;
+}
+
+.under-hero-in-overview {
+    font-family: Inter;
+    background: linear-gradient(to right, #c2e1f8, #e6eef4);
+    width: 100%;
+    height: 400px;
+    margin-top: 30px;
+}
+
+.header-in-overview {
+    text-align: center;
+    font-size: 40px;
+    font-weight: 600;
+    padding-top: 40px;
+}
+
+.secure-and-confidential {
+    background-color: #d5e8f5;
+    color: #008cff;
+}
+
+.real-time-connection {
+    width: 290px;
+    border: none;
+    border-radius: 20px;
+    height: auto;
+    margin-left: 80px;
+    margin-top: 40px;
+    background-color: #fff;
+}
+
+.Real-time-connectivity-in-overview {
+    color: #0062be;
+    font-size: 25px;
+    font-weight: 500;
+    border-color: #fff;
+    height: 50px;
+    padding: 20px 20px 0px 10px;
+    margin-left: 20px;
+    line-height: 25px;
+
+}
+
+.online-marketplace {
+    line-height: 28px;
+    font-size: 20px;
+    font-weight: 400;
+    padding: 15px 20px 20px 25px;
+    margin-top: -40px;
+     
+}
+
+#rela-time-icons {
+    margin-top: -80px;
+    margin-left: 185px;
+    padding-bottom: 40px;
+    width: 80px;
+    height: 80px;
+
+}
+
+
+.Tailored-assistance {
+    width: 290px;
+    border: none;
+    border-radius: 20px;
+    height: 240px;
+    margin-left: 390px;
+    margin-top: -265px;
+    background-color: #fff;
+}
+
+.Tailored-assistance-header {
+     
+    color: #0062be;
+    font-size: 25px;
+    font-weight: 500;
+    border-color: #fff;
+    padding: 10px 20px 0px 10px;
+    margin-left: 20px;
+    line-height: 25px;
+
+}
+
+.Tailored-assistance-main-content {
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 400;
+    padding: 15px 20px 20px 25px;
+    margin-top: -30px;
+     
+}
+
+.Assistance-icons {
+    margin-top: -80px;
+    margin-left: 185px;
+    padding-bottom: 35px;
+    width: 60px;
+    height: 60px;
+}
+
+.Trusted-collaboration {
+    width: 290px;
+    border: none;
+    border-radius: 20px;
+    height: 240px;
+    margin-left: 700px;
+    margin-top: -260px;
+    background-color: #fff;
+}
+
+.Trusted-collaboration-header {
+    color: #0062be;
+    font-size: 25px;
+    font-weight: 500;
+    border-color: #fff;
+    padding: 10px 20px 0px 10px;
+    margin-left: 20px;
+    line-height: 22px;
+}
+
+.Trusted-collaboration-main-content {
+    font-size: 20px;
+    font-weight: 400;
+    padding: 15px 20px 20px 25px;
+    margin-top: -20px;
+    line-height: 28px;
+}
+
+.trusted-icons {
+    margin-top: -70px;
+    margin-left: 195px;
+    padding-bottom: 35px;
+    width: 60px;
+    height: 60px;
+}
+
+.Empowerment-and-Convenience {
+    width: 290px;
+    border: none;
+    border-radius: 20px;
+    height: 240px;
+    margin-left: 1010px;
+    margin-top: -264px;
+    background-color: #fff;
+}
+
+.Empowerment-and-Convenience-header {
+    color: #0062be;
+    font-size: 25px;
+    font-weight: 500;
+    border-color: #fff;
+    padding: 10px 20px 0px 10px;
+    margin-left: 20px;
+    line-height: 22px;
+}
+
+.Empowerment-and-Convenience-main-content {
+    font-size: 20px;
+
+    font-weight: 400;
+    padding: 15px 20px 20px 25px;
+    margin-top: -40px;
+    line-height: 28px;
+}
+
+.Empowerment-icons {
+    margin-top: -100px;
+    margin-left: 220px;
+    padding-bottom: 35px;
+    width: 50px;
+    height: 50px;
+}
+
+#background-image-for-overview {
+    background-image: url(background-image-for-overview.jpg);
+    position: relative;
+    width: 100%;
+    height: 500px;
+}
+
+.office-view-in-overview-image {
+    margin-top: 80px;
+    margin-left: 140px;
+    border-radius: 15px;
+    transition: 0.3s;
+}
+
+.office-view-in-overview-image:hover {
+    opacity: 0.8;
+}
+
+.your-financial-companion {
+    text-align: center;
+    margin-top: -390px;
+    margin-right: 490px;
+    font-size: 23px;
+    font-weight: 500;
+    font-family: Inter;
+    background-color: #f6fcff;
+    margin-left: 600px;
+    border-radius: 30px;
+    padding: 1px 10px 1px 2px;
+    color: #0062be;
+}
+
+.Who-are-we-in-overview {
+    font-size: 50px;
+    font-family: Inter;
+    font-weight: 700;
+    margin-left: 630px;
+    margin-top: 20px;
+}
+
+.we-are-in-overview {
+    background-color: #edf0f0;
+    color: #008cff;
+}
+
+.Who-are-we-main-content {
+    font-family: Inter;
+    font-size: 23px;
+    font-weight: 400;
+    margin-left: 630px;
+    margin-top: -10px;
+    line-height: 28px;
+    color: #474b61;
+}
+
+.our-most-popular-in-overview {
+    font-family: Inter;
+    margin-top: 60px;
+    text-align: center;
+}
+
+.our-most-overview {
+    text-align: center;
+    font-family: Inter;
+    font-size: 50px;
+}
+
+.Popular-service-style {
+    background-color: #fff;
+    color: #008cff;
+}
+
+.personal-loan-overview {
+    margin-left: 380px;
+    margin-top: 20px;
+    font-family: Inter;
+    font-weight: 500;
+    font-size: 25px;
+    border: none;
+    width: 250px;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 6px grey;
+    text-align: center;
+}
+
+
+.personal-link-in-overview {
+    color: #000000;
+    transition: 0.3s;
+}
+
+.personal-link-in-overview:hover {
+    color: #e0a800;
+}
+
+#arrow-icon {
+    transition: 0.3s;
+    margin-bottom: -5px;
+    fill: #008cff;
+    margin-right: 20px;
+}
+
+#arrow-icon:hover {
+    fill: #e0a800;
+}
+
+.over-draft-overview {
+    margin-left: 700px;
+    margin-top: -95px;
+    font-family: Inter;
+    font-weight: 500;
+    font-size: 25px;
+    border: none;
+    width: 250px;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 6px grey;
+    text-align: center;
+}
+
+.over-draft-link-in-overview {
+    color: #000000;
+    transition: 0.3s;
+}
+
+.over-draft-link-in-overview:hover {
+    color: #e0a800;
+}
+
+.home-loan-in-overview {
+    margin-left: 380px;
+    margin-top: 20px;
+    font-family: Inter;
+    font-weight: 500;
+    font-size: 25px;
+    border: none;
+    width: 250px;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 6px grey;
+    text-align: center;
+}
+
+.home-loan-link-in-overview {
+    color: #000000;
+    transition: 0.3s;
+}
+
+.home-loan-link-in-overview:hover {
+    color: #e0a800;
+}
+
+.business-loan-in-overview {
+    margin-left: 700px;
+    margin-top: -95px;
+    font-family: Inter;
+    font-weight: 500;
+    font-size: 25px;
+    border: none;
+    width: 250px;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 6px grey;
+    text-align: center;
+}
+
+.business-loan-link-in-overview {
+    color: #000000;
+    transition: 0.3s;
+}
+
+.business-loan-link-in-overview:hover {
+    color: #e0a800;
+}
+
+.health-insurance-in-overview {
+    margin-left: 380px;
+    margin-top: 20px;
+    font-family: Inter;
+    font-weight: 500;
+    font-size: 25px;
+    border: none;
+    width: 250px;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 6px grey;
+    text-align: center;
+}
+
+.health-loan-link-in-overview {
+    color: #000000;
+    transition: 0.3s;
+}
+
+.health-loan-link-in-overview:hover {
+    color: #e0a800;
+}
+
+.credit-card-in-overview {
+    margin-left: 700px;
+    margin-top: -97px;
+    font-family: Inter;
+    font-weight: 500;
+    font-size: 25px;
+    border: none;
+    width: 250px;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 6px grey;
+    text-align: center;
+}
+
+.credit-card-link-in-overview {
+    color: #000000;
+    transition: 0.3s;
+}
+
+.credit-card-link-in-overview:hover {
+    color: #e0a800;
+}
+
+.contact-us-in-overview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+}
+
+.Contact-us-in-popular-overview {
+    border-radius: 20px;
+    border: 1px solid;
+    border-color: #008cff;
+    background-color: #008cff;
+    color: #fff;
+    border-radius: 30px;
+    font-family: Inter;
+    font-weight: 600;
+    font-size: 23px;
+    padding: 18px 20px 18px 20px;
+    transition: 0.3s;
+}
+
+.Contact-us-in-popular-overview:hover {
+    background-color: #fff;
+    color: #008cff;
+}
+
+.What-we-do-background {
+    background-image: url(what-we-do-background-color-in-overview.jpg);
+    width: 100%;
+    height: 500px;
+    margin-top: 40px;
+}
+
+.choice-education-in-overview {
+    margin-top: 40px;
+    font-family: Inter;
+    font-size: 25px;
+    font-weight: 500;
+    margin-left: 80px;
+    padding: 5px 5px 5px 5px;
+    border-radius: 20px;
+    background-color: #f6fcff;
+    display: inline-block;
+    color: #114678;
+}
+
+.what-we-do-in-overview {
+    letter-spacing: 2px;
+    margin-left: 80px;
+    font-family: Inter;
+    font-size: 30px;
+    font-weight: 700;
+    margin-top: -20px;
+}
+
+.we-do-in-overview {
+    background-color: #ddeaeb;
+    color: #008cff;
+}
+
+.what-we-do-main-content-in-overview {
+    font-family: Inter;
+    font-size: 22px;
+    font-weight: 400;
+    margin-left: 80px;
+    margin-top: 30px;
+    line-height: 28px;
+    color: #474b61;
+}
+
+.home-image-in-what-we-do {
+    margin-left: 880px;
+    margin-top: -400px;
+}
+
+.Why-choose-us-background-wrapper {
+    width: 100%;
+    height: 680px;
+}
+
+.empowering-financial-choice-in-overview {
+    font-family: Inter;
+    font-size: 25px;
+    font-weight: 500;
+    color: #0062be;
+    margin-left: 650px;
+    display: inline-block;
+    margin-top: 40px;
+    border-radius: 20px;
+    padding: 5px 10px 5px 10px;
+    box-shadow: 0px 0px 6px rgb(158, 158, 158);
+}
+
+.why-choose-us-in-overview {
+    margin-left: 650px;
+    font-family: Inter;
+    font-size: 50px;
+    font-weight: 700;
+    margin-top: 20px;
+    margin-top: -5px;
+}
+
+.choose-us-style {
+    background-color: #fff;
+    color: #008cff;
+}
+
+
+.Why-choose-us-main-content {
+    font-family: Inter;
+    font-size: 22px;
+    font-weight: 400;
+    margin-left: 650px;
+    margin-top: 30px;
+    line-height: 24px;
+    color: #000000;
+}
+
+.extensive-loan-inwhy-choose-us-in-overview {
+    margin-left: 650px;
+    margin-top: 20px;
+    font-family: Inter;
+    font-weight: 500;
+    font-size: 25px;
+    border: 1px solid;
+    color: #114678;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-color: rgb(191, 191, 191);
+    width: 580px;
+    padding: 20px;
+    transition: 0.3s;
+    text-align: left;
+    height: 48px;
+}
+
+.extensive-loan-inwhy-choose-us-in-overview:hover {
+    box-shadow: 0px 0px 6px grey;
+    border-radius: 20px;
+}
+
+.access-the-widest-in-overview {
+    font-family: Inter;
+    font-size: 20px;
+    font-weight: 400;
+    margin-left: 0px;
+    color: #000000;
+    margin-top: -5px;
+    text-align: left;
+}
+
+.extensive-loan-header-in-overview-header {
+    margin-top: -10px;
+}
+
+.seamless-customer-support-in-why-choose-us {
+    margin-left: 650px;
+    margin-top: 20px;
+    font-family: Inter;
+    font-weight: 500;
+    font-size: 25px;
+    border: 1px solid;
+    color: #114678;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-color: rgb(191, 191, 191);
+    width: 580px;
+    padding: 20px;
+    transition: 0.3s;
+    text-align: left;
+    height: 65px;
+}
+
+.seamless-customer-support-in-why-choose-us:hover {
+    box-shadow: 0px 0px 6px grey;
+    border-radius: 20px;
+}
+
+.seamless-customer-support-in-why-choose-us-in-overview {
+    margin-top: -10px;
+}
+
+.Receive-personalized-in-overview {
+    font-family: Inter;
+    font-size: 20px;
+    font-weight: 400;
+    margin-left: 0px;
+    color: #000000;
+    margin-top: -5px;
+    text-align: left;
+    line-height: 22px;
+}
+
+.secure-nd-transparent-service-in-why-choose-us {
+    margin-left: 650px;
+    margin-top: 20px;
+    font-family: Inter;
+    font-weight: 500;
+    font-size:25px;
+    border: 1px solid;
+    color: #114678;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-color: rgb(191, 191, 191);
+    width: 500px;
+    padding: 20px;
+    transition: 0.3s;
+    text-align: left;
+    height: 68px;
+}
+
+.secure-nd-transparent-service-in-why-choose-us:hover {
+    box-shadow: 0px 0px 6px grey;
+    border-radius: 20px;
+}
+
+.secure-and-transparent-in-why-choose-us-in-overview {
+    margin-top: -10px;
+}
+
+.Enjoy-soft-credit-check-in-overview {
+    font-family: Inter;
+    font-size: 20px;
+    font-weight: 400;
+    margin-left: 0px;
+    color: #000000;
+    margin-top: -5px;
+    text-align: left;
+    line-height: 25px;
+}
+
+.Footer-background {
+    background-color: #114779;
+    width: 100%;
+    height: 500px;
+    margin-top: 50px;
+}
+
+.Container {
+    font-family: Inter;
+    font-size: 30px;
+    color: #008cff;
+    font-weight: 700;
+    display: flex;
+    margin-left: 80px;
+}
+
+.quick-links-footer {
+    justify-content: centers;
+    margin-left: 120px;
+}
+
+.Home-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size:20px;
+    margin-bottom: 10px;
+}
+
+.Contact-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.Overview-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.Services-footer {
+    margin-left: 120px;
+}
+
+.Personal-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.Home-loan-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.Over-draft-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.Life-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.Health-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.Credit-card-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.Contact-footerf {
+    margin-left: 120px;
+    font-family: Inter;
+    font-size: 30px;
+    color: #008cff;
+    font-weight: 700;
+}
+
+.phone-no-footer {
+    margin-right: 10px;
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 10px;
+    margin-top: -30px;
+}
+
+#phone-icons-footer {
+    margin-right: 10px;
+    background-color: #fff;
+    padding: 6px;
+    margin-right: 10px;
+    margin-top: -8px;
+    border-radius: 20px;
+}
+
+.e-mail-footer {
+    margin-right: 10px;
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 10px;
+    margin-top: 30px;
+}
+
+#e-mail-icons-footer {
+    background-color: #fff;
+    padding: 6px;
+    margin-right: 10px;
+    margin-top: -8px;
+    border-radius: 20px;
+}
+
+#location-icons-footer {
+    background-color: #fff;
+    padding: 6px;
+    margin-right: 10px;
+    margin-top: -8px;
+    border-radius: 20px;
+}
+
+.footer-main-content {
+    color: #fff;
+    font-size: 20px;
+    font-family: Inter;
+    margin-left: 80px;
+    margin-top: -250px;
+}
+
+.linkedin-icons {
+    border-radius: 25px;
+    background-color: #fff;
+    padding: 5px;
+    margin-top: 30px;
+}
+
+.instagram-icons {
+    border-radius: 25px;
+    background-color: #fff;
+    padding: 5px;
+    margin-top: 30px;
+    margin-left: 20px;
+}
+
+.Copyright-footer {
+    text-align: center;
+    font-family: Inter;
+    font-size: 20px;
+    color: #fff;
+    margin-top: 60px;
+}
+
+.why-choose-us-image-left {
+    margin-bottom: -570px;
+    margin-left: 30px;
+}
+
+@media screen and (max-width: 1381px) {
+
+    body {
+        width: 100%;
+    }
+
+    .Menu-links {
+
+        margin: auto;
+    }
+
+    .Apply-button-reach {
+
+        margin: auto;
+    }
+
+}
+
+@media screen and (max-width: 1365px) {
+
+    body {
+        width: 1385px;
+    }
+
+}
+
+@media screen and (max-width: 900px) {
+
+
+    body {
+        width: 1024px;
+
+    }
+
+    #Hero-section-main-content {
+        margin-left: 100px;
+
+    }
+
+    .logo-name-style {
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+
+    .logo-name-color {
+        margin-left: -80px;
+    }
+
+    .Hero-section-firsth3 {
+        margin-left: -60px;
+    }
+
+    .Hero-image-right {
+        margin-left: 670px;
+    }
+
+    .Hero-section {
+        height: 600px;
+    }
+
+    .Hero-section-firsth3 {
+
+        margin-left: -60px;
+        margin-bottom: 20px;
+    }
+
+    .Menu-links {
+        width: auto;
+        margin: auto;
+
+    }
+
+    .logo-name-color {
+        margin-left: -90px;
+    }
+
+    .Apply-button-reach {
+        width: auto;
+        margin: auto;
+    }
+
+}
+
+
+@media screen and (max-width: 900px) {
+
+    body {
+        width: 900px;
+    }
+
+    .loan-box-in-home-page {
+        align-items: baseline;
+        justify-content: left;
+
+
+    }
+
+     
+
+    #Apply-button {
+        margin-left: 40px;
+    }
+
+
+
+    #Hero-section-main-content {
+        margin-left: 30px;
+        font-size: 13px;
+        margin-top: 100px;
+    }
+
+    .bottom-to-hero-section {
+        margin-right: 100px;
+        width: 40%;
+        height: 250px;
+        margin-top: 100px;
+    }
+
+    .carousel {
+        display: none;
+        width: 500px;
+        margin-top: -20px;
+        margin-left: 70px;
+
+    }
+
+    .card-container {
+        flex-direction: column;
+    }
+
+
+
+    .Personal-loan-box {
+        flex-direction: column;
+    }
+
+    .Hero-section {
+        width: 100%;
+        margin-top: 440px;
+        height: 500px;
+    }
+
+    .Hero-image-right {
+        display: none;
+    }
+
+    .Hero-section-firsth3 {
+        margin-left: -120px;
+        margin-bottom: 20px;
+    }
+
+    #Hero-section-main-content {
+        margin-left: 40px;
+        font-size: 13px;
+    }
+
+
+    .manu-button {
+        margin-left: 20px;
+        margin-top: 20px;
+        height: 25px;
+
+    }
+
+    .logo-name-color {
+        margin-left: -130px;
+    }
+
+    .Menu-links {
+        display: none;
+
+    }
+
+    .Apply-button-reach {
+        margin-left: 150px;
+    }
+
+}
+
+@media screen and (max-width: 600px) {
+
+    body {
+        width: 980px;
+    }
+
+
+    #Apply-button {
+        margin-left: 40px;
+    }
+
+    .bottom-to-hero-section {
+        margin-right: 100px;
+        width: 40%;
+        height: 250px;
+    }
+
+    .carousel {
+        margin-top: 16px;
+        margin-left: 70px;
+    }
+
+    .bottom-to-hero-section-contentmain {
+        margin-left: 0px;
+
+    }
+
+
+
+
+    .Hero-section {
+        margin-top: 440px;
+        height: 350px;
+    }
+
+    .Hero-image-right {
+        display: none;
+    }
+
+    .Hero-section-firsth3 {
+        margin-left: -120px;
+        margin-bottom: 20px;
+    }
+
+    #Hero-section-main-content {
+        margin-left: 40px;
+        font-size: 13px;
+    }
+
+
+    .manu-button {
+        margin-left: 20px;
+        margin-top: 20px;
+        height: 25px;
+
+    }
+
+    .logo-name-color {
+        margin-left: -130px;
+    }
+
+    .Menu-links {
+        display: none;
+
+    }
+
+    .Apply-button-reach {
+        margin-left: 150px;
+    }
+
+}
+
+@media screen and (max-width: 350px) {
+    .personal-loan-content {
+        font-size: 30px;
+    }
+}
