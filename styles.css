@@ -235,6 +235,37 @@ a:link {
     color: #464A60;
 }
 
+.Apply-section{
+    display: flex;
+    align-item: center;
+}
+
+#eligibility-button {
+    margin-left: 110px;
+    margin-top: 40px;
+
+}
+
+.eligibility-calculator {
+    font-family: Arimo;
+    font-size: 17px;
+    font-weight: 700;
+    padding: 15px 20px 15px 20px;
+    border-radius: 40px;
+    border-width: 1px;
+    border-style: groove;
+    border-style: solid;
+    color: #fff;
+    border-color: #008cff;
+    background-color: #008cff;
+    transition: 0.3s;
+}
+
+.eligibility-calculator:hover {
+    background-color: #fff;
+    color: #008cff;
+}
+
 #Apply-button {
     margin-left: 110px;
     margin-top: 40px;
