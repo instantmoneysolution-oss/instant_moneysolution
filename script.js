@@ -3,15 +3,28 @@ function formatINR(amount) {
 }
 
 function calculate() {
-  const income = parseFloat(document.getElementById('income').value) || 0;
-  const emis = parseFloat(document.getElementById('emis').value) || 0;
-  const age = parseFloat(document.getElementById('age').value) || 0;
-  const employment = document.getElementById('emp').value;
-  const rate = parseFloat(document.getElementById('rate').value);
-  const tenure = parseFloat(document.getElementById('tenure').value);
+  const incomeEl = document.getElementById('income-2');
+  const emisEl = document.getElementById('emis-2');
+  const ageEl = document.getElementById('age-2');
+  const empEl = document.getElementById('emp');
+  const rateEl = document.getElementById('rate');
+  const tenureEl = document.getElementById('tenure');
 
-  document.getElementById('rate-out').textContent = rate.toFixed(1);
-  document.getElementById('tenure-out').textContent = tenure;
+  if (!incomeEl || !emisEl || !ageEl || !empEl || !rateEl || !tenureEl) {
+    return;
+  }
+
+  const income = parseFloat(incomeEl.value) || 0;
+  const emis = parseFloat(emisEl.value) || 0;
+  const age = parseFloat(ageEl.value) || 0;
+  const employment = empEl.value;
+  const rate = parseFloat(rateEl.value);
+  const tenure = parseFloat(tenureEl.value);
+
+  const rateOutEl = document.getElementById('rate-out');
+  const tenureOutEl = document.getElementById('tenure-out');
+  if (rateOutEl) rateOutEl.textContent = rate.toFixed(1);
+  if (tenureOutEl) tenureOutEl.textContent = tenure;
 
   const foirCap = employment === 'salaried' ? 0.5 : 0.4;
   const maxTotalEmi = income * foirCap;
@@ -26,11 +39,15 @@ function calculate() {
                    (monthlyRate * Math.pow(1 + monthlyRate, months));
   }
 
-  document.getElementById('eligible-amount').textContent = formatINR(eligibleLoan);
-  document.getElementById('max-emi').textContent = formatINR(maxEmi) + '/mo';
+  const eligibleAmountEl = document.getElementById('eligible-amount');
+  const maxEmiEl = document.getElementById('max-emi');
+  if (eligibleAmountEl) eligibleAmountEl.textContent = formatINR(eligibleLoan);
+  if (maxEmiEl) maxEmiEl.textContent = formatINR(maxEmi) + '/mo';
 
   const statusBox = document.getElementById('status-box');
   const statusText = document.getElementById('status-text');
+  if (!statusBox || !statusText) return;
+
   statusBox.className = 'status';
 
   if (age < 18 || age > 75) {
@@ -48,8 +65,13 @@ function calculate() {
   }
 }
 
-['income', 'emis', 'age', 'emp', 'rate', 'tenure'].forEach(function (id) {
-  document.getElementById(id).addEventListener('input', calculate);
-});
+document.addEventListener('DOMContentLoaded', function () {
+  ['income-2', 'emis-2', 'age-2', 'emp', 'rate', 'tenure'].forEach(function (id) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', calculate);
+    }
+  });
 
-calculate();
+  calculate();
+});
