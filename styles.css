@@ -1725,11 +1725,10 @@ a:link {
 }
 
 .Apply-now-form {
-    margin-left: 480px;
     font-family: Inter;
     background-color: #fff;
     width: 500px;
-
+    margin-left: 100px;
     border-style: groove;
     border-radius: 15px;
     border: 1px solid;
