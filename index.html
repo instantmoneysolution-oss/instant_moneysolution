@@ -572,6 +572,69 @@
                 </form>
             </div>
         </div>
+
+        <div class="elegibility-section">
+            <div class="container-2">
+                <h1 class="eligible-h1">Personal loan eligibility calculator</h1>
+                <p class="subtitle">Estimate how much you might be able to borrow based on your income and existing
+                    obligations.</p>
+
+                <div class="card-2">
+                    <div class="field-grid">
+                        <div class="field-2">
+                            <label for="income">Monthly net income (₹)</label>
+                            <input type="number" class="eligibility-input" id="income-2" value="00000" min="0"
+                                step="1000">
+                        </div>
+                        <div class="field-2">
+                            <label for="emis">Existing EMIs (₹/month)</label>
+                            <input type="number" class="eligibility-input" id="emis-2" value="0000" min="0" step="500">
+                        </div>
+                        <div class="field-2">
+                            <label for="age">Age (years)</label>
+                            <input type="number" class="eligibility-input" id="age-2" value="00" min="18" max="75">
+                        </div>
+                        <div class="field-2">
+                            <label for="emp">Employment type</label>
+                            <select id="emp">
+                                <option value="salaried">Salaried</option>
+                                <option value="self">Self-employed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="slider-field">
+                        <div class="slider-label-row">
+                            <label for="rate">Interest rate (% p.a.)</label>
+                            <span class="value" id="rate-out">11.5</span>
+                        </div>
+                        <input type="range" id="rate" min="8" max="24" step="0.1" value="11.5">
+                    </div>
+
+                    <div class="slider-field">
+                        <div class="slider-label-row">
+                            <label for="tenure">Tenure (years)</label>
+                            <span class="value" id="tenure-out">5</span>
+                        </div>
+                        <input type="range" id="tenure" min="1" max="7" step="1" value="5">
+                    </div>
+
+                    <hr class="divider">
+
+                    <div class="results-2">
+                        <div class="result-box">
+                            <div class="label">Eligible loan amount</div>
+                            <div class="value" id="eligible-amount">₹0</div>
+                        </div>
+                        <div class="result-box">
+                            <div class="label">Max monthly EMI</div>
+                            <div class="value" id="max-emi">₹0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
     </div>
      
     <!--Footer section-->
