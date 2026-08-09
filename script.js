@@ -55,5 +55,82 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  const loanForm = document.querySelector('.form-for-submit form');
+
+  if (loanForm) {
+    loanForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const submitButton = loanForm.querySelector('#Submit-button');
+
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting...';
+      }
+
+      try {
+        const formData = new FormData(loanForm);
+
+        const response = await fetch(loanForm.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Submission failed');
+        }
+
+        loanForm.innerHTML = `
+          <div style="
+            text-align:center;
+            padding:50px 20px;
+          ">
+            <div style="
+              font-size:32px;
+              margin-bottom:15px;
+            ">🎉</div>
+
+            <h2 style="
+              font-size:26px;
+              margin-bottom:12px;
+            ">
+              Congratulations!
+            </h2>
+
+            <p style="
+              font-size:19px;
+              font-weight:600;
+              margin-bottom:10px;
+            ">
+              Request Submitted to Operations Team
+            </p>
+
+            <p style="
+              font-size:17px;
+              line-height:1.5;
+            ">
+              You will get a call within
+              <strong>2–6 working hours.</strong>
+            </p>
+          </div>
+        `;
+
+      } catch (error) {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Submit';
+        }
+
+        alert('Something went wrong. Please try again.');
+      }
+    });
+  }
+});
   calculate();
 });
