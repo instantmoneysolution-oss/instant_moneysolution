@@ -337,9 +337,20 @@
         <label class="Loan-amount" for="Loan-Amount">Loan Amount $</label> <br>
         <input type="number" id="loan-amount-input" placeholder="Enter Your Loan Amount "><br>
         <label class="Interest-rate-label" for="Interest rate">Interest Rate %</label><br>
-        <input type="number" id="Interest-rate-input" placeholder="Enter Your Interest Rate"><br>
-        <label class="Months-To-Pay-label" for="month to pay">Months To Pay</label><br>
-        <input type="number" id="month-to-pay-input" placeholder="Enter Months"><br>
+        <input type="number" id="Interest-rate-input" placeholder="Enter Your Interest Rate"><br><label class="Months-To-Pay-label" for="month-to-pay-input">Years To Pay</label><br>
+
+<select id="month-to-pay-input">
+    <option value="12">1 Year</option>
+    <option value="24">2 Years</option>
+    <option value="36">3 Years</option>
+    <option value="48">4 Years</option>
+    <option value="60">5 Years</option>
+    <option value="72">6 Years</option>
+    <option value="84">7 Years</option>
+    <option value="96">8 Years</option>
+    <option value="108">9 Years</option>
+    <option value="120" selected>10 Years</option>
+</select><br>
         <div class="Calculate-btn">
             <button id="calculate">Calculate</button>
         </div>
