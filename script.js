@@ -7,6 +7,7 @@ function calculate() {
   const emisEl = document.getElementById('emis-2');
   const ageEl = document.getElementById('age-2');
   const empEl = document.getElementById('emp');
+  const homeLoanEl = document.getElementById('home-loan');
   const rateEl = document.getElementById('rate');
   const tenureEl = document.getElementById('tenure');
 
@@ -20,13 +21,14 @@ function calculate() {
   const employment = empEl.value;
   const rate = parseFloat(rateEl.value);
   const tenure = parseFloat(tenureEl.value);
+  const homeLoan = homeLoanEl ? homeLoanEl.value : 'no';
 
   const rateOutEl = document.getElementById('rate-out');
   const tenureOutEl = document.getElementById('tenure-out');
   if (rateOutEl) rateOutEl.textContent = rate.toFixed(1);
   if (tenureOutEl) tenureOutEl.textContent = tenure;
 
-  const foirCap = employment === 'salaried' ? 0.5 : 0.4;
+const foirCap = homeLoan === 'yes' ? 0.75 : 0.65;
   const maxTotalEmi = income * foirCap;
   const maxEmi = Math.max(0, maxTotalEmi - emis);
 
