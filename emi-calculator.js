@@ -1,7 +1,7 @@
 const principal = document.querySelector('#loan-amount-input');
 const interest = document.querySelector('#Interest-rate-input');
 const tenure = document.querySelector('#month-to-pay-input');
-const calculate = document.querySelector('#calculate');
+const calculateBtn = document.querySelector('#calculate');
 const emi = document.querySelector('#emi');
 console.log(principal, interest, tenure);
 
@@ -18,4 +18,4 @@ function calulateEMI() {
     }
 }
 
-calculate.addEventListener('click', calulateEMI);
+calculateBtn.addEventListener('click', calulateEMI);
