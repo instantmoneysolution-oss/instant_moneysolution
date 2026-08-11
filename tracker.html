@@ -1,1 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Lead Tracker | Instant Money Solutions</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+    color: #222;
+}
+
+.header {
+    background: #111827;
+    color: white;
+    padding: 18px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.header span {
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+.container {
+    padding: 25px;
+    max-width: 1600px;
+    margin: auto;
+}
+
+.topbar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+input,
+select,
+button {
+    padding: 11px 13px;
+    border-radius: 7px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+}
+
+input,
+select {
+    background: white;
+}
+
+.search {
+    width: 280px;
+}
+
+button {
+    background: #16a34a;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    overflow: hidden;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1500px;
+}
+
+th {
+    background: #f3f4f6;
+    padding: 13px;
+    text-align: left;
+    font-size: 13px;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+}
+
+td {
+    padding: 12px;
+    border-top: 1px solid #e5e7eb;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+tr:hover td {
+    background: #f9fafb;
+}
+
+.status {
+    padding: 5px 9px;
+    border-radius: 20px;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 12px;
+}
+
+.loading,
+.message {
+    padding: 25px;
+    text-align: center;
+    color: #6b7280;
+}
+
+.count {
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #4b5563;
+}
+
+.logout {
+    background: #dc2626;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <div>
+        <h1>Instant Money Solutions</h1>
+        <span>Lead Follow-Up Tracker</span>
+    </div>
+
+    <button class="logout" onclick="logout()">Logout</button>
+</div>
+
+<div class="container">
+
+    <div class="topbar">
+
+        <input
+            type="text"
+            id="search"
+            class="search"
+            placeholder="Search Lead ID / Customer Name..."
+            oninput="filterLeads()"
+        >
+
+        <select id="agentFilter" onchange="filterLeads()">
+            <option value="">All Agents</option>
+        </select>
+
+        <select id="tlFilter" onchange="filterLeads()">
+            <option value="">All TLs</option>
+        </select>
+
+        <select id="statusFilter" onchange="filterLeads()">
+            <option value="">All Status</option>
+        </select>
+
+        <select id="stageFilter" onchange="filterLeads()">
+            <option value="">All Stages</option>
+        </select>
+
+        <button onclick="loadLeads()">Refresh</button>
+
+    </div>
+
+    <div class="count" id="count">
+        Loading leads...
+    </div>
+
+    <div class="card">
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Lead ID</th>
+                        <th>Customer Name</th>
+                        <th>Loan Type</th>
+                        <th>Diary</th>
+                        <th>Page</th>
+                        <th>Agent</th>
+                        <th>TL</th>
+                        <th>Manager</th>
+                        <th>Process</th>
+                        <th>Stage</th>
+                        <th>Next Date</th>
+                        <th>Next Time</th>
+                        <th>Last Remark</th>
+                        <th>Reminder</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody id="leadTable">
+                    <tr>
+                        <td colspan="16" class="loading">
+                            Loading leads...
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let allLeads = [];
+let filteredLeads = [];
+
+
+/* =========================
+   CHECK LOGIN
+========================= */
+
+async function checkLogin() {
+
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+        window.location.href = "index.html";
+        return false;
+    }
+
+    return true;
+}
+
+
+/* =========================
+   LOAD LEADS
+========================= */
+
+async function loadLeads() {
+
+    const table = document.getElementById("leadTable");
+
+    table.innerHTML = `
+        <tr>
+            <td colspan="16" class="loading">
+                Loading leads...
+            </td>
+        </tr>
+    `;
+
+    const { data, error } = await supabaseClient
+        .from("leads")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    if (error) {
+
+        console.error(error);
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="16" class="message">
+                    Error loading leads: ${escapeHtml(error.message)}
+                </td>
+            </tr>
+        `;
+
+        document.getElementById("count").innerText = "Error loading leads";
+
+        return;
+    }
+
+    allLeads = data || [];
+    filteredLeads = [...allLeads];
+
+    populateFilters();
+    renderLeads();
+
+}
+
+
+/* =========================
+   FILTER OPTIONS
+========================= */
+
+function populateFilters() {
+
+    const agents = [...new Set(
+        allLeads
+            .map(x => x.agent_name)
+            .filter(Boolean)
+    )].sort();
+
+    const tls = [...new Set(
+        allLeads
+            .map(x => x.tl_name)
+            .filter(Boolean)
+    )].sort();
+
+    const statuses = [...new Set(
+        allLeads
+            .map(x => x.current_status)
+            .filter(Boolean)
+    )].sort();
+
+    const stages = [...new Set(
+        allLeads
+            .map(x => x.stage)
+            .filter(Boolean)
+    )].sort();
+
+
+    fillSelect("agentFilter", agents, "All Agents");
+    fillSelect("tlFilter", tls, "All TLs");
+    fillSelect("statusFilter", statuses, "All Status");
+    fillSelect("stageFilter", stages, "All Stages");
+
+}
+
+
+function fillSelect(id, values, defaultText) {
+
+    const select = document.getElementById(id);
+
+    select.innerHTML =
+        `<option value="">${defaultText}</option>`;
+
+    values.forEach(value => {
+
+        const option = document.createElement("option");
+
+        option.value = value;
+        option.textContent = value;
+
+        select.appendChild(option);
+
+    });
+
+}
+
+
+/* =========================
+   FILTER LEADS
+========================= */
+
+function filterLeads() {
+
+    const search =
+        document.getElementById("search")
+        .value
+        .toLowerCase()
+        .trim();
+
+    const agent =
+        document.getElementById("agentFilter").value;
+
+    const tl =
+        document.getElementById("tlFilter").value;
+
+    const status =
+        document.getElementById("statusFilter").value;
+
+    const stage =
+        document.getElementById("stageFilter").value;
+
+
+    filteredLeads = allLeads.filter(lead => {
+
+        const searchMatch =
+            !search ||
+            String(lead.lead_id || "")
+                .toLowerCase()
+                .includes(search) ||
+            String(lead.customer_name || "")
+                .toLowerCase()
+                .includes(search);
+
+
+        const agentMatch =
+            !agent ||
+            lead.agent_name === agent;
+
+
+        const tlMatch =
+            !tl ||
+            lead.tl_name === tl;
+
+
+        const statusMatch =
+            !status ||
+            lead.current_status === status;
+
+
+        const stageMatch =
+            !stage ||
+            lead.stage === stage;
+
+
+        return (
+            searchMatch &&
+            agentMatch &&
+            tlMatch &&
+            statusMatch &&
+            stageMatch
+        );
+
+    });
+
+
+    renderLeads();
+
+}
+
+
+/* =========================
+   RENDER TABLE
+========================= */
+
+function renderLeads() {
+
+    const table =
+        document.getElementById("leadTable");
+
+    document.getElementById("count").innerText =
+        `${filteredLeads.length} lead(s) found`;
+
+
+    if (!filteredLeads.length) {
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="16" class="message">
+                    No leads found
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    table.innerHTML = filteredLeads.map(lead => `
+
+        <tr>
+
+            <td>${escapeHtml(lead.id)}</td>
+
+            <td>
+                <strong>
+                    ${escapeHtml(lead.lead_id)}
+                </strong>
+            </td>
+
+            <td>
+                ${escapeHtml(lead.customer_name)}
+            </td>
+
+            <td>
+                ${escapeHtml(lead.loan_type)}
+            </td>
+
+            <td>
+                ${escapeHtml(lead.diary)}
+            </td>
+
+            <td>
+                ${escapeHtml(lead.page)}
+            </td>
+
+            <td>
+                ${escapeHtml(lead.agent_name)}
+            </td>
+
+            <td>
+                ${escapeHtml(lead.tl_name)}
+            </td>
+
+            <td>
+                ${escapeHtml(lead.manager_name)}
+            </td>
+
+            <td>
+                ${escapeHtml(lead.process)}
+            </td>
+
+            <td>
+                ${escapeHtml(lead.stage)}
+            </td>
+
+            <td>
+                ${formatDate(lead.next_date)}
+            </td>
+
+            <td>
+                ${escapeHtml(lead.next_time)}
+            </td>
+
+            <td>
+                ${escapeHtml(lead.last_remark)}
+            </td>
+
+            <td>
+                ${escapeHtml(lead.reminder_status)}
+            </td>
+
+            <td>
+                <span class="status">
+                    ${escapeHtml(lead.current_status)}
+                </span>
+            </td>
+
+        </tr>
+
+    `).join("");
+
+}
+
+
+/* =========================
+   DATE FORMAT
+========================= */
+
+function formatDate(date) {
+
+    if (!date) return "";
+
+    try {
+
+        return new Date(date + "T00:00:00")
+            .toLocaleDateString("en-IN");
+
+    } catch {
+
+        return date;
+
+    }
+
+}
+
+
+/* =========================
+   HTML SECURITY
+========================= */
+
+function escapeHtml(value) {
+
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+async function logout() {
+
+    await supabaseClient.auth.signOut();
+
+    window.location.href = "index.html";
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+(async function() {
+
+    const loggedIn = await checkLogin();
+
+    if (loggedIn) {
+        await loadLeads();
+    }
+
+})();
+
+</script>
+
+</body>
+</html>
