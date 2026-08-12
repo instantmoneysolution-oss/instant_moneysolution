@@ -185,14 +185,6 @@ button:disabled {
                 <input type="text" id="customerName" placeholder="Enter customer name">
             </div>
 
-            <div class="field">
-                <label>Loan Type</label>
-                <select id="loanType">
-                    <option value="">Select Loan Type</option>
-                    <option value="Personal Loan">Personal Loan</option>
-                    <option value="Over Draft">Over Draft</option>
-                </select>
-            </div>
 
             <div class="field">
                 <label>Diary</label>
@@ -230,23 +222,16 @@ button:disabled {
                 </select>
             </div>
 
-            <div class="field">
-                <label>Stage</label>
-                <select id="stage">
-                    <option value="">Select Stage</option>
-                    <option value="New">New</option>
-                    <option value="Follow Up">Follow Up</option>
-                    <option value="Interested">Interested</option>
-                    <option value="Document Pending">Document Pending</option>
-                    <option value="Login">Login</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Disbursed">Disbursed</option>
-                    <option value="Hold">Hold</option>
-                    <option value="Rejected">Rejected</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>
-            </div>
-
+<div class="field">
+    <label>Stage</label>
+    <select id="stage">
+        <option value="">Select Stage</option>
+        <option value="Callback">Callback</option>
+        <option value="Follow Up">Follow Up</option>
+        <option value="Login">Login</option>
+        <option value="NI">NI</option>
+    </select>
+</div>
             <div class="field">
                 <label>Next Date</label>
                 <input type="date" id="nextDate">
@@ -446,8 +431,7 @@ async function saveLead() {
     const managerName =
         document.getElementById("managerName").value;
 
-    const process =
-        document.getElementById("process").value;
+
 
     const stage =
         document.getElementById("stage").value;
@@ -487,26 +471,25 @@ async function saveLead() {
         return;
     }
 
-    if (!process) {
-        showMessage("Please select Process.", false);
-        return;
-    }
+if (!stage) {
+    showMessage("Please select Stage.", false);
+    return;
+}
 
-    if (!stage) {
-        showMessage("Please select Stage.", false);
-        return;
-    }
+if ((stage === "Callback" || stage === "Follow Up") && !nextDate) {
+    showMessage("Please select Next Date.", false);
+    return;
+}
 
-    if (!nextDate) {
-        showMessage("Please select Next Date.", false);
-        return;
-    }
+if ((stage === "Callback" || stage === "Follow Up") && !nextTime) {
+    showMessage("Please select Next Time.", false);
+    return;
+}
 
-    if (!nextTime) {
-        showMessage("Please select Next Time.", false);
-        return;
-    }
-
+if (stage === "Login" || stage === "NI") {
+    document.getElementById("nextDate").value = "";
+    document.getElementById("nextTime").value = "";
+}
 
     saveBtn.disabled = true;
     saveBtn.innerText = "Saving...";
@@ -538,19 +521,19 @@ async function saveLead() {
 
             manager_name: managerName,
 
-            process: process,
+process: loanType,
 
-            stage: stage,
+stage: stage,
 
-            next_date: nextDate,
+next_date: (stage === "Callback" || stage === "Follow Up") ? nextDate : null,
 
-            next_time: nextTime,
+next_time: (stage === "Callback" || stage === "Follow Up") ? nextTime : null,
 
-            last_remark: lastRemark,
+last_remark: lastRemark,
 
-            reminder_status: "Pending",
+reminder_status: (stage === "Login" || stage === "NI") ? "Closed" : "Pending",
 
-            current_status: "Active"
+current_status: (stage === "Login" || stage === "NI") ? "Closed" : "Active"
         };
 
 
