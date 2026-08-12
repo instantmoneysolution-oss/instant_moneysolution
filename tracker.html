@@ -55,8 +55,7 @@ body {
 
 input,
 select,
-button,
-textarea {
+button {
     padding: 11px 13px;
     border-radius: 7px;
     border: 1px solid #d1d5db;
@@ -64,8 +63,7 @@ textarea {
 }
 
 input,
-select,
-textarea {
+select {
     background: white;
 }
 
@@ -147,119 +145,19 @@ tr:hover td {
 .logout {
     background: #dc2626;
 }
-
-/* NEW LEAD MODAL */
-
-.modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.45);
-    z-index: 9999;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.modal.show {
-    display: flex;
-}
-
-.modal-box {
-    background: white;
-    width: min(760px, 100%);
-    max-height: 90vh;
-    overflow-y: auto;
-    border-radius: 14px;
-    padding: 22px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-}
-
-.modal-box h2 {
-    margin: 0 0 18px;
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.form-group.full {
-    grid-column: 1 / -1;
-}
-
-.form-group label {
-    font-size: 13px;
-    font-weight: bold;
-    color: #374151;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-}
-
-.form-group textarea {
-    min-height: 80px;
-    resize: vertical;
-}
-
-.readonly-box {
-    background: #f3f4f6;
-    color: #374151;
-}
-
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 18px;
-}
-
-.btn-secondary {
-    background: #6b7280;
-}
-
-.btn-blue {
-    background: #2563eb;
-}
-
-@media (max-width: 650px) {
-
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .form-group.full {
-        grid-column: auto;
-    }
-}
 </style>
 </head>
 
 <body>
 
 <div class="header">
-
     <div>
         <h1>Instant Money Solutions</h1>
         <span>Lead Follow-Up Tracker</span>
     </div>
 
-    <button class="logout" onclick="logout()">
-        Logout
-    </button>
-
+    <button class="logout" onclick="logout()">Logout</button>
 </div>
-
 
 <div class="container">
 
@@ -289,24 +187,13 @@ tr:hover td {
             <option value="">All Stages</option>
         </select>
 
-        <button onclick="loadLeads()">
-            Refresh
-        </button>
-
-        <button
-            onclick="openNewLead()"
-            style="background:#2563eb;"
-        >
-            + New Lead
-        </button>
+        <button onclick="loadLeads()">Refresh</button>
 
     </div>
-
 
     <div class="count" id="count">
         Loading leads...
     </div>
-
 
     <div class="card">
 
@@ -315,9 +202,7 @@ tr:hover td {
             <table>
 
                 <thead>
-
                     <tr>
-
                         <th>ID</th>
                         <th>Lead ID</th>
                         <th>Customer Name</th>
@@ -334,22 +219,15 @@ tr:hover td {
                         <th>Last Remark</th>
                         <th>Reminder</th>
                         <th>Status</th>
-
                     </tr>
-
                 </thead>
 
-
                 <tbody id="leadTable">
-
                     <tr>
-
                         <td colspan="16" class="loading">
                             Loading leads...
                         </td>
-
                     </tr>
-
                 </tbody>
 
             </table>
@@ -361,271 +239,10 @@ tr:hover td {
 </div>
 
 
-<!-- NEW LEAD MODAL -->
-
-<div id="newLeadModal" class="modal">
-
-    <div class="modal-box">
-
-        <h2>
-            + New Lead
-        </h2>
-
-
-        <div class="form-grid">
-
-
-            <div class="form-group">
-
-                <label>
-                    Customer Name *
-                </label>
-
-                <input
-                    id="newCustomerName"
-                    type="text"
-                    placeholder="Customer name"
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Loan Type *
-                </label>
-
-                <select id="newLoanType">
-
-                    <option value="">
-                        Select Loan Type
-                    </option>
-
-                    <option value="Personal Loan">
-                        Personal Loan
-                    </option>
-
-                    <option value="Overdraft">
-                        Overdraft
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Diary
-                </label>
-
-                <input
-                    id="newDiary"
-                    type="number"
-                    value="1"
-                    min="0"
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Page
-                </label>
-
-                <input
-                    id="newPage"
-                    type="number"
-                    value="1"
-                    min="0"
-                >
-
-            </div>
-
-
-            <!-- AUTOMATIC AGENT -->
-
-            <div class="form-group">
-
-                <label>
-                    Agent
-                </label>
-
-                <input
-                    id="newAgent"
-                    class="readonly-box"
-                    type="text"
-                    readonly
-                >
-
-            </div>
-
-
-            <!-- AUTOMATIC TL -->
-
-            <div class="form-group">
-
-                <label>
-                    TL
-                </label>
-
-                <input
-                    id="newTL"
-                    class="readonly-box"
-                    type="text"
-                    readonly
-                >
-
-            </div>
-
-
-            <!-- AUTOMATIC MANAGER -->
-
-            <div class="form-group">
-
-                <label>
-                    Manager
-                </label>
-
-                <input
-                    id="newManager"
-                    class="readonly-box"
-                    type="text"
-                    readonly
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Process
-                </label>
-
-                <input
-                    id="newProcess"
-                    type="text"
-                    value="Personal Loan"
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Stage
-                </label>
-
-                <select id="newStage">
-
-                    <option value="new">
-                        new
-                    </option>
-
-                    <option value="follow up">
-                        follow up
-                    </option>
-
-                    <option value="interested">
-                        interested
-                    </option>
-
-                    <option value="documents">
-                        documents
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Next Date
-                </label>
-
-                <input
-                    id="newNextDate"
-                    type="date"
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Next Time
-                </label>
-
-                <input
-                    id="newNextTime"
-                    type="time"
-                >
-
-            </div>
-
-
-            <div class="form-group full">
-
-                <label>
-                    Last Remark
-                </label>
-
-                <textarea
-                    id="newLastRemark"
-                    placeholder="Remark"
-                ></textarea>
-
-            </div>
-
-        </div>
-
-
-        <div
-            id="newLeadMessage"
-            class="message"
-            style="display:none;"
-        ></div>
-
-
-        <div class="modal-actions">
-
-            <button
-                class="btn-secondary"
-                onclick="closeNewLead()"
-            >
-                Cancel
-            </button>
-
-            <button
-                class="btn-blue"
-                onclick="saveNewLead()"
-            >
-                Save Lead
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
 <script>
 
 let allLeads = [];
-
 let filteredLeads = [];
-
-let currentEmployee = null;
 
 
 /* =========================
@@ -638,79 +255,12 @@ async function checkLogin() {
         data: { user }
     } = await supabaseClient.auth.getUser();
 
-
     if (!user) {
-
         window.location.href = "index.html";
-
         return false;
     }
 
-
     return true;
-}
-
-
-/* =========================
-   CURRENT EMPLOYEE
-========================= */
-
-async function loadCurrentEmployee() {
-
-    const {
-        data: { user },
-        error: userError
-    } = await supabaseClient.auth.getUser();
-
-
-    if (userError || !user) {
-
-        throw new Error(
-            "Login session not found."
-        );
-
-    }
-
-
-    const { data, error } = await supabaseClient
-
-        .from("employees")
-
-        .select(
-            "employee_id,name,email,role,active,tl_name,manager_name"
-        )
-
-        .eq("email", user.email)
-
-        .eq("active", true)
-
-        .maybeSingle();
-
-
-    if (error) {
-
-        console.error(error);
-
-        throw new Error(
-            "Employee mapping load failed: " +
-            error.message
-        );
-
-    }
-
-
-    if (!data) {
-
-        throw new Error(
-            "Logged-in email is not mapped in employees table."
-        );
-
-    }
-
-
-    currentEmployee = data;
-
-    return data;
 }
 
 
@@ -720,73 +270,42 @@ async function loadCurrentEmployee() {
 
 async function loadLeads() {
 
-    const table =
-        document.getElementById("leadTable");
-
+    const table = document.getElementById("leadTable");
 
     table.innerHTML = `
-
         <tr>
-
             <td colspan="16" class="loading">
                 Loading leads...
             </td>
-
         </tr>
-
     `;
 
-
     const { data, error } = await supabaseClient
-
         .from("leads")
-
         .select("*")
-
-        .order(
-            "created_at",
-            {
-                ascending: false
-            }
-        );
-
+        .order("created_at", { ascending: false });
 
     if (error) {
 
         console.error(error);
 
-
         table.innerHTML = `
-
             <tr>
-
-                <td
-                    colspan="16"
-                    class="message"
-                >
-                    Error loading leads:
-                    ${escapeHtml(error.message)}
+                <td colspan="16" class="message">
+                    Error loading leads: ${escapeHtml(error.message)}
                 </td>
-
             </tr>
-
         `;
 
-
-        document.getElementById("count").innerText =
-            "Error loading leads";
+        document.getElementById("count").innerText = "Error loading leads";
 
         return;
     }
 
-
     allLeads = data || [];
-
     filteredLeads = [...allLeads];
 
-
     populateFilters();
-
     renderLeads();
 
 }
@@ -798,138 +317,56 @@ async function loadLeads() {
 
 function populateFilters() {
 
-    const agents = [
-        ...new Set(
+    const agents = [...new Set(
+        allLeads
+            .map(x => x.agent_name)
+            .filter(Boolean)
+    )].sort();
 
-            allLeads
+    const tls = [...new Set(
+        allLeads
+            .map(x => x.tl_name)
+            .filter(Boolean)
+    )].sort();
 
-                .map(
-                    x => x.agent_name
-                )
+    const statuses = [...new Set(
+        allLeads
+            .map(x => x.current_status)
+            .filter(Boolean)
+    )].sort();
 
-                .filter(Boolean)
-
-        )
-
-    ].sort();
-
-
-    const tls = [
-        ...new Set(
-
-            allLeads
-
-                .map(
-                    x => x.tl_name
-                )
-
-                .filter(Boolean)
-
-        )
-
-    ].sort();
+    const stages = [...new Set(
+        allLeads
+            .map(x => x.stage)
+            .filter(Boolean)
+    )].sort();
 
 
-    const statuses = [
-        ...new Set(
-
-            allLeads
-
-                .map(
-                    x => x.current_status
-                )
-
-                .filter(Boolean)
-
-        )
-
-    ].sort();
-
-
-    const stages = [
-        ...new Set(
-
-            allLeads
-
-                .map(
-                    x => x.stage
-                )
-
-                .filter(Boolean)
-
-        )
-
-    ].sort();
-
-
-    fillSelect(
-        "agentFilter",
-        agents,
-        "All Agents"
-    );
-
-
-    fillSelect(
-        "tlFilter",
-        tls,
-        "All TLs"
-    );
-
-
-    fillSelect(
-        "statusFilter",
-        statuses,
-        "All Status"
-    );
-
-
-    fillSelect(
-        "stageFilter",
-        stages,
-        "All Stages"
-    );
+    fillSelect("agentFilter", agents, "All Agents");
+    fillSelect("tlFilter", tls, "All TLs");
+    fillSelect("statusFilter", statuses, "All Status");
+    fillSelect("stageFilter", stages, "All Stages");
 
 }
 
 
-/* =========================
-   FILL SELECT
-========================= */
+function fillSelect(id, values, defaultText) {
 
-function fillSelect(
-    id,
-    values,
-    defaultText
-) {
-
-    const select =
-        document.getElementById(id);
-
+    const select = document.getElementById(id);
 
     select.innerHTML =
-        `<option value="">
-            ${defaultText}
-        </option>`;
+        `<option value="">${defaultText}</option>`;
 
+    values.forEach(value => {
 
-    values.forEach(
-        value => {
+        const option = document.createElement("option");
 
-            const option =
-                document.createElement(
-                    "option"
-                );
+        option.value = value;
+        option.textContent = value;
 
+        select.appendChild(option);
 
-            option.value = value;
-
-            option.textContent = value;
-
-
-            select.appendChild(option);
-
-        }
-    );
+    });
 
 }
 
@@ -942,98 +379,64 @@ function filterLeads() {
 
     const search =
         document.getElementById("search")
-            .value
-            .toLowerCase()
-            .trim();
-
+        .value
+        .toLowerCase()
+        .trim();
 
     const agent =
-        document.getElementById(
-            "agentFilter"
-        ).value;
-
+        document.getElementById("agentFilter").value;
 
     const tl =
-        document.getElementById(
-            "tlFilter"
-        ).value;
-
+        document.getElementById("tlFilter").value;
 
     const status =
-        document.getElementById(
-            "statusFilter"
-        ).value;
-
+        document.getElementById("statusFilter").value;
 
     const stage =
-        document.getElementById(
-            "stageFilter"
-        ).value;
+        document.getElementById("stageFilter").value;
 
 
-    filteredLeads =
-        allLeads.filter(
-            lead => {
+    filteredLeads = allLeads.filter(lead => {
 
-                const searchMatch =
-
-                    !search ||
-
-                    String(
-                        lead.lead_id || ""
-                    )
-                    .toLowerCase()
-                    .includes(search)
-
-                    ||
-
-                    String(
-                        lead.customer_name || ""
-                    )
-                    .toLowerCase()
-                    .includes(search);
+        const searchMatch =
+            !search ||
+            String(lead.lead_id || "")
+                .toLowerCase()
+                .includes(search) ||
+            String(lead.customer_name || "")
+                .toLowerCase()
+                .includes(search);
 
 
-                const agentMatch =
-
-                    !agent ||
-                    lead.agent_name === agent;
-
-
-                const tlMatch =
-
-                    !tl ||
-                    lead.tl_name === tl;
+        const agentMatch =
+            !agent ||
+            lead.agent_name === agent;
 
 
-                const statusMatch =
-
-                    !status ||
-                    lead.current_status === status;
-
-
-                const stageMatch =
-
-                    !stage ||
-                    lead.stage === stage;
+        const tlMatch =
+            !tl ||
+            lead.tl_name === tl;
 
 
-                return (
+        const statusMatch =
+            !status ||
+            lead.current_status === status;
 
-                    searchMatch &&
 
-                    agentMatch &&
+        const stageMatch =
+            !stage ||
+            lead.stage === stage;
 
-                    tlMatch &&
 
-                    statusMatch &&
-
-                    stageMatch
-
-                );
-
-            }
+        return (
+            searchMatch &&
+            agentMatch &&
+            tlMatch &&
+            statusMatch &&
+            stageMatch
         );
+
+    });
 
 
     renderLeads();
@@ -1048,175 +451,99 @@ function filterLeads() {
 function renderLeads() {
 
     const table =
-        document.getElementById(
-            "leadTable"
-        );
+        document.getElementById("leadTable");
 
-
-    document.getElementById(
-        "count"
-    ).innerText =
-
+    document.getElementById("count").innerText =
         `${filteredLeads.length} lead(s) found`;
 
 
     if (!filteredLeads.length) {
 
         table.innerHTML = `
-
             <tr>
-
-                <td
-                    colspan="16"
-                    class="message"
-                >
+                <td colspan="16" class="message">
                     No leads found
                 </td>
-
             </tr>
-
         `;
 
         return;
     }
 
 
-    table.innerHTML =
+    table.innerHTML = filteredLeads.map(lead => `
 
-        filteredLeads
+        <tr>
 
-            .map(
+            <td>${escapeHtml(lead.id)}</td>
 
-                lead => `
+            <td>
+                <strong>
+                    ${escapeHtml(lead.lead_id)}
+                </strong>
+            </td>
 
-                <tr>
+            <td>
+                ${escapeHtml(lead.customer_name)}
+            </td>
 
-                    <td>
-                        ${escapeHtml(lead.id)}
-                    </td>
+            <td>
+                ${escapeHtml(lead.loan_type)}
+            </td>
 
+            <td>
+                ${escapeHtml(lead.diary)}
+            </td>
 
-                    <td>
+            <td>
+                ${escapeHtml(lead.page)}
+            </td>
 
-                        <strong>
-                            ${escapeHtml(
-                                lead.lead_id
-                            )}
-                        </strong>
+            <td>
+                ${escapeHtml(lead.agent_name)}
+            </td>
 
-                    </td>
+            <td>
+                ${escapeHtml(lead.tl_name)}
+            </td>
 
+            <td>
+                ${escapeHtml(lead.manager_name)}
+            </td>
 
-                    <td>
-                        ${escapeHtml(
-                            lead.customer_name
-                        )}
-                    </td>
+            <td>
+                ${escapeHtml(lead.process)}
+            </td>
 
+            <td>
+                ${escapeHtml(lead.stage)}
+            </td>
 
-                    <td>
-                        ${escapeHtml(
-                            lead.loan_type
-                        )}
-                    </td>
+            <td>
+                ${formatDate(lead.next_date)}
+            </td>
 
+            <td>
+                ${escapeHtml(lead.next_time)}
+            </td>
 
-                    <td>
-                        ${escapeHtml(
-                            lead.diary
-                        )}
-                    </td>
+            <td>
+                ${escapeHtml(lead.last_remark)}
+            </td>
 
+            <td>
+                ${escapeHtml(lead.reminder_status)}
+            </td>
 
-                    <td>
-                        ${escapeHtml(
-                            lead.page
-                        )}
-                    </td>
+            <td>
+                <span class="status">
+                    ${escapeHtml(lead.current_status)}
+                </span>
+            </td>
 
+        </tr>
 
-                    <td>
-                        ${escapeHtml(
-                            lead.agent_name
-                        )}
-                    </td>
-
-
-                    <td>
-                        ${escapeHtml(
-                            lead.tl_name
-                        )}
-                    </td>
-
-
-                    <td>
-                        ${escapeHtml(
-                            lead.manager_name
-                        )}
-                    </td>
-
-
-                    <td>
-                        ${escapeHtml(
-                            lead.process
-                        )}
-                    </td>
-
-
-                    <td>
-                        ${escapeHtml(
-                            lead.stage
-                        )}
-                    </td>
-
-
-                    <td>
-                        ${formatDate(
-                            lead.next_date
-                        )}
-                    </td>
-
-
-                    <td>
-                        ${escapeHtml(
-                            lead.next_time
-                        )}
-                    </td>
-
-
-                    <td>
-                        ${escapeHtml(
-                            lead.last_remark
-                        )}
-                    </td>
-
-
-                    <td>
-                        ${escapeHtml(
-                            lead.reminder_status
-                        )}
-                    </td>
-
-
-                    <td>
-
-                        <span class="status">
-
-                            ${escapeHtml(
-                                lead.current_status
-                            )}
-
-                        </span>
-
-                    </td>
-
-                </tr>
-
-            `
-
-            )
-
-            .join("");
+    `).join("");
 
 }
 
@@ -1229,19 +556,12 @@ function formatDate(date) {
 
     if (!date) return "";
 
-
     try {
 
-        return new Date(
-            date + "T00:00:00"
-        )
-        .toLocaleDateString(
-            "en-IN"
-        );
+        return new Date(date + "T00:00:00")
+            .toLocaleDateString("en-IN");
 
-    }
-
-    catch {
+    } catch {
 
         return date;
 
@@ -1251,516 +571,21 @@ function formatDate(date) {
 
 
 /* =========================
-   NEW LEAD
-========================= */
-
-async function openNewLead() {
-
-    const modal =
-        document.getElementById(
-            "newLeadModal"
-        );
-
-
-    const msg =
-        document.getElementById(
-            "newLeadMessage"
-        );
-
-
-    msg.style.display = "none";
-
-    msg.innerText = "";
-
-
-    try {
-
-        if (!currentEmployee) {
-
-            await loadCurrentEmployee();
-
-        }
-
-
-        document.getElementById(
-            "newAgent"
-        ).value =
-
-            currentEmployee.name || "";
-
-
-        document.getElementById(
-            "newTL"
-        ).value =
-
-            currentEmployee.tl_name || "";
-
-
-        document.getElementById(
-            "newManager"
-        ).value =
-
-            currentEmployee.manager_name || "";
-
-
-        document.getElementById(
-            "newProcess"
-        ).value =
-
-            "Personal Loan";
-
-
-        const today =
-            new Date();
-
-
-        const localToday =
-
-            new Date(
-                today.getTime() -
-                today.getTimezoneOffset() *
-                60000
-            )
-
-            .toISOString()
-
-            .split("T")[0];
-
-
-        document.getElementById(
-            "newNextDate"
-        ).value = localToday;
-
-
-        modal.classList.add(
-            "show"
-        );
-
-    }
-
-    catch (err) {
-
-        alert(
-            err.message
-        );
-
-    }
-
-}
-
-
-/* =========================
-   CLOSE NEW LEAD
-========================= */
-
-function closeNewLead() {
-
-    document
-        .getElementById(
-            "newLeadModal"
-        )
-        .classList.remove(
-            "show"
-        );
-
-}
-
-
-/* =========================
-   GENERATE TEST LEAD ID
-========================= */
-
-async function generateNextLeadId() {
-
-    const { data, error } =
-
-        await supabaseClient
-
-            .from("leads")
-
-            .select("lead_id")
-
-            .like(
-                "lead_id",
-                "IMS-TEST-%"
-            )
-
-            .order(
-                "id",
-                {
-                    ascending: false
-                }
-            )
-
-            .limit(100);
-
-
-    if (error) {
-
-        throw new Error(
-            "Lead ID check failed: " +
-            error.message
-        );
-
-    }
-
-
-    let maxNumber = 0;
-
-
-    (data || []).forEach(
-        row => {
-
-            const match =
-
-                String(
-                    row.lead_id || ""
-                )
-
-                .match(
-                    /^IMS-TEST-(\d+)$/
-                );
-
-
-            if (match) {
-
-                maxNumber = Math.max(
-                    maxNumber,
-                    Number(match[1])
-                );
-
-            }
-
-        }
-    );
-
-
-    return (
-
-        `IMS-TEST-${String(
-            maxNumber + 1
-        ).padStart(3, "0")}`
-
-    );
-
-}
-
-
-/* =========================
-   SAVE NEW LEAD
-========================= */
-
-async function saveNewLead() {
-
-    const msg =
-        document.getElementById(
-            "newLeadMessage"
-        );
-
-
-    msg.style.display = "none";
-
-
-    const customerName =
-
-        document.getElementById(
-            "newCustomerName"
-        )
-        .value
-        .trim();
-
-
-    const loanType =
-
-        document.getElementById(
-            "newLoanType"
-        ).value;
-
-
-    if (!customerName) {
-
-        alert(
-            "Customer Name bhar bhai."
-        );
-
-        return;
-
-    }
-
-
-    if (!loanType) {
-
-        alert(
-            "Loan Type select kar."
-        );
-
-        return;
-
-    }
-
-
-    try {
-
-        if (!currentEmployee) {
-
-            await loadCurrentEmployee();
-
-        }
-
-
-        const leadId =
-            await generateNextLeadId();
-
-
-        const payload = {
-
-            lead_id:
-                leadId,
-
-
-            customer_name:
-                customerName,
-
-
-            loan_type:
-                loanType,
-
-
-            diary:
-                Number(
-                    document.getElementById(
-                        "newDiary"
-                    ).value
-                ) || 1,
-
-
-            page:
-                Number(
-                    document.getElementById(
-                        "newPage"
-                    ).value
-                ) || 1,
-
-
-            agent_name:
-                currentEmployee.name ||
-                null,
-
-
-            tl_name:
-                currentEmployee.tl_name ||
-                null,
-
-
-            manager_name:
-                currentEmployee.manager_name ||
-                null,
-
-
-            process:
-
-                document.getElementById(
-                    "newProcess"
-                )
-                .value
-                .trim()
-
-                ||
-
-                loanType,
-
-
-            stage:
-
-                document.getElementById(
-                    "newStage"
-                ).value
-
-                ||
-
-                "new",
-
-
-            next_date:
-
-                document.getElementById(
-                    "newNextDate"
-                ).value
-
-                ||
-
-                null,
-
-
-            next_time:
-
-                document.getElementById(
-                    "newNextTime"
-                ).value
-
-                ||
-
-                null,
-
-
-            last_remark:
-
-                document.getElementById(
-                    "newLastRemark"
-                )
-                .value
-                .trim()
-
-                ||
-
-                null,
-
-
-            reminder_status:
-                "Pending",
-
-
-            current_status:
-                "Active"
-
-        };
-
-
-        const { error } =
-
-            await supabaseClient
-
-                .from("leads")
-
-                .insert(
-                    payload
-                );
-
-
-        if (error) {
-
-            console.error(error);
-
-            throw new Error(
-                error.message
-            );
-
-        }
-
-
-        alert(
-            `Lead ${leadId} successfully create ho gayi.`
-        );
-
-
-        closeNewLead();
-
-
-        document.getElementById(
-            "newCustomerName"
-        ).value = "";
-
-
-        document.getElementById(
-            "newLoanType"
-        ).value = "";
-
-
-        document.getElementById(
-            "newLastRemark"
-        ).value = "";
-
-
-        await loadLeads();
-
-    }
-
-    catch (err) {
-
-        console.error(err);
-
-
-        msg.style.display =
-            "block";
-
-
-        msg.innerText =
-            "Error: " +
-            err.message;
-
-    }
-
-}
-
-
-/* =========================
-   CLOSE MODAL OUTSIDE CLICK
-========================= */
-
-document.addEventListener(
-    "click",
-    function(event) {
-
-        const modal =
-            document.getElementById(
-                "newLeadModal"
-            );
-
-
-        if (
-            event.target === modal
-        ) {
-
-            closeNewLead();
-
-        }
-
-    }
-);
-
-
-/* =========================
    HTML SECURITY
 ========================= */
 
 function escapeHtml(value) {
 
-    if (
-        value === null ||
-        value === undefined
-    ) {
-
+    if (value === null || value === undefined) {
         return "";
-
     }
 
-
     return String(value)
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
 }
 
@@ -1771,13 +596,9 @@ function escapeHtml(value) {
 
 async function logout() {
 
-    await supabaseClient
-        .auth
-        .signOut();
+    await supabaseClient.auth.signOut();
 
-
-    window.location.href =
-        "index.html";
+    window.location.href = "index.html";
 
 }
 
@@ -1788,35 +609,14 @@ async function logout() {
 
 (async function() {
 
-    const loggedIn =
-        await checkLogin();
-
+    const loggedIn = await checkLogin();
 
     if (loggedIn) {
-
-        try {
-
-            await loadCurrentEmployee();
-
-            await loadLeads();
-
-        }
-
-        catch (error) {
-
-            console.error(error);
-
-            alert(
-                error.message
-            );
-
-            await logout();
-
-        }
-
+        await loadLeads();
     }
 
 })();
+
 </script>
 
 </body>
