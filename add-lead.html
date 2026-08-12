@@ -520,7 +520,24 @@ if ((stage === "Callback" || stage === "Follow Up") && !nextTime) {
     showMessage("Please select Next Time.", false);
     return;
 }
+/* PAST DATE / TIME VALIDATION */
 
+if (stage === "Callback" || stage === "Follow Up") {
+
+    const now = new Date();
+
+    const selectedDateTime = new Date(
+        nextDate + "T" + nextTime
+    );
+
+    if (selectedDateTime < now) {
+        showMessage(
+            "Past date/time is not allowed. Please select present or future date/time.",
+            false
+        );
+        return;
+    }
+}
 if (stage === "Login" || stage === "NI") {
     document.getElementById("nextDate").value = "";
     document.getElementById("nextTime").value = "";
