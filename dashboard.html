@@ -369,25 +369,87 @@ body {
 
 <script>
 
-/* =========================
-   LOAD DASHBOARD
-========================= */
-
 function loadDashboard() {
 
-    const employeeId =
-        sessionStorage.getItem("employee_id");
+    const employeeId = sessionStorage.getItem("employee_id");
+    const employeeName = sessionStorage.getItem("employee_name");
+    const employeeRole = sessionStorage.getItem("employee_role");
 
-    const employeeName =
-        sessionStorage.getItem("employee_name");
-
-    const employeeRole =
-        sessionStorage.getItem("employee_role");
-
-
-    /* LOGIN CHECK */
-
+    // LOGIN CHECK
     if (!employeeId || !employeeRole) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    // SHOW USER
+    document.getElementById("userName").innerText =
+        employeeName || employeeId;
+
+    document.getElementById("userRole").innerText =
+        employeeRole.toUpperCase();
+
+    document.getElementById("welcomeText").innerText =
+        "Welcome, " + (employeeName || employeeId);
+
+
+    // HIDE ALL ROLE BUTTONS
+
+    document.querySelectorAll(".agent-card").forEach(function(card) {
+        card.classList.add("hidden");
+    });
+
+    document.querySelectorAll(".tl-card").forEach(function(card) {
+        card.classList.add("hidden");
+    });
+
+    document.querySelectorAll(".manager-card").forEach(function(card) {
+        card.classList.add("hidden");
+    });
+
+
+    // AGENT
+
+    if (employeeRole.toLowerCase() === "agent") {
+
+        document.querySelectorAll(".agent-card").forEach(function(card) {
+            card.classList.remove("hidden");
+        });
+
+    }
+
+
+    // TL
+
+    else if (
+        employeeRole.toLowerCase() === "tl" ||
+        employeeRole.toLowerCase() === "team leader"
+    ) {
+
+        document.querySelectorAll(".tl-card").forEach(function(card) {
+            card.classList.remove("hidden");
+        });
+
+    }
+
+
+    // MANAGER
+
+    else if (employeeRole.toLowerCase() === "manager") {
+
+        document.querySelectorAll(".manager-card").forEach(function(card) {
+            card.classList.remove("hidden");
+        });
+
+    }
+
+
+    // INVALID ROLE
+
+    else {
+
+        alert("Your account role is not authorised.");
+
+        sessionStorage.clear();
 
         window.location.href = "login.html";
 
@@ -395,173 +457,32 @@ function loadDashboard() {
     }
 
 
-    /* ROLE */
+    // SHOW DASHBOARD
 
-    const role =
-        String(employeeRole)
-            .trim()
-            .toLowerCase();
+    document.getElementById("loading").classList.add("hidden");
 
-
-    /* USER DETAILS */
-
-    document.getElementById("userName").innerText =
-        employeeName || employeeId;
-
-    document.getElementById("userRole").innerText =
-        role.toUpperCase();
-
-    document.getElementById("welcomeText").innerText =
-        "Welcome, " + (employeeName || employeeId);
-
-
-    /* HIDE ALL ROLE BUTTONS */
-
-    document
-        .querySelectorAll(".agent-card")
-        .forEach(card => {
-            card.classList.add("hidden");
-        });
-
-    document
-        .querySelectorAll(".tl-card")
-        .forEach(card => {
-            card.classList.add("hidden");
-        });
-
-    document
-        .querySelectorAll(".manager-card")
-        .forEach(card => {
-            card.classList.add("hidden");
-        });
-
-
-    /* =========================
-       AGENT
-    ========================= */
-
-    if (role === "agent") {
-
-        document
-            .querySelectorAll(".agent-card")
-            .forEach(card => {
-                card.classList.remove("hidden");
-            });
-
-    }
-
-
-    /* =========================
-       TL
-    ========================= */
-
-    else if (
-        role === "tl" ||
-        role === "team leader" ||
-        role === "team_leader"
-    ) {
-
-        document
-            .querySelectorAll(".tl-card")
-            .forEach(card => {
-                card.classList.remove("hidden");
-            });
-
-    }
-
-
-    /* =========================
-       MANAGER
-    ========================= */
-
-    else if (
-        role === "manager"
-    ) {
-
-        document
-            .querySelectorAll(".manager-card")
-            .forEach(card => {
-                card.classList.remove("hidden");
-            });
-
-    }
-
-
-    /* =========================
-       INVALID ROLE
-    ========================= */
-
-    else {
-
-        alert(
-            "Your account role is not authorised."
-        );
-
-        sessionStorage.clear();
-
-        window.location.href =
-            "login.html";
-
-        return;
-    }
-
-
-    /* SHOW DASHBOARD */
-
-    document
-        .getElementById("loading")
-        .classList.add("hidden");
-
-    document
-        .getElementById("dashboardGrid")
-        .classList.remove("hidden");
-
+    document.getElementById("dashboardGrid").classList.remove("hidden");
 }
 
 
-/* =========================
-   OPEN PAGE
-========================= */
+/* OPEN PAGE */
 
 function openPage(page) {
-
     window.location.href = page;
-
 }
 
 
-/* =========================
-   LOGOUT
-========================= */
+/* LOGOUT */
 
-async function logout() {
-
-    try {
-
-        if (typeof supabaseClient !== "undefined") {
-
-            await supabaseClient.auth.signOut();
-
-        }
-
-    } catch (error) {
-
-        console.error(error);
-
-    }
-
+function logout() {
 
     sessionStorage.clear();
 
-    window.location.href =
-        "login.html";
-
+    window.location.href = "login.html";
 }
 
 
-/* =========================
-   START
-========================= */
+/* START */
 
 loadDashboard();
 
