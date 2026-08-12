@@ -367,6 +367,41 @@ document.getElementById("agent").addEventListener("change", function() {
         employee["MANAGER NAME"] || "";
 });
 
+    function updateStageFields() {
+    const stage = document.getElementById("stage").value;
+
+    const nextDateField =
+        document.getElementById("nextDate").closest(".field");
+
+    const nextTimeField =
+        document.getElementById("nextTime").closest(".field");
+
+    if (stage === "Callback" || stage === "Follow Up") {
+
+        nextDateField.style.display = "";
+        nextTimeField.style.display = "";
+
+    } else if (stage === "Login" || stage === "NI") {
+
+        nextDateField.style.display = "none";
+        nextTimeField.style.display = "none";
+
+        document.getElementById("nextDate").value = "";
+        document.getElementById("nextTime").value = "";
+
+    } else {
+
+        nextDateField.style.display = "";
+        nextTimeField.style.display = "";
+    }
+}
+
+document.getElementById("stage").addEventListener(
+    "change",
+    updateStageFields
+);
+
+updateStageFields();
 
 /* =========================
    GENERATE LEAD ID
