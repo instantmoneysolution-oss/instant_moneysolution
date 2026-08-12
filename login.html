@@ -94,10 +94,6 @@
             color: #16a34a;
         }
 
-        .hidden {
-            display: none;
-        }
-
         .back {
             display: block;
             text-align: center;
@@ -118,7 +114,6 @@
         Instant Money Solutions
     </div>
 
-    <!-- STEP 1 -->
     <form id="loginForm">
 
         <label>Employee ID</label>
@@ -128,48 +123,24 @@
             id="employeeId"
             placeholder="Enter Employee ID"
             required
-            autocomplete="off"
+            autocomplete="username"
         >
 
-        <label>Mobile Number</label>
+        <label>Password</label>
 
         <input
-            type="tel"
-            id="mobile"
-            placeholder="Enter 10 digit mobile number"
-            maxlength="10"
-            inputmode="numeric"
+            type="password"
+            id="password"
+            placeholder="Enter Password"
             required
-            autocomplete="off"
+            autocomplete="current-password"
         >
 
-        <button type="submit" id="sendOtpBtn">
-            Send OTP
+        <button type="submit" id="loginBtn">
+            Login
         </button>
 
     </form>
-
-
-    <!-- STEP 2 -->
-    <form id="otpForm" class="hidden">
-
-        <label>Enter OTP</label>
-
-        <input
-            type="text"
-            id="otp"
-            placeholder="Enter 6 digit OTP"
-            maxlength="6"
-            inputmode="numeric"
-            autocomplete="one-time-code"
-        >
-
-        <button type="submit" id="verifyOtpBtn">
-            Verify OTP
-        </button>
-
-    </form>
-
 
     <div id="message" class="message"></div>
 
@@ -182,25 +153,8 @@
 
 <script>
 
-let currentPhone = "";
-let currentEmployeeId = "";
-
-
 /*************************************************
- * CLEAN MOBILE NUMBER
- *************************************************/
-
-function cleanMobile(value) {
-
-    return value
-        .replace(/\D/g, "")
-        .slice(0, 10);
-
-}
-
-
-/*************************************************
- * SEND OTP
+ * STAFF LOGIN
  *************************************************/
 
 document
@@ -216,16 +170,16 @@ document
                 .trim()
                 .toUpperCase();
 
-        const mobile =
-            cleanMobile(
-                document.getElementById("mobile").value
-            );
+        const password =
+            document
+                .getElementById("password")
+                .value;
 
         const message =
             document.getElementById("message");
 
-        const sendOtpBtn =
-            document.getElementById("sendOtpBtn");
+        const loginBtn =
+            document.getElementById("loginBtn");
 
 
         message.className = "message";
@@ -245,260 +199,183 @@ document
         }
 
 
-        if (!/^\d{10}$/.test(mobile)) {
+        if (!password) {
 
             message.innerText =
-                "Please enter a valid 10 digit mobile number.";
+                "Please enter Password.";
 
             return;
         }
 
 
-        sendOtpBtn.disabled = true;
-        sendOtpBtn.innerText = "Checking...";
-        // CHECK EMPLOYEE BEFORE SENDING OTP
-const { data: employee, error: employeeError } =
-    await supabaseClient
-        .from("employees")
-        .select("employee_id, name, mobile, role, active")
-        .eq("employee_id", employeeId)
-        .eq("mobile", mobile)
-        .eq("active", true)
-        .maybeSingle();
-
-if (employeeError) {
-    console.error(employeeError);
-
-    message.innerText = "Employee verification failed.";
-
-    sendOtpBtn.disabled = false;
-    sendOtpBtn.innerText = "Send OTP";
-
-    return;
-}
-
-if (!employee) {
-    message.innerText =
-        "Employee ID or mobile number is not authorised.";
-
-    sendOtpBtn.disabled = false;
-    sendOtpBtn.innerText = "Send OTP";
-
-    return;
-}
+        loginBtn.disabled = true;
+        loginBtn.innerText = "Checking...";
 
 
-        /*************************************************
-         * SAVE CURRENT LOGIN DETAILS
-         *************************************************/
+        try {
 
-        currentEmployeeId = employeeId;
-        currentPhone = "+91" + mobile;
+            /*************************************************
+             * GET EMPLOYEE EMAIL
+             *************************************************/
+
+            const {
+                data: employeeEmail,
+                error: employeeError
+            } = await supabaseClient
+                .rpc(
+                    "get_employee_login_email",
+                    {
+                        p_employee_id: employeeId
+                    }
+                );
 
 
-        /*************************************************
-         * SEND OTP
-         *************************************************/
+            if (employeeError) {
 
-        const { error } =
-            await supabaseClient.auth.signInWithOtp({
+                console.error(employeeError);
 
-                phone: currentPhone
+                message.innerText =
+                    "Employee verification failed.";
+
+                loginBtn.disabled = false;
+                loginBtn.innerText = "Login";
+
+                return;
+            }
+
+
+            if (!employeeEmail) {
+
+                message.innerText =
+                    "Employee ID is not authorised.";
+
+                loginBtn.disabled = false;
+                loginBtn.innerText = "Login";
+
+                return;
+            }
+
+
+            /*************************************************
+             * SUPABASE EMAIL + PASSWORD LOGIN
+             *************************************************/
+
+            const {
+                data,
+                error
+            } = await supabaseClient.auth.signInWithPassword({
+
+                email: employeeEmail,
+
+                password: password
 
             });
 
 
-        if (error) {
+            if (error) {
+
+                console.error(error);
+
+                message.innerText =
+                    "Invalid Employee ID or Password.";
+
+                loginBtn.disabled = false;
+                loginBtn.innerText = "Login";
+
+                return;
+            }
+
+
+            /*************************************************
+             * GET EMPLOYEE DETAILS
+             *************************************************/
+
+            const {
+                data: employee,
+                error: detailsError
+            } = await supabaseClient
+                .from("employees")
+                .select(
+                    "employee_id, name, role, active"
+                )
+                .eq(
+                    "employee_id",
+                    employeeId
+                )
+                .eq(
+                    "active",
+                    true
+                )
+                .maybeSingle();
+
+
+            if (detailsError || !employee) {
+
+                console.error(detailsError);
+
+                await supabaseClient.auth.signOut();
+
+                message.innerText =
+                    "Employee account is not authorised.";
+
+                loginBtn.disabled = false;
+                loginBtn.innerText = "Login";
+
+                return;
+            }
+
+
+            /*************************************************
+             * SAVE EMPLOYEE SESSION DETAILS
+             *************************************************/
+
+            sessionStorage.setItem(
+                "employee_id",
+                employee.employee_id
+            );
+
+            sessionStorage.setItem(
+                "employee_name",
+                employee.name
+            );
+
+            sessionStorage.setItem(
+                "employee_role",
+                employee.role
+            );
+
+
+            /*************************************************
+             * LOGIN SUCCESS
+             *************************************************/
+
+            message.className =
+                "message success";
+
+            message.innerText =
+                "Login successful. Opening tracker...";
+
+
+            setTimeout(function() {
+
+                window.location.href =
+                    "tracker.html";
+
+            }, 500);
+
+        }
+
+        catch (error) {
 
             console.error(error);
 
             message.innerText =
-                error.message;
+                "Something went wrong. Please try again.";
 
-            sendOtpBtn.disabled = false;
-            sendOtpBtn.innerText = "Send OTP";
+            loginBtn.disabled = false;
+            loginBtn.innerText = "Login";
 
-            return;
         }
-
-
-        /*************************************************
-         * SHOW OTP BOX
-         *************************************************/
-
-        document
-            .getElementById("loginForm")
-            .classList.add("hidden");
-
-        document
-            .getElementById("otpForm")
-            .classList.remove("hidden");
-
-
-        message.className =
-            "message success";
-
-        message.innerText =
-            "OTP sent to your mobile number.";
-
-
-        document
-            .getElementById("otp")
-            .focus();
-
-    });
-
-
-/*************************************************
- * VERIFY OTP
- *************************************************/
-
-document
-    .getElementById("otpForm")
-    .addEventListener("submit", async function(e) {
-
-        e.preventDefault();
-
-
-        const otp =
-            document
-                .getElementById("otp")
-                .value
-                .trim();
-
-        const message =
-            document.getElementById("message");
-
-        const verifyOtpBtn =
-            document.getElementById("verifyOtpBtn");
-
-
-        message.className = "message";
-        message.innerText = "";
-
-
-        if (!/^\d{6}$/.test(otp)) {
-
-            message.innerText =
-                "Please enter the 6 digit OTP.";
-
-            return;
-        }
-
-
-        verifyOtpBtn.disabled = true;
-        verifyOtpBtn.innerText = "Verifying...";
-
-
-        /*************************************************
-         * VERIFY SUPABASE OTP
-         *************************************************/
-
-        const { data, error } =
-            await supabaseClient.auth.verifyOtp({
-
-                phone: currentPhone,
-
-                token: otp,
-
-                type: "sms"
-
-            });
-
-
-        if (error) {
-
-            console.error(error);
-
-            message.innerText =
-                error.message;
-
-            verifyOtpBtn.disabled = false;
-            verifyOtpBtn.innerText = "Verify OTP";
-
-            return;
-        }
-
-
-        /*************************************************
-         * CHECK EMPLOYEE
-         *************************************************/
-
-        const {
-            data: employee,
-            error: employeeError
-        } = await supabaseClient
-            .from("employees")
-            .select("employee_id, name, mobile, role, active")
-            .eq("employee_id", currentEmployeeId)
-            .eq("mobile", currentPhone.replace("+91", ""))
-            .eq("active", true)
-            .maybeSingle();
-
-
-        if (employeeError) {
-
-            console.error(employeeError);
-
-            message.innerText =
-                "Employee verification failed.";
-
-            await supabaseClient.auth.signOut();
-
-            verifyOtpBtn.disabled = false;
-            verifyOtpBtn.innerText = "Verify OTP";
-
-            return;
-        }
-
-
-        if (!employee) {
-
-            message.innerText =
-                "Employee ID or mobile number is not authorised.";
-
-            await supabaseClient.auth.signOut();
-
-            verifyOtpBtn.disabled = false;
-            verifyOtpBtn.innerText = "Verify OTP";
-
-            return;
-        }
-
-
-        /*************************************************
-         * LOGIN SUCCESS
-         *************************************************/
-
-        sessionStorage.setItem(
-            "employee_id",
-            employee.employee_id
-        );
-
-        sessionStorage.setItem(
-            "employee_name",
-            employee.name
-        );
-
-        sessionStorage.setItem(
-            "employee_role",
-            employee.role
-        );
-
-
-        message.className =
-            "message success";
-
-        message.innerText =
-            "Login successful. Opening tracker...";
-
-
-        setTimeout(function() {
-
-            window.location.href =
-                "tracker.html";
-
-        }, 500);
 
     });
 
