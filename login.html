@@ -256,6 +256,36 @@ document
 
         sendOtpBtn.disabled = true;
         sendOtpBtn.innerText = "Checking...";
+        // CHECK EMPLOYEE BEFORE SENDING OTP
+const { data: employee, error: employeeError } =
+    await supabaseClient
+        .from("employees")
+        .select("employee_id, name, mobile, role, active")
+        .eq("employee_id", employeeId)
+        .eq("mobile", mobile)
+        .eq("active", true)
+        .maybeSingle();
+
+if (employeeError) {
+    console.error(employeeError);
+
+    message.innerText = "Employee verification failed.";
+
+    sendOtpBtn.disabled = false;
+    sendOtpBtn.innerText = "Send OTP";
+
+    return;
+}
+
+if (!employee) {
+    message.innerText =
+        "Employee ID or mobile number is not authorised.";
+
+    sendOtpBtn.disabled = false;
+    sendOtpBtn.innerText = "Send OTP";
+
+    return;
+}
 
 
         /*************************************************
