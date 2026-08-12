@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard | Instant Money Solutions</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+    color: #111827;
+}
+
+.header {
+    background: #111827;
+    color: white;
+    padding: 20px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.company h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.company span {
+    font-size: 13px;
+    opacity: 0.75;
+}
+
+.user-box {
+    text-align: right;
+}
+
+.user-box strong {
+    display: block;
+    font-size: 15px;
+}
+
+.user-box span {
+    font-size: 12px;
+    opacity: 0.75;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 35px auto;
+    padding: 0 20px;
+}
+
+.welcome {
+    margin-bottom: 25px;
+}
+
+.welcome h2 {
+    margin: 0 0 6px;
+    font-size: 25px;
+}
+
+.welcome p {
+    margin: 0;
+    color: #6b7280;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    min-height: 150px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    cursor: pointer;
+    transition: 0.2s;
+    border: 1px solid #e5e7eb;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.icon {
+    font-size: 30px;
+    margin-bottom: 12px;
+}
+
+.dashboard-card h3 {
+    margin: 0 0 7px;
+    font-size: 17px;
+}
+
+.dashboard-card p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.logout {
+    background: #dc2626;
+    color: white;
+}
+
+.logout:hover {
+    background: #b91c1c;
+}
+
+.loading {
+    text-align: center;
+    padding: 50px;
+    color: #6b7280;
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 800px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 550px) {
+    .header {
+        padding: 15px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .user-box {
+        display: none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+    <div class="company">
+        <h1>Instant Money Solutions</h1>
+        <span>Staff Dashboard</span>
+    </div>
+
+    <div class="user-box">
+        <strong id="userName">Loading...</strong>
+        <span id="userRole">Loading...</span>
+    </div>
+
+</div>
+
+
+<div class="container">
+
+    <div class="welcome">
+        <h2 id="welcomeText">Welcome</h2>
+        <p>Select an option to continue.</p>
+    </div>
+
+    <div id="loading" class="loading">
+        Loading dashboard...
+    </div>
+
+
+    <div id="dashboardGrid" class="dashboard-grid hidden">
+
+
+        <!-- =========================
+             AGENT BUTTONS
+        ========================== -->
+
+        <div
+            class="dashboard-card agent-card"
+            onclick="openPage('add-lead.html')"
+        >
+            <div class="icon">➕</div>
+            <h3>Lead Generate</h3>
+            <p>Create a new customer lead.</p>
+        </div>
+
+
+        <div
+            class="dashboard-card agent-card"
+            onclick="openPage('lead-update.html')"
+        >
+            <div class="icon">✏️</div>
+            <h3>Lead Update</h3>
+            <p>Update your existing leads.</p>
+        </div>
+
+
+        <div
+            class="dashboard-card agent-card"
+            onclick="openPage('follow-up.html')"
+        >
+            <div class="icon">📅</div>
+            <h3>Today's Follow-up</h3>
+            <p>View today's Callback and Follow Up leads.</p>
+        </div>
+
+
+        <!-- =========================
+             TL BUTTONS
+        ========================== -->
+
+        <div
+            class="dashboard-card tl-card"
+            onclick="openPage('add-lead.html')"
+        >
+            <div class="icon">➕</div>
+            <h3>Lead Generate</h3>
+            <p>Create a new customer lead.</p>
+        </div>
+
+
+        <div
+            class="dashboard-card tl-card"
+            onclick="openPage('tracker.html')"
+        >
+            <div class="icon">📋</div>
+            <h3>Team Tracker</h3>
+            <p>View your team's leads.</p>
+        </div>
+
+
+        <div
+            class="dashboard-card tl-card"
+            onclick="openPage('lead-update.html')"
+        >
+            <div class="icon">✏️</div>
+            <h3>Lead Update</h3>
+            <p>Update team leads.</p>
+        </div>
+
+
+        <div
+            class="dashboard-card tl-card"
+            onclick="openPage('follow-up.html')"
+        >
+            <div class="icon">📅</div>
+            <h3>Team Follow-ups</h3>
+            <p>View your team's follow-ups.</p>
+        </div>
+
+
+        <div
+            class="dashboard-card tl-card"
+            onclick="openPage('team.html')"
+        >
+            <div class="icon">👥</div>
+            <h3>My Team</h3>
+            <p>View your assigned team.</p>
+        </div>
+
+
+        <div
+            class="dashboard-card tl-card"
+            onclick="openPage('team-performance.html')"
+        >
+            <div class="icon">📊</div>
+            <h3>Team Performance</h3>
+            <p>View team performance.</p>
+        </div>
+
+
+        <!-- =========================
+             MANAGER BUTTONS
+        ========================== -->
+
+        <div
+            class="dashboard-card manager-card"
+            onclick="openPage('add-lead.html')"
+        >
+            <div class="icon">➕</div>
+            <h3>Lead Generate</h3>
+            <p>Create a new customer lead.</p>
+        </div>
+
+
+        <div
+            class="dashboard-card manager-card"
+            onclick="openPage('tracker.html')"
+        >
+            <div class="icon">📋</div>
+            <h3>All Leads</h3>
+            <p>View all leads.</p>
+        </div>
+
+
+        <div
+            class="dashboard-card manager-card"
+            onclick="openPage('lead-update.html')"
+        >
+            <div class="icon">✏️</div>
+            <h3>Lead Update</h3>
+            <p>Update existing leads.</p>
+        </div>
+
+
+        <div
+            class="dashboard-card manager-card"
+            onclick="openPage('follow-up.html')"
+        >
+            <div class="icon">📅</div>
+            <h3>Follow-ups</h3>
+            <p>View all pending follow-ups.</p>
+        </div>
+
+
+        <div
+            class="dashboard-card manager-card"
+            onclick="openPage('team-management.html')"
+        >
+            <div class="icon">👥</div>
+            <h3>Team Management</h3>
+            <p>Manage employees and teams.</p>
+        </div>
+
+
+        <div
+            class="dashboard-card manager-card"
+            onclick="openPage('performance.html')"
+        >
+            <div class="icon">📊</div>
+            <h3>Overall Performance</h3>
+            <p>View overall business performance.</p>
+        </div>
+
+
+        <!-- =========================
+             LOGOUT
+        ========================== -->
+
+        <div
+            class="dashboard-card logout"
+            onclick="logout()"
+        >
+            <div class="icon">🚪</div>
+            <h3>Logout</h3>
+            <p>Sign out of staff account.</p>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   CHECK LOGIN + ROLE
+========================= */
+
+async function loadDashboard() {
+
+    try {
+
+        const {
+            data: { user }
+        } = await supabaseClient.auth.getUser();
+
+
+        if (!user) {
+
+            window.location.href = "login.html";
+
+            return;
+        }
+
+
+        const employeeId =
+            sessionStorage.getItem("employee_id");
+
+
+        if (!employeeId) {
+
+            await supabaseClient.auth.signOut();
+
+            window.location.href = "login.html";
+
+            return;
+        }
+
+
+        const {
+            data: employee,
+            error
+        } = await supabaseClient
+            .from("employees")
+            .select(
+                "employee_id, name, role, active"
+            )
+            .eq(
+                "employee_id",
+                employeeId
+            )
+            .eq(
+                "active",
+                true
+            )
+            .maybeSingle();
+
+
+        if (error || !employee) {
+
+            console.error(error);
+
+            await supabaseClient.auth.signOut();
+
+            sessionStorage.clear();
+
+            window.location.href = "login.html";
+
+            return;
+        }
+
+
+        const role =
+            String(employee.role || "")
+                .toLowerCase();
+
+
+        document.getElementById("userName").innerText =
+            employee.name || employee.employee_id;
+
+
+        document.getElementById("userRole").innerText =
+            role.toUpperCase();
+
+
+        document.getElementById("welcomeText").innerText =
+            "Welcome, " + employee.name;
+
+
+        /* =========================
+           HIDE ALL ROLE BUTTONS
+        ========================== */
+
+        document
+            .querySelectorAll(".agent-card")
+            .forEach(card => {
+                card.classList.add("hidden");
+            });
+
+        document
+            .querySelectorAll(".tl-card")
+            .forEach(card => {
+                card.classList.add("hidden");
+            });
+
+        document
+            .querySelectorAll(".manager-card")
+            .forEach(card => {
+                card.classList.add("hidden");
+            });
+
+
+        /* =========================
+           SHOW CORRECT ROLE
+        ========================== */
+
+        if (role === "agent") {
+
+            document
+                .querySelectorAll(".agent-card")
+                .forEach(card => {
+                    card.classList.remove("hidden");
+                });
+
+        }
+
+        else if (role === "tl") {
+
+            document
+                .querySelectorAll(".tl-card")
+                .forEach(card => {
+                    card.classList.remove("hidden");
+                });
+
+        }
+
+        else if (role === "manager") {
+
+            document
+                .querySelectorAll(".manager-card")
+                .forEach(card => {
+                    card.classList.remove("hidden");
+                });
+
+        }
+
+        else {
+
+            alert("Your account role is not authorised.");
+
+            await supabaseClient.auth.signOut();
+
+            sessionStorage.clear();
+
+            window.location.href = "login.html";
+
+            return;
+        }
+
+
+        document
+            .getElementById("loading")
+            .classList.add("hidden");
+
+        document
+            .getElementById("dashboardGrid")
+            .classList.remove("hidden");
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        window.location.href = "login.html";
+    }
+
+}
+
+
+/* =========================
+   OPEN PAGE
+========================= */
+
+function openPage(page) {
+
+    window.location.href = page;
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+async function logout() {
+
+    await supabaseClient.auth.signOut();
+
+    sessionStorage.clear();
+
+    window.location.href = "login.html";
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+loadDashboard();
+
+</script>
+
+</body>
+</html>
