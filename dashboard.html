@@ -367,178 +367,154 @@ body {
 
 <script>
 
+<script>
+
 /* =========================
-   CHECK LOGIN + ROLE
+   LOAD DASHBOARD
 ========================= */
 
-async function loadDashboard() {
+function loadDashboard() {
 
-    try {
+    const employeeId =
+        sessionStorage.getItem("employee_id");
 
-        const {
-            data: { user }
-        } = await supabaseClient.auth.getUser();
+    const employeeName =
+        sessionStorage.getItem("employee_name");
 
-
-        if (!user) {
-
-            window.location.href = "login.html";
-
-            return;
-        }
+    const employeeRole =
+        sessionStorage.getItem("employee_role");
 
 
-        const employeeId =
-            sessionStorage.getItem("employee_id");
+    /* LOGIN CHECK */
+
+    if (!employeeId || !employeeRole) {
+
+        window.location.href = "login.html";
+
+        return;
+    }
 
 
-        if (!employeeId) {
+    /* ROLE */
 
-            await supabaseClient.auth.signOut();
-
-            window.location.href = "login.html";
-
-            return;
-        }
+    const role =
+        String(employeeRole)
+            .trim()
+            .toLowerCase();
 
 
-        const {
-            data: employee,
-            error
-        } = await supabaseClient
-            .from("employees")
-            .select(
-                "employee_id, name, role, active"
-            )
-            .eq(
-                "employee_id",
-                employeeId
-            )
-            .eq(
-                "active",
-                true
-            )
-            .maybeSingle();
+    /* USER DETAILS */
+
+    document.getElementById("userName").innerText =
+        employeeName || employeeId;
+
+    document.getElementById("userRole").innerText =
+        role.toUpperCase();
+
+    document.getElementById("welcomeText").innerText =
+        "Welcome, " + (employeeName || employeeId);
 
 
-        if (error || !employee) {
+    /* HIDE ALL ROLE BUTTONS */
 
-            console.error(error);
+    document
+        .querySelectorAll(".agent-card")
+        .forEach(card => {
+            card.classList.add("hidden");
+        });
 
-            await supabaseClient.auth.signOut();
+    document
+        .querySelectorAll(".tl-card")
+        .forEach(card => {
+            card.classList.add("hidden");
+        });
 
-            sessionStorage.clear();
-
-            window.location.href = "login.html";
-
-            return;
-        }
-
-
-        const role =
-            String(employee.role || "")
-                .toLowerCase();
-
-
-        document.getElementById("userName").innerText =
-            employee.name || employee.employee_id;
+    document
+        .querySelectorAll(".manager-card")
+        .forEach(card => {
+            card.classList.add("hidden");
+        });
 
 
-        document.getElementById("userRole").innerText =
-            role.toUpperCase();
+    /* =========================
+       AGENT
+    ========================= */
 
-
-        document.getElementById("welcomeText").innerText =
-            "Welcome, " + employee.name;
-
-
-        /* =========================
-           HIDE ALL ROLE BUTTONS
-        ========================== */
+    if (role === "agent") {
 
         document
             .querySelectorAll(".agent-card")
             .forEach(card => {
-                card.classList.add("hidden");
+                card.classList.remove("hidden");
             });
+
+    }
+
+
+    /* =========================
+       TL
+    ========================= */
+
+    else if (
+        role === "tl" ||
+        role === "team leader" ||
+        role === "team_leader"
+    ) {
 
         document
             .querySelectorAll(".tl-card")
             .forEach(card => {
-                card.classList.add("hidden");
+                card.classList.remove("hidden");
             });
+
+    }
+
+
+    /* =========================
+       MANAGER
+    ========================= */
+
+    else if (
+        role === "manager"
+    ) {
 
         document
             .querySelectorAll(".manager-card")
             .forEach(card => {
-                card.classList.add("hidden");
+                card.classList.remove("hidden");
             });
 
-
-        /* =========================
-           SHOW CORRECT ROLE
-        ========================== */
-
-        if (role === "agent") {
-
-            document
-                .querySelectorAll(".agent-card")
-                .forEach(card => {
-                    card.classList.remove("hidden");
-                });
-
-        }
-
-        else if (role === "tl") {
-
-            document
-                .querySelectorAll(".tl-card")
-                .forEach(card => {
-                    card.classList.remove("hidden");
-                });
-
-        }
-
-        else if (role === "manager") {
-
-            document
-                .querySelectorAll(".manager-card")
-                .forEach(card => {
-                    card.classList.remove("hidden");
-                });
-
-        }
-
-        else {
-
-            alert("Your account role is not authorised.");
-
-            await supabaseClient.auth.signOut();
-
-            sessionStorage.clear();
-
-            window.location.href = "login.html";
-
-            return;
-        }
-
-
-        document
-            .getElementById("loading")
-            .classList.add("hidden");
-
-        document
-            .getElementById("dashboardGrid")
-            .classList.remove("hidden");
-
     }
 
-    catch (error) {
 
-        console.error(error);
+    /* =========================
+       INVALID ROLE
+    ========================= */
 
-        window.location.href = "login.html";
+    else {
+
+        alert(
+            "Your account role is not authorised."
+        );
+
+        sessionStorage.clear();
+
+        window.location.href =
+            "login.html";
+
+        return;
     }
+
+
+    /* SHOW DASHBOARD */
+
+    document
+        .getElementById("loading")
+        .classList.add("hidden");
+
+    document
+        .getElementById("dashboardGrid")
+        .classList.remove("hidden");
 
 }
 
@@ -560,11 +536,25 @@ function openPage(page) {
 
 async function logout() {
 
-    await supabaseClient.auth.signOut();
+    try {
+
+        if (typeof supabaseClient !== "undefined") {
+
+            await supabaseClient.auth.signOut();
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
 
     sessionStorage.clear();
 
-    window.location.href = "login.html";
+    window.location.href =
+        "login.html";
 
 }
 
@@ -576,6 +566,3 @@ async function logout() {
 loadDashboard();
 
 </script>
-
-</body>
-</html>
