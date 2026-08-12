@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Add Lead | Instant Money Solutions</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+    color: #222;
+}
+
+.header {
+    background: #111827;
+    color: white;
+    padding: 18px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.header span {
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 25px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+h2 {
+    margin-top: 0;
+    color: #111827;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+}
+
+.field.full {
+    grid-column: 1 / -1;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 7px;
+    font-size: 14px;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    font-size: 14px;
+    background: white;
+}
+
+input[readonly] {
+    background: #f3f4f6;
+}
+
+textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.buttons {
+    margin-top: 25px;
+    display: flex;
+    gap: 12px;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.save-btn {
+    background: #16a34a;
+    color: white;
+}
+
+.back-btn {
+    background: #6b7280;
+    color: white;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.message {
+    margin-top: 18px;
+    padding: 12px;
+    border-radius: 7px;
+    display: none;
+}
+
+.success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+@media (max-width: 700px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .field.full {
+        grid-column: auto;
+    }
+
+    .container {
+        margin: 10px auto;
+        padding: 15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <div>
+        <h1>Instant Money Solutions</h1>
+        <span>Add New Lead</span>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>Add New Lead</h2>
+
+        <div class="form-grid">
+
+            <div class="field">
+                <label>Customer Name</label>
+                <input type="text" id="customerName" placeholder="Enter customer name">
+            </div>
+
+            <div class="field">
+                <label>Loan Type</label>
+                <select id="loanType">
+                    <option value="">Select Loan Type</option>
+                    <option value="Personal Loan">Personal Loan</option>
+                    <option value="Over Draft">Over Draft</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Diary</label>
+                <input type="number" id="diary" value="1" min="1">
+            </div>
+
+            <div class="field">
+                <label>Page</label>
+                <input type="number" id="page" value="1" min="1">
+            </div>
+
+            <div class="field">
+                <label>Agent</label>
+                <select id="agent">
+                    <option value="">Loading agents...</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>TL</label>
+                <input type="text" id="tlName" readonly>
+            </div>
+
+            <div class="field">
+                <label>Manager</label>
+                <input type="text" id="managerName" readonly>
+            </div>
+
+            <div class="field">
+                <label>Process</label>
+                <select id="process">
+                    <option value="">Select Process</option>
+                    <option value="Personal Loan">Personal Loan</option>
+                    <option value="Over Draft">Over Draft</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Stage</label>
+                <select id="stage">
+                    <option value="">Select Stage</option>
+                    <option value="New">New</option>
+                    <option value="Follow Up">Follow Up</option>
+                    <option value="Interested">Interested</option>
+                    <option value="Document Pending">Document Pending</option>
+                    <option value="Login">Login</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Disbursed">Disbursed</option>
+                    <option value="Hold">Hold</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Next Date</label>
+                <input type="date" id="nextDate">
+            </div>
+
+            <div class="field">
+                <label>Next Time</label>
+                <input type="time" id="nextTime">
+            </div>
+
+            <div class="field full">
+                <label>Last Remark</label>
+                <textarea id="lastRemark" placeholder="Enter remark"></textarea>
+            </div>
+
+        </div>
+
+        <div class="buttons">
+            <button class="save-btn" id="saveBtn" onclick="saveLead()">
+                Save Lead
+            </button>
+
+            <button class="back-btn" onclick="goBack()">
+                Back to Tracker
+            </button>
+        </div>
+
+        <div id="message" class="message"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+let employees = [];
+
+/* =========================
+   CHECK LOGIN
+========================= */
+
+async function checkLogin() {
+
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+        window.location.href = "index.html";
+        return false;
+    }
+
+    return true;
+}
+
+
+/* =========================
+   LOAD EMPLOYEES
+========================= */
+
+async function loadEmployees() {
+
+    const agentSelect = document.getElementById("agent");
+
+    agentSelect.innerHTML =
+        '<option value="">Loading agents...</option>';
+
+    const { data, error } = await supabaseClient
+        .from("employees")
+        .select("*")
+        .eq("role", "agent")
+        .eq("active", true)
+        .order("name");
+
+    if (error) {
+
+        console.error(error);
+
+        agentSelect.innerHTML =
+            '<option value="">Unable to load agents</option>';
+
+        showMessage(
+            "Error loading employees: " + error.message,
+            false
+        );
+
+        return;
+    }
+
+    employees = data || [];
+
+    agentSelect.innerHTML =
+        '<option value="">Select Agent</option>';
+
+    employees.forEach(employee => {
+
+        const option = document.createElement("option");
+
+        option.value = employee.employee_id;
+
+        option.textContent =
+            employee.name + " (" + employee.employee_id + ")";
+
+        agentSelect.appendChild(option);
+    });
+}
+
+
+/* =========================
+   AGENT CHANGE
+========================= */
+
+document.getElementById("agent").addEventListener("change", function() {
+
+    const employeeId = this.value;
+
+    const employee = employees.find(
+        x => x.employee_id === employeeId
+    );
+
+    if (!employee) {
+
+        document.getElementById("tlName").value = "";
+        document.getElementById("managerName").value = "";
+
+        return;
+    }
+
+    document.getElementById("tlName").value =
+        employee["TL NAME"] || "";
+
+    document.getElementById("managerName").value =
+        employee["MANAGER NAME"] || "";
+});
+
+
+/* =========================
+   GENERATE LEAD ID
+========================= */
+
+async function generateLeadId() {
+
+    const { data, error } = await supabaseClient
+        .from("leads")
+        .select("lead_id")
+        .order("id", { ascending: false })
+        .limit(1);
+
+    if (error) {
+        throw error;
+    }
+
+    let nextNumber = 1;
+
+    if (data && data.length && data[0].lead_id) {
+
+        const lastId = String(data[0].lead_id);
+
+        const match = lastId.match(/(\d+)$/);
+
+        if (match) {
+            nextNumber = parseInt(match[1], 10) + 1;
+        }
+    }
+
+    return "IMS-TEST-" +
+        String(nextNumber).padStart(3, "0");
+}
+
+
+/* =========================
+   SAVE LEAD
+========================= */
+
+async function saveLead() {
+
+    const saveBtn = document.getElementById("saveBtn");
+
+    const customerName =
+        document.getElementById("customerName").value.trim();
+
+    const loanType =
+        document.getElementById("loanType").value;
+
+    const diary =
+        document.getElementById("diary").value;
+
+    const page =
+        document.getElementById("page").value;
+
+    const employeeId =
+        document.getElementById("agent").value;
+
+    const tlName =
+        document.getElementById("tlName").value;
+
+    const managerName =
+        document.getElementById("managerName").value;
+
+    const process =
+        document.getElementById("process").value;
+
+    const stage =
+        document.getElementById("stage").value;
+
+    const nextDate =
+        document.getElementById("nextDate").value;
+
+    const nextTime =
+        document.getElementById("nextTime").value;
+
+    const lastRemark =
+        document.getElementById("lastRemark").value.trim();
+
+
+    /* VALIDATION */
+
+    if (!customerName) {
+        showMessage("Customer Name is required.", false);
+        return;
+    }
+
+    if (!loanType) {
+        showMessage("Please select Loan Type.", false);
+        return;
+    }
+
+    if (!employeeId) {
+        showMessage("Please select Agent.", false);
+        return;
+    }
+
+    if (!tlName || !managerName) {
+        showMessage(
+            "TL / Manager mapping is missing for this employee.",
+            false
+        );
+        return;
+    }
+
+    if (!process) {
+        showMessage("Please select Process.", false);
+        return;
+    }
+
+    if (!stage) {
+        showMessage("Please select Stage.", false);
+        return;
+    }
+
+    if (!nextDate) {
+        showMessage("Please select Next Date.", false);
+        return;
+    }
+
+    if (!nextTime) {
+        showMessage("Please select Next Time.", false);
+        return;
+    }
+
+
+    saveBtn.disabled = true;
+    saveBtn.innerText = "Saving...";
+
+
+    try {
+
+        const leadId = await generateLeadId();
+
+
+        const newLead = {
+
+            lead_id: leadId,
+
+            customer_name: customerName,
+
+            loan_type: loanType,
+
+            diary: parseInt(diary || 1),
+
+            page: parseInt(page || 1),
+
+            agent_name:
+                employees.find(
+                    x => x.employee_id === employeeId
+                )?.name || "",
+
+            tl_name: tlName,
+
+            manager_name: managerName,
+
+            process: process,
+
+            stage: stage,
+
+            next_date: nextDate,
+
+            next_time: nextTime,
+
+            last_remark: lastRemark,
+
+            reminder_status: "Pending",
+
+            current_status: "Active"
+        };
+
+
+        const { error } = await supabaseClient
+            .from("leads")
+            .insert([newLead]);
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        showMessage(
+            "Lead " + leadId + " saved successfully!",
+            true
+        );
+
+
+        setTimeout(() => {
+
+            window.location.href = "tracker.html";
+
+        }, 1200);
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            "Error saving lead: " + error.message,
+            false
+        );
+
+        saveBtn.disabled = false;
+        saveBtn.innerText = "Save Lead";
+    }
+}
+
+
+/* =========================
+   MESSAGE
+========================= */
+
+function showMessage(text, success) {
+
+    const message =
+        document.getElementById("message");
+
+    message.innerText = text;
+
+    message.className =
+        "message " + (success ? "success" : "error");
+
+    message.style.display = "block";
+}
+
+
+/* =========================
+   BACK
+========================= */
+
+function goBack() {
+
+    window.location.href = "tracker.html";
+}
+
+
+/* =========================
+   START
+========================= */
+
+(async function() {
+
+    const loggedIn = await checkLogin();
+
+    if (loggedIn) {
+        await loadEmployees();
+    }
+
+})();
+
+</script>
+
+</body>
+</html>
