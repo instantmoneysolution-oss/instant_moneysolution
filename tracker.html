@@ -219,12 +219,13 @@ tr:hover td {
                         <th>Last Remark</th>
                         <th>Reminder</th>
                         <th>Status</th>
+                        <th>Update</th>
                     </tr>
                 </thead>
 
                 <tbody id="leadTable">
                     <tr>
-                        <td colspan="16" class="loading">
+                        <td colspan="17" class="loading">
                             Loading leads...
                         </td>
                     </tr>
@@ -270,7 +271,7 @@ async function loadLeads() {
 
     table.innerHTML = `
         <tr>
-            <td colspan="16" class="loading">
+            <td colspan="17" class="loading">
                 Loading leads...
             </td>
         </tr>
@@ -287,7 +288,7 @@ async function loadLeads() {
 
         table.innerHTML = `
             <tr>
-                <td colspan="16" class="message">
+                <td colspan="17" class="message">
                     Error loading leads: ${escapeHtml(error.message)}
                 </td>
             </tr>
@@ -457,7 +458,7 @@ function renderLeads() {
 
         table.innerHTML = `
             <tr>
-                <td colspan="16" class="message">
+                <td colspan="17" class="message">
                     No leads found
                 </td>
             </tr>
@@ -536,11 +537,30 @@ function renderLeads() {
                     ${escapeHtml(lead.current_status)}
                 </span>
             </td>
-
+<td>
+    <button
+        onclick="updateLead('${encodeURIComponent(lead.lead_id)}')"
+        style="
+            background:#2563eb;
+            color:white;
+            border:none;
+            padding:7px 10px;
+            border-radius:6px;
+            cursor:pointer;
+            font-size:14px;
+        "
+        title="Update Lead"
+    >
+        ✏️
+    </button>
+</td>
         </tr>
 
     `).join("");
 
+}
+    function updateLead(leadId) {
+    window.location.href = `lead-update.html?lead_id=${leadId}`;
 }
 
 
