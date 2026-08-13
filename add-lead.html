@@ -302,8 +302,8 @@ async function loadEmployees() {
     const { data, error } = await supabaseClient
         .from("employees")
         .select("*")
-        .eq("role", "agent")
-        .eq("active", true)
+.in("role", ["agent", "tl"])
+.eq("active", true)
         .order("name");
 
     if (error) {
