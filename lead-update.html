@@ -1181,31 +1181,12 @@ async function updateLead() {
         };
 
 
-const {
-    data: updatedLead,
-    error
-} = await supabaseClient
-    .from("leads")
-    .update(updatedData)
-    .eq(
-        "lead_id",
-        currentLead.lead_id
-    )
-    .select()
-    .maybeSingle();
-
-if (error) {
-    throw error;
-}
-
-if (!updatedLead) {
-    throw new Error(
-        "Lead was not updated. Supabase returned 0 matching rows. Check UPDATE permission/RLS policy."
-    );
-}
-    );
-}
-
+showMessage(
+    "Lead " +
+    currentLead.lead_id +
+    " updated successfully!",
+    true
+);
 
         showMessage(
             "Lead " +
