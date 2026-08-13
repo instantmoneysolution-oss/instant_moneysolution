@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Today's Leads | Instant Money Solutions</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+    color: #222;
+}
+
+.header {
+    background: #111827;
+    color: white;
+    padding: 18px 25px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.header span {
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+.container {
+    max-width: 1600px;
+    margin: auto;
+    padding: 25px;
+}
+
+.topbar {
+    background: white;
+    padding: 20px;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 2px 10px rgba(0,0,0,0.08);
+
+    margin-bottom: 20px;
+}
+
+.topbar h2 {
+    margin: 0 0 8px;
+    color: #111827;
+}
+
+.topbar p {
+    margin: 0;
+    color: #6b7280;
+}
+
+.date-badge {
+    display: inline-block;
+
+    margin-top: 12px;
+
+    padding: 8px 14px;
+
+    border-radius: 20px;
+
+    background: #eff6ff;
+    color: #2563eb;
+
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.actions {
+    margin-top: 15px;
+}
+
+button {
+    border: none;
+    border-radius: 7px;
+
+    padding: 10px 16px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+.back-btn {
+    background: #6b7280;
+    color: white;
+}
+
+.refresh-btn {
+    background: #2563eb;
+    color: white;
+
+    margin-left: 8px;
+}
+
+.logout-btn {
+    background: #dc2626;
+    color: white;
+}
+
+.card {
+    background: white;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 2px 10px rgba(0,0,0,0.08);
+
+    overflow: hidden;
+}
+
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 1200px;
+}
+
+th {
+    background: #111827;
+    color: white;
+
+    padding: 13px 12px;
+
+    text-align: left;
+
+    font-size: 13px;
+
+    white-space: nowrap;
+}
+
+td {
+    padding: 12px;
+
+    border-bottom:
+        1px solid #e5e7eb;
+
+    font-size: 13px;
+
+    vertical-align: middle;
+
+    white-space: nowrap;
+}
+
+tr:hover {
+    background: #f9fafb;
+}
+
+.lead-id {
+    color: #2563eb;
+    font-weight: bold;
+}
+
+.customer {
+    font-weight: bold;
+}
+
+.status {
+    display: inline-block;
+
+    padding: 5px 9px;
+
+    border-radius: 15px;
+
+    background: #e0f2fe;
+    color: #0369a1;
+
+    font-weight: bold;
+
+    font-size: 12px;
+}
+
+.update-btn {
+    background: #2563eb;
+    color: white;
+
+    padding: 7px 10px;
+
+    border-radius: 6px;
+
+    font-size: 14px;
+}
+
+.loading,
+.empty,
+.error {
+    padding: 35px;
+
+    text-align: center;
+}
+
+.loading {
+    color: #6b7280;
+}
+
+.empty {
+    color: #6b7280;
+}
+
+.error {
+    color: #b91c1c;
+}
+
+.count {
+    margin-top: 15px;
+
+    font-weight: bold;
+
+    color: #111827;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<div class="header">
+
+    <div>
+
+        <h1>
+            Instant Money Solutions
+        </h1>
+
+        <span>
+            Today's Leads
+        </span>
+
+    </div>
+
+
+    <div>
+
+        <span id="userInfo">
+            Loading...
+        </span>
+
+        <button
+            class="logout-btn"
+            onclick="logout()"
+            style="margin-left:15px;"
+        >
+            Logout
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<div class="container">
+
+
+    <div class="topbar">
+
+        <h2>
+            Today's Leads
+        </h2>
+
+        <p>
+            Only leads generated today by your team are shown here.
+        </p>
+
+
+        <div
+            class="date-badge"
+            id="todayDate"
+        >
+            Loading date...
+        </div>
+
+
+        <div class="actions">
+
+            <button
+                class="back-btn"
+                onclick="goBack()"
+            >
+                ← Dashboard
+            </button>
+
+
+            <button
+                class="refresh-btn"
+                onclick="loadTodayLeads()"
+            >
+                ↻ Refresh
+            </button>
+
+        </div>
+
+
+        <div
+            class="count"
+            id="count"
+        >
+            Loading today's leads...
+        </div>
+
+    </div>
+
+
+
+    <div class="card">
+
+
+        <div
+            id="loading"
+            class="loading"
+        >
+            Loading today's leads...
+        </div>
+
+
+        <div
+            id="error"
+            class="error"
+            style="display:none;"
+        ></div>
+
+
+        <div
+            id="empty"
+            class="empty"
+            style="display:none;"
+        >
+            No leads generated today.
+        </div>
+
+
+        <div
+            id="tableContainer"
+            class="table-wrap"
+            style="display:none;"
+        >
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Lead ID
+                        </th>
+
+                        <th>
+                            Customer
+                        </th>
+
+                        <th>
+                            Agent
+                        </th>
+
+                        <th>
+                            TL
+                        </th>
+
+                        <th>
+                            Manager
+                        </th>
+
+                        <th>
+                            Process
+                        </th>
+
+                        <th>
+                            Stage
+                        </th>
+
+                        <th>
+                            Created
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Update
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody
+                    id="todayLeadBody"
+                ></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+
+/* =========================
+   VARIABLES
+========================= */
+
+let currentUser = null;
+
+let currentEmployee = null;
+
+
+
+/* =========================
+   TODAY DATE
+========================= */
+
+function getTodayDate() {
+
+    const now =
+        new Date();
+
+    const year =
+        now.getFullYear();
+
+    const month =
+        String(
+            now.getMonth() + 1
+        ).padStart(2, "0");
+
+    const day =
+        String(
+            now.getDate()
+        ).padStart(2, "0");
+
+    return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day
+    );
+
+}
+
+
+
+/* =========================
+   DISPLAY DATE
+========================= */
+
+function displayDate(dateString) {
+
+    const date =
+        new Date(
+            dateString +
+            "T00:00:00"
+        );
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+
+/* =========================
+   CHECK LOGIN
+========================= */
+
+async function checkLogin() {
+
+    const {
+        data: {
+            user
+        }
+    } =
+        await supabaseClient
+            .auth
+            .getUser();
+
+
+    if (!user) {
+
+        window.location.href =
+            "login.html";
+
+        return false;
+
+    }
+
+
+    currentUser =
+        user;
+
+    return true;
+
+}
+
+
+
+/* =========================
+   LOAD CURRENT EMPLOYEE
+========================= */
+
+async function loadCurrentEmployee() {
+
+    const employeeId =
+        sessionStorage.getItem(
+            "employee_id"
+        );
+
+
+    if (!employeeId) {
+
+        await supabaseClient
+            .auth
+            .signOut();
+
+        window.location.href =
+            "login.html";
+
+        return false;
+
+    }
+
+
+    const {
+        data: employee,
+        error
+    } =
+        await supabaseClient
+
+            .from("employees")
+
+            .select("*")
+
+            .eq(
+                "employee_id",
+                employeeId
+            )
+
+            .eq(
+                "active",
+                true
+            )
+
+            .maybeSingle();
+
+
+    if (
+        error ||
+        !employee
+    ) {
+
+        console.error(error);
+
+        showError(
+            "Employee account could not be verified."
+        );
+
+        return false;
+
+    }
+
+
+    currentEmployee =
+        employee;
+
+
+    const role =
+        String(
+            employee.role || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    document.getElementById(
+        "userInfo"
+    ).innerText =
+
+        (
+            employee.name ||
+            employee.employee_id
+        )
+        +
+        " | "
+        +
+        role.toUpperCase();
+
+
+    return true;
+
+}
+
+
+
+/* =========================
+   CHECK LEAD ACCESS
+========================= */
+
+function canAccessLead(lead) {
+
+    if (!currentEmployee) {
+
+        return false;
+
+    }
+
+
+    const role =
+        String(
+            currentEmployee.role || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    const employeeName =
+        String(
+            currentEmployee.name || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    const leadAgent =
+        String(
+            lead.agent_name || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    const leadTL =
+        String(
+            lead.tl_name || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    const leadManager =
+        String(
+            lead.manager_name || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+
+    /* =========================
+       AGENT
+    ========================= */
+
+    if (
+        role === "agent"
+    ) {
+
+        return (
+            leadAgent ===
+            employeeName
+        );
+
+    }
+
+
+
+    /* =========================
+       TL
+    ========================= */
+
+    if (
+        role === "tl" ||
+        role === "team leader"
+    ) {
+
+        return (
+            leadTL ===
+            employeeName
+        );
+
+    }
+
+
+
+    /* =========================
+       MANAGER
+    ========================= */
+
+    if (
+        role === "manager"
+    ) {
+
+        return (
+            leadManager ===
+            employeeName
+        );
+
+    }
+
+
+
+    /* =========================
+       ADMIN
+    ========================= */
+
+    if (
+        role === "admin"
+    ) {
+
+        return true;
+
+    }
+
+
+    return false;
+
+}
+
+
+
+/* =========================
+   LOAD TODAY LEADS
+========================= */
+
+async function loadTodayLeads() {
+
+
+    const loading =
+        document.getElementById(
+            "loading"
+        );
+
+
+    const empty =
+        document.getElementById(
+            "empty"
+        );
+
+
+    const errorBox =
+        document.getElementById(
+            "error"
+        );
+
+
+    const table =
+        document.getElementById(
+            "tableContainer"
+        );
+
+
+    const count =
+        document.getElementById(
+            "count"
+        );
+
+
+    loading.style.display =
+        "block";
+
+
+    empty.style.display =
+        "none";
+
+
+    errorBox.style.display =
+        "none";
+
+
+    table.style.display =
+        "none";
+
+
+    count.innerText =
+        "Loading today's leads...";
+
+
+
+    const today =
+        getTodayDate();
+
+
+    document.getElementById(
+        "todayDate"
+    ).innerText =
+        displayDate(today);
+
+
+
+    try {
+
+
+        /*
+         * LOCAL DAY RANGE
+         *
+         * This avoids problems where
+         * created_at is stored as UTC.
+         */
+
+        const start =
+            new Date();
+
+        start.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+
+        const end =
+            new Date();
+
+        end.setHours(
+            23,
+            59,
+            59,
+            999
+        );
+
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+
+                .from("leads")
+
+                .select("*")
+
+                .gte(
+                    "created_at",
+                    start.toISOString()
+                )
+
+                .lte(
+                    "created_at",
+                    end.toISOString()
+                )
+
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
+
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+
+        /*
+         * ROLE BASED FILTER
+         */
+
+        const visibleLeads =
+            (data || [])
+                .filter(
+                    lead =>
+                        canAccessLead(
+                            lead
+                        )
+                );
+
+
+
+        loading.style.display =
+            "none";
+
+
+
+        count.innerText =
+            visibleLeads.length +
+            " lead(s) generated today";
+
+
+
+        if (
+            visibleLeads.length === 0
+        ) {
+
+            empty.innerText =
+                "No leads generated today by your team.";
+
+            empty.style.display =
+                "block";
+
+            return;
+
+        }
+
+
+
+        const body =
+            document.getElementById(
+                "todayLeadBody"
+            );
+
+
+
+        body.innerHTML =
+
+            visibleLeads
+                .map(
+                    lead => `
+
+<tr>
+
+    <td>
+
+        <span class="lead-id">
+
+            ${escapeHtml(
+                lead.lead_id
+            )}
+
+        </span>
+
+    </td>
+
+
+    <td>
+
+        <span class="customer">
+
+            ${escapeHtml(
+                lead.customer_name
+            )}
+
+        </span>
+
+    </td>
+
+
+    <td>
+
+        ${escapeHtml(
+            lead.agent_name
+        )}
+
+    </td>
+
+
+    <td>
+
+        ${escapeHtml(
+            lead.tl_name
+        )}
+
+    </td>
+
+
+    <td>
+
+        ${escapeHtml(
+            lead.manager_name
+        )}
+
+    </td>
+
+
+    <td>
+
+        ${escapeHtml(
+            lead.process ||
+            lead.loan_type
+        )}
+
+    </td>
+
+
+    <td>
+
+        ${escapeHtml(
+            lead.stage
+        )}
+
+    </td>
+
+
+    <td>
+
+        ${formatCreatedAt(
+            lead.created_at
+        )}
+
+    </td>
+
+
+    <td>
+
+        <span class="status">
+
+            ${escapeHtml(
+                lead.current_status
+            )}
+
+        </span>
+
+    </td>
+
+
+    <td>
+
+        <button
+
+            class="update-btn"
+
+            onclick="
+                updateLead(
+                    '${encodeURIComponent(
+                        lead.lead_id
+                    )}'
+                )
+            "
+
+            title="Update Lead"
+
+        >
+
+            ✏️
+
+        </button>
+
+    </td>
+
+</tr>
+
+`
+                )
+                .join("");
+
+
+        table.style.display =
+            "block";
+
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+
+        loading.style.display =
+            "none";
+
+
+        count.innerText =
+            "Error loading today's leads";
+
+
+        errorBox.innerText =
+            "Error loading today's leads: " +
+            error.message;
+
+
+        errorBox.style.display =
+            "block";
+
+    }
+
+}
+
+
+
+/* =========================
+   UPDATE LEAD
+========================= */
+
+function updateLead(
+    leadId
+) {
+
+    window.location.href =
+        "lead-update.html?lead_id=" +
+        leadId;
+
+}
+
+
+
+/* =========================
+   CREATED DATE FORMAT
+========================= */
+
+function formatCreatedAt(
+    value
+) {
+
+    if (!value) {
+
+        return "";
+
+    }
+
+
+    try {
+
+        return new Date(
+            value
+        ).toLocaleString(
+            "en-IN",
+            {
+                day: "2-digit",
+                month: "short",
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
+
+    }
+
+    catch {
+
+        return value;
+
+    }
+
+}
+
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
+
+function escapeHtml(
+    value
+) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+
+    }
+
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+
+/* =========================
+   BACK
+========================= */
+
+function goBack() {
+
+    window.location.href =
+        "dashboard.html";
+
+}
+
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+async function logout() {
+
+    await supabaseClient
+        .auth
+        .signOut();
+
+
+    sessionStorage.clear();
+
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+
+/* =========================
+   SHOW ERROR
+========================= */
+
+function showError(
+    message
+) {
+
+    document.getElementById(
+        "loading"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "empty"
+    ).style.display =
+        "none";
+
+
+    const errorBox =
+        document.getElementById(
+            "error"
+        );
+
+
+    errorBox.innerText =
+        message;
+
+
+    errorBox.style.display =
+        "block";
+
+}
+
+
+
+/* =========================
+   START
+========================= */
+
+(async function() {
+
+
+    const loggedIn =
+        await checkLogin();
+
+
+    if (!loggedIn) {
+
+        return;
+
+    }
+
+
+    const employeeLoaded =
+        await loadCurrentEmployee();
+
+
+    if (!employeeLoaded) {
+
+        return;
+
+    }
+
+
+    await loadTodayLeads();
+
+
+})();
+
+</script>
+
+</body>
+
+</html>
