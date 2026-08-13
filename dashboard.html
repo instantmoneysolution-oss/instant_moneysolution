@@ -489,6 +489,15 @@ async function loadDashboard() {
                 });
 
         }
+            else if (role === "admin") {
+
+    document
+        .querySelectorAll(".admin-card")
+        .forEach(card => {
+            card.classList.remove("hidden");
+        });
+
+}
 
         else {
 
