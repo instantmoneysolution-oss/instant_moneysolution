@@ -1,1 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Lead Update | Instant Money Solutions</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+    color: #222;
+}
+
+.header {
+    background: #111827;
+    color: white;
+    padding: 18px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.header span {
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 25px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+h2 {
+    margin-top: 0;
+    color: #111827;
+}
+
+.lead-info {
+    background: #f3f4f6;
+    padding: 14px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.lead-info strong {
+    color: #111827;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+}
+
+.field.full {
+    grid-column: 1 / -1;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 7px;
+    font-size: 14px;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    font-size: 14px;
+    background: white;
+}
+
+input[readonly] {
+    background: #f3f4f6;
+    cursor: not-allowed;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.buttons {
+    margin-top: 25px;
+    display: flex;
+    gap: 12px;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.save-btn {
+    background: #16a34a;
+    color: white;
+}
+
+.back-btn {
+    background: #6b7280;
+    color: white;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.message {
+    margin-top: 18px;
+    padding: 12px;
+    border-radius: 7px;
+    display: none;
+}
+
+.success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.loading {
+    text-align: center;
+    padding: 30px;
+    color: #6b7280;
+}
+
+.hidden {
+    display: none;
+}
+
+.role-badge {
+    display: inline-block;
+    background: #dbeafe;
+    color: #1d4ed8;
+    padding: 5px 9px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+@media (max-width: 700px) {
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .field.full {
+        grid-column: auto;
+    }
+
+    .container {
+        margin: 10px auto;
+        padding: 15px;
+    }
+
+    .buttons {
+        flex-direction: column;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+    <div>
+        <h1>Instant Money Solutions</h1>
+        <span>Lead Update</span>
+    </div>
+
+    <div>
+        <span id="userInfo">Loading...</span>
+    </div>
+
+</div>
+
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>Update Lead</h2>
+
+        <div id="loading" class="loading">
+            Loading lead...
+        </div>
+
+
+        <div id="content" class="hidden">
+
+            <div class="lead-info">
+
+                <strong>Lead ID:</strong>
+                <span id="leadIdDisplay"></span>
+
+                &nbsp;&nbsp;
+
+                <span id="roleBadge" class="role-badge"></span>
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <!-- CUSTOMER -->
+
+                <div class="field">
+                    <label>Customer Name</label>
+
+                    <input
+                        type="text"
+                        id="customerName"
+                    >
+                </div>
+
+
+                <!-- DIARY -->
+
+                <div class="field">
+
+                    <label>Diary</label>
+
+                    <input
+                        type="number"
+                        id="diary"
+                        min="1"
+                    >
+
+                </div>
+
+
+                <!-- PAGE -->
+
+                <div class="field">
+
+                    <label>Page</label>
+
+                    <input
+                        type="number"
+                        id="page"
+                        min="1"
+                    >
+
+                </div>
+
+
+                <!-- AGENT -->
+
+                <div class="field">
+
+                    <label>Agent</label>
+
+                    <input
+                        type="text"
+                        id="agentName"
+                        readonly
+                    >
+
+                </div>
+
+
+                <!-- TL -->
+
+                <div class="field">
+
+                    <label>TL</label>
+
+                    <input
+                        type="text"
+                        id="tlName"
+                        readonly
+                    >
+
+                </div>
+
+
+                <!-- MANAGER -->
+
+                <div class="field">
+
+                    <label>Manager</label>
+
+                    <input
+                        type="text"
+                        id="managerName"
+                        readonly
+                    >
+
+                </div>
+
+
+                <!-- PROCESS -->
+
+                <div class="field">
+
+                    <label>Process</label>
+
+                    <select id="process">
+
+                        <option value="">
+                            Select Process
+                        </option>
+
+                        <option value="Personal Loan">
+                            Personal Loan
+                        </option>
+
+                        <option value="Over Draft">
+                            Over Draft
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- STAGE -->
+
+                <div class="field">
+
+                    <label>Stage</label>
+
+                    <select id="stage">
+
+                        <option value="">
+                            Select Stage
+                        </option>
+
+                        <option value="Callback">
+                            Callback
+                        </option>
+
+                        <option value="Follow Up">
+                            Follow Up
+                        </option>
+
+                        <option value="Login">
+                            Login
+                        </option>
+
+                        <option value="NI">
+                            NI
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- NEXT DATE -->
+
+                <div
+                    class="field"
+                    id="nextDateField"
+                >
+
+                    <label>Next Date</label>
+
+                    <input
+                        type="date"
+                        id="nextDate"
+                    >
+
+                </div>
+
+
+                <!-- NEXT TIME -->
+
+                <div
+                    class="field"
+                    id="nextTimeField"
+                >
+
+                    <label>Next Time</label>
+
+                    <input
+                        type="time"
+                        id="nextTime"
+                    >
+
+                </div>
+
+
+                <!-- REMARK -->
+
+                <div class="field full">
+
+                    <label>Last Remark</label>
+
+                    <textarea
+                        id="lastRemark"
+                        placeholder="Enter latest remark"
+                    ></textarea>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="buttons">
+
+                <button
+                    class="save-btn"
+                    id="saveBtn"
+                    onclick="updateLead()"
+                >
+                    Update Lead
+                </button>
+
+
+                <button
+                    class="back-btn"
+                    onclick="goBack()"
+                >
+                    Back
+                </button>
+
+            </div>
+
+
+            <div
+                id="message"
+                class="message"
+            ></div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let currentUser = null;
+let currentEmployee = null;
+let currentLead = null;
+
+
+/* =========================
+   MESSAGE
+========================= */
+
+function showMessage(text, success) {
+
+    const message =
+        document.getElementById("message");
+
+    message.innerText = text;
+
+    message.className =
+        "message " +
+        (success ? "success" : "error");
+
+    message.style.display = "block";
+}
+
+
+/* =========================
+   CHECK LOGIN
+========================= */
+
+async function checkLogin() {
+
+    const {
+        data: { user }
+    } = await supabaseClient.auth.getUser();
+
+
+    if (!user) {
+
+        window.location.href =
+            "login.html";
+
+        return false;
+    }
+
+
+    currentUser = user;
+
+    return true;
+}
+
+
+/* =========================
+   LOAD CURRENT EMPLOYEE
+========================= */
+
+async function loadCurrentEmployee() {
+
+    const employeeId =
+        sessionStorage.getItem("employee_id");
+
+
+    if (!employeeId) {
+
+        await supabaseClient.auth.signOut();
+
+        window.location.href =
+            "login.html";
+
+        return false;
+    }
+
+
+    const {
+        data: employee,
+        error
+    } = await supabaseClient
+
+        .from("employees")
+
+        .select("*")
+
+        .eq(
+            "employee_id",
+            employeeId
+        )
+
+        .eq(
+            "active",
+            true
+        )
+
+        .maybeSingle();
+
+
+    if (error || !employee) {
+
+        console.error(error);
+
+        showMessage(
+            "Employee account could not be verified.",
+            false
+        );
+
+        return false;
+    }
+
+
+    currentEmployee = employee;
+
+
+    const role =
+        String(employee.role || "")
+        .toLowerCase();
+
+
+    document.getElementById(
+        "userInfo"
+    ).innerText =
+        (employee.name || employee.employee_id)
+        + " | "
+        + role.toUpperCase();
+
+
+    document.getElementById(
+        "roleBadge"
+    ).innerText =
+        role.toUpperCase();
+
+
+    return true;
+}
+
+
+/* =========================
+   GET LEAD ID FROM URL
+========================= */
+
+function getLeadIdFromUrl() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    return params.get("lead_id");
+}
+
+
+/* =========================
+   CHECK LEAD ACCESS
+========================= */
+
+function canAccessLead(lead) {
+
+    if (!currentEmployee) {
+        return false;
+    }
+
+
+    const role =
+        String(
+            currentEmployee.role || ""
+        ).toLowerCase();
+
+
+    const employeeName =
+        String(
+            currentEmployee.name || ""
+        ).trim()
+        .toLowerCase();
+
+
+    const leadAgent =
+        String(
+            lead.agent_name || ""
+        ).trim()
+        .toLowerCase();
+
+
+    const leadTL =
+        String(
+            lead.tl_name || ""
+        ).trim()
+        .toLowerCase();
+
+
+    const leadManager =
+        String(
+            lead.manager_name || ""
+        ).trim()
+        .toLowerCase();
+
+
+    /* AGENT */
+
+    if (role === "agent") {
+
+        return (
+            leadAgent === employeeName
+        );
+    }
+
+
+    /* TL */
+
+    if (role === "tl") {
+
+        return (
+            leadTL === employeeName
+        );
+    }
+
+
+    /* MANAGER */
+
+    if (role === "manager") {
+
+        return (
+            leadManager === employeeName
+        );
+    }
+
+
+    return false;
+}
+
+
+/* =========================
+   LOAD LEAD
+========================= */
+
+async function loadLead() {
+
+    const leadId =
+        getLeadIdFromUrl();
+
+
+    if (!leadId) {
+
+        document.getElementById(
+            "loading"
+        ).innerText =
+            "Lead ID is missing.";
+
+        return false;
+    }
+
+
+    const {
+        data: lead,
+        error
+    } = await supabaseClient
+
+        .from("leads")
+
+        .select("*")
+
+        .eq(
+            "lead_id",
+            leadId
+        )
+
+        .maybeSingle();
+
+
+    if (error) {
+
+        console.error(error);
+
+        document.getElementById(
+            "loading"
+        ).innerText =
+            "Error loading lead: "
+            + error.message;
+
+        return false;
+    }
+
+
+    if (!lead) {
+
+        document.getElementById(
+            "loading"
+        ).innerText =
+            "Lead not found.";
+
+        return false;
+    }
+
+
+    /* ROLE ACCESS CHECK */
+
+    if (!canAccessLead(lead)) {
+
+        document.getElementById(
+            "loading"
+        ).innerText =
+            "You do not have permission to update this lead.";
+
+        return false;
+    }
+
+
+    currentLead = lead;
+
+
+    /* SHOW DATA */
+
+    document.getElementById(
+        "leadIdDisplay"
+    ).innerText =
+        lead.lead_id || "";
+
+
+    document.getElementById(
+        "customerName"
+    ).value =
+        lead.customer_name || "";
+
+
+    document.getElementById(
+        "diary"
+    ).value =
+        lead.diary || 1;
+
+
+    document.getElementById(
+        "page"
+    ).value =
+        lead.page || 1;
+
+
+    document.getElementById(
+        "agentName"
+    ).value =
+        lead.agent_name || "";
+
+
+    document.getElementById(
+        "tlName"
+    ).value =
+        lead.tl_name || "";
+
+
+    document.getElementById(
+        "managerName"
+    ).value =
+        lead.manager_name || "";
+
+
+    document.getElementById(
+        "process"
+    ).value =
+        lead.process || lead.loan_type || "";
+
+
+    document.getElementById(
+        "stage"
+    ).value =
+        lead.stage || "";
+
+
+    document.getElementById(
+        "nextDate"
+    ).value =
+        lead.next_date || "";
+
+
+    document.getElementById(
+        "nextTime"
+    ).value =
+        lead.next_time || "";
+
+
+    document.getElementById(
+        "lastRemark"
+    ).value =
+        lead.last_remark || "";
+
+
+    updateStageFields();
+
+
+    document.getElementById(
+        "loading"
+    ).classList.add("hidden");
+
+
+    document.getElementById(
+        "content"
+    ).classList.remove("hidden");
+
+
+    return true;
+}
+
+
+/* =========================
+   STAGE FIELD CONTROL
+========================= */
+
+function updateStageFields() {
+
+    const stage =
+        document.getElementById(
+            "stage"
+        ).value;
+
+
+    const nextDateField =
+        document.getElementById(
+            "nextDateField"
+        );
+
+
+    const nextTimeField =
+        document.getElementById(
+            "nextTimeField"
+        );
+
+
+    if (
+        stage === "Callback" ||
+        stage === "Follow Up"
+    ) {
+
+        nextDateField.style.display =
+            "";
+
+        nextTimeField.style.display =
+            "";
+
+    } else {
+
+        nextDateField.style.display =
+            "none";
+
+        nextTimeField.style.display =
+            "none";
+
+        document.getElementById(
+            "nextDate"
+        ).value = "";
+
+        document.getElementById(
+            "nextTime"
+        ).value = "";
+    }
+}
+
+
+document.getElementById(
+    "stage"
+).addEventListener(
+    "change",
+    updateStageFields
+);
+
+
+/* =========================
+   VALIDATE DATE/TIME
+========================= */
+
+function validateDateTime(
+    stage,
+    nextDate,
+    nextTime
+) {
+
+    if (
+        stage !== "Callback" &&
+        stage !== "Follow Up"
+    ) {
+        return true;
+    }
+
+
+    if (!nextDate) {
+
+        showMessage(
+            "Please select Next Date.",
+            false
+        );
+
+        return false;
+    }
+
+
+    if (!nextTime) {
+
+        showMessage(
+            "Please select Next Time.",
+            false
+        );
+
+        return false;
+    }
+
+
+    const selectedDateTime =
+        new Date(
+            nextDate +
+            "T" +
+            nextTime
+        );
+
+
+    const now = new Date();
+
+
+    if (selectedDateTime < now) {
+
+        showMessage(
+            "Past date/time is not allowed. Please select present or future date/time.",
+            false
+        );
+
+        return false;
+    }
+
+
+    return true;
+}
+
+
+/* =========================
+   UPDATE LEAD
+========================= */
+
+async function updateLead() {
+
+    if (!currentLead) {
+        return;
+    }
+
+
+    const saveBtn =
+        document.getElementById(
+            "saveBtn"
+        );
+
+
+    const customerName =
+        document.getElementById(
+            "customerName"
+        ).value.trim();
+
+
+    const diary =
+        document.getElementById(
+            "diary"
+        ).value;
+
+
+    const page =
+        document.getElementById(
+            "page"
+        ).value;
+
+
+    const process =
+        document.getElementById(
+            "process"
+        ).value;
+
+
+    const stage =
+        document.getElementById(
+            "stage"
+        ).value;
+
+
+    const nextDate =
+        document.getElementById(
+            "nextDate"
+        ).value;
+
+
+    const nextTime =
+        document.getElementById(
+            "nextTime"
+        ).value;
+
+
+    const lastRemark =
+        document.getElementById(
+            "lastRemark"
+        ).value.trim();
+
+
+    /* VALIDATION */
+
+    if (!customerName) {
+
+        showMessage(
+            "Customer Name is required.",
+            false
+        );
+
+        return;
+    }
+
+
+    if (!process) {
+
+        showMessage(
+            "Please select Process.",
+            false
+        );
+
+        return;
+    }
+
+
+    if (!stage) {
+
+        showMessage(
+            "Please select Stage.",
+            false
+        );
+
+        return;
+    }
+
+
+    if (
+        !validateDateTime(
+            stage,
+            nextDate,
+            nextTime
+        )
+    ) {
+        return;
+    }
+
+
+    saveBtn.disabled = true;
+
+    saveBtn.innerText =
+        "Updating...";
+
+
+    try {
+
+        const updatedData = {
+
+            customer_name:
+                customerName,
+
+            diary:
+                parseInt(diary || 1),
+
+            page:
+                parseInt(page || 1),
+
+            loan_type:
+                process,
+
+            process:
+                process,
+
+            stage:
+                stage,
+
+            next_date:
+                (
+                    stage === "Callback" ||
+                    stage === "Follow Up"
+                )
+                ? nextDate
+                : null,
+
+            next_time:
+                (
+                    stage === "Callback" ||
+                    stage === "Follow Up"
+                )
+                ? nextTime
+                : null,
+
+            last_remark:
+                lastRemark,
+
+            reminder_status:
+                (
+                    stage === "Login" ||
+                    stage === "NI"
+                )
+                ? "Closed"
+                : "Pending",
+
+            current_status:
+                (
+                    stage === "Login" ||
+                    stage === "NI"
+                )
+                ? "Closed"
+                : "Active"
+        };
+
+
+        const {
+            error
+        } = await supabaseClient
+
+            .from("leads")
+
+            .update(updatedData)
+
+            .eq(
+                "lead_id",
+                currentLead.lead_id
+            );
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        showMessage(
+            "Lead " +
+            currentLead.lead_id +
+            " updated successfully!",
+            true
+        );
+
+
+        setTimeout(() => {
+
+            window.location.href =
+                "dashboard.html";
+
+        }, 1200);
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+            "Error updating lead: "
+            + error.message,
+            false
+        );
+
+
+        saveBtn.disabled =
+            false;
+
+        saveBtn.innerText =
+            "Update Lead";
+    }
+}
+
+
+/* =========================
+   BACK
+========================= */
+
+function goBack() {
+
+    window.location.href =
+        "dashboard.html";
+}
+
+
+/* =========================
+   START
+========================= */
+
+(async function() {
+
+    const loggedIn =
+        await checkLogin();
+
+
+    if (!loggedIn) {
+        return;
+    }
+
+
+    const employeeLoaded =
+        await loadCurrentEmployee();
+
+
+    if (!employeeLoaded) {
+        return;
+    }
+
+
+    await loadLead();
+
+})();
+
+</script>
+
+</body>
+</html>
