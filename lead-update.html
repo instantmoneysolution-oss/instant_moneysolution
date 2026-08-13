@@ -1009,184 +1009,143 @@ function validateDateTime(
    UPDATE LEAD
 ========================= */
 
+/* =========================
+   UPDATE LEAD
+========================= */
+
 async function updateLead() {
 
     if (!currentLead) {
+        showMessage("Lead data not loaded.", false);
         return;
     }
 
-
-    const saveBtn =
-        document.getElementById(
-            "saveBtn"
-        );
-
+    const saveBtn = document.getElementById("saveBtn");
 
     const customerName =
-        document.getElementById(
-            "customerName"
-        ).value.trim();
-
+        document.getElementById("customerName").value.trim();
 
     const diary =
-        document.getElementById(
-            "diary"
-        ).value;
-
+        document.getElementById("diary").value;
 
     const page =
-        document.getElementById(
-            "page"
-        ).value;
-
+        document.getElementById("page").value;
 
     const process =
-        document.getElementById(
-            "process"
-        ).value;
-
+        document.getElementById("process").value;
 
     const stage =
-        document.getElementById(
-            "stage"
-        ).value;
-
+        document.getElementById("stage").value;
 
     const nextDate =
-        document.getElementById(
-            "nextDate"
-        ).value;
-
+        document.getElementById("nextDate").value;
 
     const nextTime =
-        document.getElementById(
-            "nextTime"
-        ).value;
-
+        document.getElementById("nextTime").value;
 
     const lastRemark =
-        document.getElementById(
-            "lastRemark"
-        ).value.trim();
+        document.getElementById("lastRemark").value.trim();
 
-
-    /* VALIDATION */
 
     if (!customerName) {
-
-        showMessage(
-            "Customer Name is required.",
-            false
-        );
-
+        showMessage("Customer Name is required.", false);
         return;
     }
-
 
     if (!process) {
-
-        showMessage(
-            "Please select Process.",
-            false
-        );
-
+        showMessage("Please select Process.", false);
         return;
     }
-
 
     if (!stage) {
-
-        showMessage(
-            "Please select Stage.",
-            false
-        );
-
+        showMessage("Please select Stage.", false);
         return;
     }
 
-
-    if (
-        !validateDateTime(
-            stage,
-            nextDate,
-            nextTime
-        )
-    ) {
+    if (!validateDateTime(stage, nextDate, nextTime)) {
         return;
     }
 
 
     saveBtn.disabled = true;
-
-    saveBtn.innerText =
-        "Updating...";
+    saveBtn.innerText = "Updating...";
 
 
     try {
 
         const updatedData = {
 
-            customer_name:
-                customerName,
+            customer_name: customerName,
 
-            diary:
-                parseInt(diary || 1),
+            diary: parseInt(diary || 1),
 
-            page:
-                parseInt(page || 1),
+            page: parseInt(page || 1),
 
-            loan_type:
-                process,
+            loan_type: process,
 
-            process:
-                process,
+            process: process,
 
-            stage:
-                stage,
+            stage: stage,
 
             next_date:
                 (
                     stage === "Callback" ||
                     stage === "Follow Up"
                 )
-                ? nextDate
-                : null,
+                    ? nextDate
+                    : null,
 
             next_time:
                 (
                     stage === "Callback" ||
                     stage === "Follow Up"
                 )
-                ? nextTime
-                : null,
+                    ? nextTime
+                    : null,
 
-            last_remark:
-                lastRemark,
+            last_remark: lastRemark,
 
             reminder_status:
                 (
                     stage === "Login" ||
                     stage === "NI"
                 )
-                ? "Closed"
-                : "Pending",
+                    ? "Closed"
+                    : "Pending",
 
             current_status:
                 (
                     stage === "Login" ||
                     stage === "NI"
                 )
-                ? "Closed"
-                : "Active"
+                    ? "Closed"
+                    : "Active"
         };
 
 
-showMessage(
-    "Lead " +
-    currentLead.lead_id +
-    " updated successfully!",
-    true
-);
+        const {
+            data: updatedLead,
+            error
+        } = await supabaseClient
+            .from("leads")
+            .update(updatedData)
+            .eq("lead_id", currentLead.lead_id)
+            .select()
+            .maybeSingle();
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        if (!updatedLead) {
+            throw new Error(
+                "Lead was not updated. No matching lead found for " +
+                currentLead.lead_id
+            );
+        }
+
 
         showMessage(
             "Lead " +
@@ -1196,33 +1155,34 @@ showMessage(
         );
 
 
+        saveBtn.innerText = "Updated ✓";
+
+
         setTimeout(() => {
 
-            window.location.href =
-                "dashboard.html";
+            window.location.href = "dashboard.html";
 
-        }, 1200);
+        }, 1000);
 
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "UPDATE LEAD ERROR:",
+            error
+        );
 
         showMessage(
-            "Error updating lead: "
-            + error.message,
+            "Error updating lead: " +
+            error.message,
             false
         );
 
+        saveBtn.disabled = false;
 
-        saveBtn.disabled =
-            false;
-
-        saveBtn.innerText =
-            "Update Lead";
+        saveBtn.innerText = "Update Lead";
     }
 }
-
 
 /* =========================
    BACK
