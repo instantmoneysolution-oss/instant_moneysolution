@@ -502,7 +502,17 @@ async function loadDashboard() {
         /* =========================
            SHOW CORRECT ROLE
         ========================== */
+/* =========================
+   HIDE ALL ROLE CARDS FIRST
+========================= */
 
+document
+    .querySelectorAll(
+        ".agent-card, .tl-card, .manager-card, .admin-card"
+    )
+    .forEach(card => {
+        card.classList.add("hidden");
+    });
         if (role === "agent") {
 
             document
