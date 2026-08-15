@@ -550,17 +550,21 @@ async function checkLogin() {
    LOAD CURRENT EMPLOYEE
 ========================= */
 
+/* =========================
+   LOAD CURRENT EMPLOYEE
+========================= */
+
 async function loadCurrentEmployee() {
 
     try {
 
-        const {
-            data: { user },
-            error: userError
-        } = await supabaseClient.auth.getUser();
+        const employeeId =
+            sessionStorage.getItem("employee_id");
 
-        if (userError || !user) {
-            throw new Error("Login session not found.");
+        if (!employeeId) {
+            throw new Error(
+                "Employee ID not found in login session."
+            );
         }
 
         const {
@@ -569,7 +573,7 @@ async function loadCurrentEmployee() {
         } = await supabaseClient
             .from("employees")
             .select("*")
-            .eq("email", user.email)
+            .eq("employee_id", employeeId)
             .eq("active", true)
             .maybeSingle();
 
@@ -582,7 +586,8 @@ async function loadCurrentEmployee() {
 
         if (!employee) {
             throw new Error(
-                "Logged-in email is not mapped in employees table."
+                "Employee not found for ID: " +
+                employeeId
             );
         }
 
@@ -614,8 +619,6 @@ async function loadCurrentEmployee() {
         return false;
     }
 }
-
-
 /* =========================
    GET LEAD ID FROM URL
 ========================= */
