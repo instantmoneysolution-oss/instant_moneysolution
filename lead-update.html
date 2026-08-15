@@ -552,79 +552,67 @@ async function checkLogin() {
 
 async function loadCurrentEmployee() {
 
-    const employeeId =
-        sessionStorage.getItem("employee_id");
+    try {
 
+        const {
+            data: { user },
+            error: userError
+        } = await supabaseClient.auth.getUser();
 
-    if (!employeeId) {
+        if (userError || !user) {
+            throw new Error("Login session not found.");
+        }
 
-        await supabaseClient.auth.signOut();
+        const {
+            data: employee,
+            error
+        } = await supabaseClient
+            .from("employees")
+            .select("*")
+            .eq("email", user.email)
+            .eq("active", true)
+            .maybeSingle();
 
-        window.location.href =
-            "login.html";
+        if (error) {
+            throw new Error(
+                "Employee mapping load failed: " +
+                error.message
+            );
+        }
 
-        return false;
-    }
+        if (!employee) {
+            throw new Error(
+                "Logged-in email is not mapped in employees table."
+            );
+        }
 
+        currentEmployee = employee;
 
-    const {
-        data: employee,
-        error
-    } = await supabaseClient
+        const role =
+            String(employee.role || "").toLowerCase();
 
-        .from("employees")
+        document.getElementById("userInfo").innerText =
+            (employee.name || employee.employee_id) +
+            " | " +
+            role.toUpperCase();
 
-        .select("*")
+        document.getElementById("roleBadge").innerText =
+            role.toUpperCase();
 
-        .eq(
-            "employee_id",
-            employeeId
-        )
+        return true;
 
-        .eq(
-            "active",
-            true
-        )
+    } catch (error) {
 
-        .maybeSingle();
-
-
-    if (error || !employee) {
-
-        console.error(error);
-
-        showMessage(
-            "Employee account could not be verified.",
-            false
+        console.error(
+            "LOAD EMPLOYEE ERROR:",
+            error
         );
 
+        document.getElementById("loading").innerText =
+            error.message;
+
         return false;
     }
-
-
-    currentEmployee = employee;
-
-
-    const role =
-        String(employee.role || "")
-        .toLowerCase();
-
-
-    document.getElementById(
-        "userInfo"
-    ).innerText =
-        (employee.name || employee.employee_id)
-        + " | "
-        + role.toUpperCase();
-
-
-    document.getElementById(
-        "roleBadge"
-    ).innerText =
-        role.toUpperCase();
-
-
-    return true;
 }
 
 
@@ -1137,13 +1125,14 @@ async function updateLead() {
                     : "Pending",
 
             current_status:
-                (
-                    stage === "Login" ||
-                    stage === "NI"
-                )
-                    ? "Closed"
-                    : "Active"
-            agent_reminder: null,
+    (
+        stage === "Login" ||
+        stage === "NI"
+    )
+        ? "Closed"
+        : "Active",
+
+agent_reminder: null,
 tl_reminder: null,
 manager_reminder: null
         };
@@ -1227,28 +1216,46 @@ function goBack() {
 
 (async function() {
 
-    const loggedIn =
-        await checkLogin();
+    try {
 
+        document.getElementById("loading").innerText =
+            "Checking login...";
 
-    if (!loggedIn) {
-        return;
+        const loggedIn =
+            await checkLogin();
+
+        if (!loggedIn) {
+            return;
+        }
+
+        document.getElementById("loading").innerText =
+            "Loading employee...";
+
+        const employeeLoaded =
+            await loadCurrentEmployee();
+
+        if (!employeeLoaded) {
+            return;
+        }
+
+        document.getElementById("loading").innerText =
+            "Loading lead...";
+
+        await loadLead();
+
+    } catch (error) {
+
+        console.error(
+            "LEAD UPDATE START ERROR:",
+            error
+        );
+
+        document.getElementById("loading").innerText =
+            "Error: " + error.message;
     }
-
-
-    const employeeLoaded =
-        await loadCurrentEmployee();
-
-
-    if (!employeeLoaded) {
-        return;
-    }
-
-
-    await loadLead();
 
 })();
-
+    
 </script>
 
 </body>
