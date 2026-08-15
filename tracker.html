@@ -277,36 +277,160 @@ async function loadLeads() {
         </tr>
     `;
 
-    const { data, error } = await supabaseClient
-        .from("leads")
-        .select("*")
-        .order("created_at", { ascending: false });
+    try {
 
-    if (error) {
+        /* =========================
+           GET LOGGED-IN EMPLOYEE
+        ========================= */
+
+        const employeeName =
+            sessionStorage.getItem("employee_name");
+
+        const employeeRole =
+            (sessionStorage.getItem("employee_role") || "")
+                .toLowerCase()
+                .trim();
+
+
+        if (!employeeName || !employeeRole) {
+
+            window.location.href = "login.html";
+            return;
+        }
+
+
+        /* =========================
+           LOAD LEADS
+        ========================= */
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("leads")
+            .select("*")
+            .order("created_at", {
+                ascending: false
+            });
+
+
+        if (error) {
+
+            console.error(error);
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="17" class="message">
+                        Error loading leads:
+                        ${escapeHtml(error.message)}
+                    </td>
+                </tr>
+            `;
+
+            document.getElementById("count").innerText =
+                "Error loading leads";
+
+            return;
+        }
+
+
+        /* =========================
+           ROLE BASED VISIBILITY
+        ========================= */
+
+        let visibleLeads = [];
+
+
+        if (employeeRole === "admin") {
+
+            /* ADMIN → ALL LEADS */
+
+            visibleLeads = data || [];
+
+        }
+
+        else if (employeeRole === "agent") {
+
+            /* AGENT → ONLY OWN LEADS */
+
+            visibleLeads = (data || []).filter(lead =>
+                String(lead.agent_name || "")
+                    .trim()
+                    .toLowerCase() ===
+                employeeName.trim().toLowerCase()
+            );
+
+        }
+
+        else if (employeeRole === "tl") {
+
+            /* TL → TEAM LEADS */
+
+            visibleLeads = (data || []).filter(lead =>
+                String(lead.tl_name || "")
+                    .trim()
+                    .toLowerCase() ===
+                employeeName.trim().toLowerCase()
+            );
+
+        }
+
+        else if (employeeRole === "manager") {
+
+            /* MANAGER → MANAGER'S LEADS */
+
+            visibleLeads = (data || []).filter(lead =>
+                String(lead.manager_name || "")
+                    .trim()
+                    .toLowerCase() ===
+                employeeName.trim().toLowerCase()
+            );
+
+        }
+
+        else {
+
+            console.error(
+                "Unknown employee role:",
+                employeeRole
+            );
+
+            visibleLeads = [];
+        }
+
+
+        /* =========================
+           SAVE FILTERED LEADS
+        ========================= */
+
+        allLeads = visibleLeads;
+
+        filteredLeads = [...allLeads];
+
+
+        populateFilters();
+
+        renderLeads();
+
+    }
+
+    catch (error) {
 
         console.error(error);
 
         table.innerHTML = `
             <tr>
                 <td colspan="17" class="message">
-                    Error loading leads: ${escapeHtml(error.message)}
+                    Something went wrong while loading leads.
                 </td>
             </tr>
         `;
 
-        document.getElementById("count").innerText = "Error loading leads";
-
-        return;
+        document.getElementById("count").innerText =
+            "Error loading leads";
     }
 
-    allLeads = data || [];
-    filteredLeads = [...allLeads];
-
-    populateFilters();
-    renderLeads();
-
 }
-
 
 /* =========================
    FILTER OPTIONS
