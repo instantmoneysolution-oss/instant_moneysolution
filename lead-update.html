@@ -510,25 +510,41 @@ function showMessage(text, success) {
 
 async function checkLogin() {
 
-    const {
-        data: { user }
-    } = await supabaseClient.auth.getUser();
+    try {
 
+        const {
+            data: { session },
+            error
+        } = await supabaseClient.auth.getSession();
 
-    if (!user) {
+        if (error) {
+            console.error("Session error:", error);
 
-        window.location.href =
-            "login.html";
+            document.getElementById("loading").innerText =
+                "Login session error: " + error.message;
+
+            return false;
+        }
+
+        if (!session) {
+            window.location.href = "login.html";
+            return false;
+        }
+
+        currentUser = session.user;
+
+        return true;
+
+    } catch (error) {
+
+        console.error("Login check failed:", error);
+
+        document.getElementById("loading").innerText =
+            "Login check failed: " + error.message;
 
         return false;
     }
-
-
-    currentUser = user;
-
-    return true;
 }
-
 
 /* =========================
    LOAD CURRENT EMPLOYEE
