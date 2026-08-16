@@ -659,15 +659,15 @@ async function loadFollowUps() {
 
             .select("*")
 
-.in(
+.eq(
     "stage",
-    ["Follow Up", "Callback"]
+    "Follow Up"
 )
 
-            .eq(
-                "next_date",
-                today
-            )
+.eq(
+    "next_date",
+    today
+)
 
             .order(
                 "next_time",
