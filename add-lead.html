@@ -632,31 +632,33 @@ updateStageFields();
 
 async function generateLeadId() {
 
-    const { data, error } = await supabaseClient
-        .from("leads")
-        .select("lead_id")
-        .order("id", { ascending: false })
-        .limit(1);
+    const {
+        data,
+        error
+    } = await supabaseClient
+        .rpc("generate_next_lead_id");
+
 
     if (error) {
+
+        console.error(
+            "Lead ID generation error:",
+            error
+        );
+
         throw error;
     }
 
-    let nextNumber = 1;
 
-    if (data && data.length && data[0].lead_id) {
+    if (!data) {
 
-        const lastId = String(data[0].lead_id);
-
-        const match = lastId.match(/(\d+)$/);
-
-        if (match) {
-            nextNumber = parseInt(match[1], 10) + 1;
-        }
+        throw new Error(
+            "Lead ID could not be generated."
+        );
     }
 
-    return "IMS-TEST-" +
-        String(nextNumber).padStart(3, "0");
+
+    return data;
 }
 
 
