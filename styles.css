@@ -2389,3 +2389,148 @@ input[type="range"] {
         font-size: 30px;
     }
 }
+
+/* ================================
+   PRE-APPROVED LOAN BANNER
+================================ */
+
+.preapproved-banner {
+    width: 90%;
+    max-width: 1200px;
+    margin: 60px auto;
+    padding: 45px 50px;
+    box-sizing: border-box;
+
+    background: linear-gradient(135deg, #eaf6ff, #f7fbff);
+    border: 1px solid #d7eaf8;
+    border-radius: 22px;
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+
+    font-family: Inter, Arial, sans-serif;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+}
+
+.preapproved-banner-content {
+    flex: 1;
+}
+
+.preapproved-tag {
+    display: inline-block;
+
+    color: #008cff;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+
+    margin-bottom: 12px;
+}
+
+.preapproved-banner h2 {
+    margin: 0 0 15px;
+
+    font-size: 34px;
+    line-height: 1.2;
+    color: #111827;
+}
+
+.preapproved-banner p {
+    margin: 0 0 25px;
+
+    max-width: 650px;
+
+    font-size: 18px;
+    line-height: 1.6;
+    color: #474b61;
+}
+
+.preapproved-btn {
+    display: inline-block;
+
+    padding: 13px 24px;
+
+    background-color: #008cff;
+    color: #fff;
+
+    border: 1px solid #008cff;
+    border-radius: 30px;
+
+    font-family: Inter, Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: 0.3s ease;
+}
+
+.preapproved-btn:hover {
+    background-color: #fff;
+    color: #008cff;
+    transform: translateY(-2px);
+}
+
+.preapproved-banner-highlight {
+    min-width: 260px;
+
+    padding: 25px;
+
+    background-color: #fff;
+    border-radius: 16px;
+
+    border: 1px solid #e1edf7;
+
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
+
+    text-align: center;
+}
+
+.preapproved-banner-highlight strong {
+    display: block;
+
+    color: #008cff;
+    font-size: 22px;
+
+    margin-bottom: 10px;
+}
+
+.preapproved-banner-highlight span {
+    display: block;
+
+    color: #474b61;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+
+/* Mobile */
+@media (max-width: 768px) {
+
+    .preapproved-banner {
+        width: 92%;
+        padding: 30px 22px;
+
+        flex-direction: column;
+        text-align: center;
+
+        gap: 25px;
+    }
+
+    .preapproved-banner h2 {
+        font-size: 27px;
+    }
+
+    .preapproved-banner p {
+        font-size: 16px;
+    }
+
+    .preapproved-banner-highlight {
+        width: 100%;
+        min-width: unset;
+        box-sizing: border-box;
+    }
+}
