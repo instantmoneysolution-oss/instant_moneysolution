@@ -154,232 +154,368 @@
 <script>
 
 /*************************************************
+ * OFFICE WI-FI SECURITY
+ *************************************************/
+
+const ALLOWED_IPS = [
+    "122.161.67.126",
+    "103.82.78.26"
+];
+
+
+async function checkOfficeWifi() {
+
+    try {
+
+        const response =
+            await fetch(
+                "https://api.ipify.org?format=json",
+                {
+                    cache: "no-store"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "IP service unavailable."
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        return ALLOWED_IPS.includes(
+            String(data.ip || "").trim()
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Office Wi-Fi check failed:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/*************************************************
  * STAFF LOGIN
  *************************************************/
 
 document
     .getElementById("loginForm")
-    .addEventListener("submit", async function(e) {
+    .addEventListener(
+        "submit",
+        async function(e) {
 
-        e.preventDefault();
-
-        const employeeId =
-            document
-                .getElementById("employeeId")
-                .value
-                .trim()
-                .toUpperCase();
-
-        const password =
-            document
-                .getElementById("password")
-                .value;
-
-        const message =
-            document.getElementById("message");
-
-        const loginBtn =
-            document.getElementById("loginBtn");
+            e.preventDefault();
 
 
-        message.className = "message";
-        message.innerText = "";
+            const employeeId =
+                document
+                    .getElementById("employeeId")
+                    .value
+                    .trim()
+                    .toUpperCase();
 
 
-        /*************************************************
-         * BASIC VALIDATION
-         *************************************************/
-
-        if (!employeeId) {
-
-            message.innerText =
-                "Please enter Employee ID.";
-
-            return;
-        }
+            const password =
+                document
+                    .getElementById("password")
+                    .value;
 
 
-        if (!password) {
-
-            message.innerText =
-                "Please enter Password.";
-
-            return;
-        }
-
-
-        loginBtn.disabled = true;
-        loginBtn.innerText = "Checking...";
-
-
-        try {
-
-            /*************************************************
-             * GET EMPLOYEE EMAIL
-             *************************************************/
-
-            const {
-                data: employeeEmail,
-                error: employeeError
-            } = await supabaseClient
-                .rpc(
-                    "get_employee_login_email",
-                    {
-                        p_employee_id: employeeId
-                    }
+            const message =
+                document.getElementById(
+                    "message"
                 );
 
 
-            if (employeeError) {
-
-                console.error(employeeError);
-
-                message.innerText =
-                    "Employee verification failed.";
-
-                loginBtn.disabled = false;
-                loginBtn.innerText = "Login";
-
-                return;
-            }
+            const loginBtn =
+                document.getElementById(
+                    "loginBtn"
+                );
 
 
-            if (!employeeEmail) {
+            message.className =
+                "message";
 
-                message.innerText =
-                    "Employee ID is not authorised.";
-
-                loginBtn.disabled = false;
-                loginBtn.innerText = "Login";
-
-                return;
-            }
+            message.innerText = "";
 
 
             /*************************************************
-             * SUPABASE EMAIL + PASSWORD LOGIN
+             * BASIC VALIDATION
              *************************************************/
 
-            const {
-                data,
-                error
-            } = await supabaseClient.auth.signInWithPassword({
+            if (!employeeId) {
 
-                email: employeeEmail,
+                message.innerText =
+                    "Please enter Employee ID.";
 
-                password: password
+                return;
 
-            });
+            }
 
 
-            if (error) {
+            if (!password) {
+
+                message.innerText =
+                    "Please enter Password.";
+
+                return;
+
+            }
+
+
+            loginBtn.disabled = true;
+
+            loginBtn.innerText =
+                "Checking...";
+
+
+            try {
+
+
+                /*************************************************
+                 * OFFICE WI-FI CHECK
+                 *************************************************/
+
+                const officeWifi =
+                    await checkOfficeWifi();
+
+
+                if (!officeWifi) {
+
+                    message.innerText =
+                        "Please connect to office Wi-Fi to access Staff Login.";
+
+                    loginBtn.disabled = false;
+
+                    loginBtn.innerText =
+                        "Login";
+
+                    return;
+
+                }
+
+
+                /*************************************************
+                 * GET EMPLOYEE EMAIL
+                 *************************************************/
+
+                const {
+                    data: employeeEmail,
+                    error: employeeError
+                } = await supabaseClient
+                    .rpc(
+                        "get_employee_login_email",
+                        {
+                            p_employee_id:
+                                employeeId
+                        }
+                    );
+
+
+                if (employeeError) {
+
+                    console.error(
+                        employeeError
+                    );
+
+                    message.innerText =
+                        "Employee verification failed.";
+
+                    loginBtn.disabled = false;
+
+                    loginBtn.innerText =
+                        "Login";
+
+                    return;
+
+                }
+
+
+                if (!employeeEmail) {
+
+                    message.innerText =
+                        "Employee ID is not authorised.";
+
+                    loginBtn.disabled = false;
+
+                    loginBtn.innerText =
+                        "Login";
+
+                    return;
+
+                }
+
+
+                /*************************************************
+                 * SUPABASE EMAIL + PASSWORD LOGIN
+                 *************************************************/
+
+                const {
+                    data,
+                    error
+                } = await supabaseClient.auth
+                    .signInWithPassword({
+
+                        email:
+                            employeeEmail,
+
+                        password:
+                            password
+
+                    });
+
+
+                if (error) {
+
+                    console.error(error);
+
+                    message.innerText =
+                        "Invalid Employee ID or Password.";
+
+                    loginBtn.disabled = false;
+
+                    loginBtn.innerText =
+                        "Login";
+
+                    return;
+
+                }
+
+
+                /*************************************************
+                 * GET EMPLOYEE DETAILS
+                 *************************************************/
+
+                const {
+                    data: employee,
+                    error: detailsError
+                } = await supabaseClient
+                    .from("employees")
+                    .select(
+                        "employee_id, name, role, active"
+                    )
+                    .eq(
+                        "employee_id",
+                        employeeId
+                    )
+                    .eq(
+                        "active",
+                        true
+                    )
+                    .maybeSingle();
+
+
+                if (
+                    detailsError ||
+                    !employee
+                ) {
+
+                    console.error(
+                        detailsError
+                    );
+
+                    await supabaseClient
+                        .auth
+                        .signOut();
+
+
+                    message.innerText =
+                        "Employee account is not authorised.";
+
+                    loginBtn.disabled = false;
+
+                    loginBtn.innerText =
+                        "Login";
+
+                    return;
+
+                }
+
+
+                /*************************************************
+                 * SAVE EMPLOYEE SESSION DETAILS
+                 *************************************************/
+
+                sessionStorage.setItem(
+                    "employee_id",
+                    employee.employee_id
+                );
+
+
+                sessionStorage.setItem(
+                    "employee_name",
+                    employee.name
+                );
+
+
+                sessionStorage.setItem(
+                    "employee_role",
+                    employee.role
+                );
+
+
+                /*************************************************
+                 * LOGIN SUCCESS
+                 *************************************************/
+
+                message.className =
+                    "message success";
+
+
+                message.innerText =
+                    "Login successful. Opening tracker...";
+
+
+                setTimeout(
+                    function() {
+
+                        window.location.href =
+                            "dashboard.html";
+
+                    },
+                    500
+                );
+
+            }
+
+
+            catch (error) {
 
                 console.error(error);
 
-                message.innerText =
-                    "Invalid Employee ID or Password.";
-
-                loginBtn.disabled = false;
-                loginBtn.innerText = "Login";
-
-                return;
-            }
-
-
-            /*************************************************
-             * GET EMPLOYEE DETAILS
-             *************************************************/
-
-            const {
-                data: employee,
-                error: detailsError
-            } = await supabaseClient
-                .from("employees")
-                .select(
-                    "employee_id, name, role, active"
-                )
-                .eq(
-                    "employee_id",
-                    employeeId
-                )
-                .eq(
-                    "active",
-                    true
-                )
-                .maybeSingle();
-
-
-            if (detailsError || !employee) {
-
-                console.error(detailsError);
-
-                await supabaseClient.auth.signOut();
 
                 message.innerText =
-                    "Employee account is not authorised.";
+                    "Something went wrong. Please try again.";
+
 
                 loginBtn.disabled = false;
-                loginBtn.innerText = "Login";
 
-                return;
+
+                loginBtn.innerText =
+                    "Login";
+
             }
 
-
-            /*************************************************
-             * SAVE EMPLOYEE SESSION DETAILS
-             *************************************************/
-
-            sessionStorage.setItem(
-                "employee_id",
-                employee.employee_id
-            );
-
-            sessionStorage.setItem(
-                "employee_name",
-                employee.name
-            );
-
-            sessionStorage.setItem(
-                "employee_role",
-                employee.role
-            );
-
-
-            /*************************************************
-             * LOGIN SUCCESS
-             *************************************************/
-
-            message.className =
-                "message success";
-
-            message.innerText =
-                "Login successful. Opening tracker...";
-
-
-setTimeout(function() {
-
-    window.location.href =
-        "dashboard.html";
-
-}, 500);
-
         }
-
-        catch (error) {
-
-            console.error(error);
-
-            message.innerText =
-                "Something went wrong. Please try again.";
-
-            loginBtn.disabled = false;
-            loginBtn.innerText = "Login";
-
-        }
-
-    });
+    );
 
 </script>
 
 </body>
+
 </html>
