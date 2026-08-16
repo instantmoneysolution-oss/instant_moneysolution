@@ -294,17 +294,24 @@ async function checkLogin() {
 
 async function loadEmployees() {
 
-    const agentSelect = document.getElementById("agent");
+    const agentSelect =
+        document.getElementById("agent");
+
 
     agentSelect.innerHTML =
         '<option value="">Loading agents...</option>';
 
-    const { data, error } = await supabaseClient
+
+    const {
+        data,
+        error
+    } = await supabaseClient
         .from("employees")
         .select("*")
-.in("role", ["agent", "tl"])
-.eq("active", true)
+        .eq("role", "agent")
+        .eq("active", true)
         .order("name");
+
 
     if (error) {
 
@@ -314,31 +321,247 @@ async function loadEmployees() {
             '<option value="">Unable to load agents</option>';
 
         showMessage(
-            "Error loading employees: " + error.message,
+            "Error loading employees: " +
+            error.message,
             false
         );
 
         return;
     }
 
+
     employees = data || [];
+
+
+    const loggedInRole =
+        String(
+            sessionStorage.getItem("employee_role") || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    const loggedInEmployeeId =
+        String(
+            sessionStorage.getItem("employee_id") || ""
+        )
+        .trim();
+
+
+    const loggedInEmployeeName =
+        String(
+            sessionStorage.getItem("employee_name") || ""
+        )
+        .trim();
+
+
+    /*************************************************
+     * AGENT LOGIN
+     *************************************************/
+
+    if (loggedInRole === "agent") {
+
+        const loggedInAgent =
+            employees.find(
+                employee =>
+                    String(
+                        employee.employee_id || ""
+                    ).trim() ===
+                    loggedInEmployeeId
+            );
+
+
+        if (!loggedInAgent) {
+
+            agentSelect.innerHTML =
+                '<option value="">Agent profile not found</option>';
+
+            return;
+        }
+
+
+        agentSelect.innerHTML = "";
+
+
+        const option =
+            document.createElement("option");
+
+
+        option.value =
+            loggedInAgent.employee_id;
+
+
+        option.textContent =
+            loggedInAgent.name +
+            " (" +
+            loggedInAgent.employee_id +
+            ")";
+
+
+        option.selected = true;
+
+
+        agentSelect.appendChild(option);
+
+
+        agentSelect.disabled = true;
+
+
+        document.getElementById("tlName").value =
+            loggedInAgent["TL NAME"] || "";
+
+
+        document.getElementById("managerName").value =
+            loggedInAgent["MANAGER NAME"] || "";
+
+
+        return;
+    }
+
+
+    /*************************************************
+     * LOGGED-IN NAME
+     *************************************************/
+
+    const loggedInName =
+        loggedInEmployeeName
+            .replace(/\s+/g, " ")
+            .trim()
+            .toLowerCase();
+
+
+    let visibleEmployees = [];
+
+
+    /*************************************************
+     * TL LOGIN
+     *************************************************/
+
+    if (loggedInRole === "tl") {
+
+        visibleEmployees =
+            employees.filter(
+                employee => {
+
+                    const tlName =
+                        String(
+                            employee["TL NAME"] || ""
+                        )
+                        .replace(/\s+/g, " ")
+                        .trim()
+                        .toLowerCase();
+
+
+                    return tlName === loggedInName;
+                }
+            );
+    }
+
+
+    /*************************************************
+     * MANAGER LOGIN
+     *************************************************/
+
+    else if (loggedInRole === "manager") {
+
+        visibleEmployees =
+            employees.filter(
+                employee => {
+
+                    const managerName =
+                        String(
+                            employee["MANAGER NAME"] || ""
+                        )
+                        .replace(/\s+/g, " ")
+                        .trim()
+                        .toLowerCase();
+
+
+                    return managerName === loggedInName;
+                }
+            );
+    }
+
+
+    /*************************************************
+     * ADMIN LOGIN
+     *************************************************/
+
+    else if (loggedInRole === "admin") {
+
+        visibleEmployees =
+            employees;
+    }
+
+
+    /*************************************************
+     * UNKNOWN ROLE
+     *************************************************/
+
+    else {
+
+        agentSelect.innerHTML =
+            '<option value="">Access not authorised</option>';
+
+        return;
+    }
+
+
+    /*************************************************
+     * SHOW AGENTS
+     *************************************************/
+
+    agentSelect.disabled = false;
+
 
     agentSelect.innerHTML =
         '<option value="">Select Agent</option>';
 
-    employees.forEach(employee => {
 
-        const option = document.createElement("option");
+    visibleEmployees.forEach(
+        employee => {
 
-        option.value = employee.employee_id;
+            const option =
+                document.createElement("option");
 
-        option.textContent =
-            employee.name + " (" + employee.employee_id + ")";
 
-        agentSelect.appendChild(option);
-    });
+            option.value =
+                employee.employee_id;
+
+
+            option.textContent =
+                employee.name +
+                " (" +
+                employee.employee_id +
+                ")";
+
+
+            agentSelect.appendChild(option);
+        }
+    );
+
+
+    /*************************************************
+     * NO AGENT FOUND
+     *************************************************/
+
+    if (
+        visibleEmployees.length === 0
+    ) {
+
+        agentSelect.innerHTML =
+            '<option value="">No agents assigned</option>';
+
+
+        showMessage(
+            "No agents are mapped to " +
+            loggedInEmployeeName +
+            ". Please check the employees table mapping.",
+            false
+        );
+    }
+
 }
-
 
 /* =========================
    AGENT CHANGE
