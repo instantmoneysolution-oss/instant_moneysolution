@@ -270,6 +270,9 @@ button:disabled {
                         type="number"
                         id="diary"
                         min="1"
+                        max="999"
+                        inputmode="numeric"
+                        oninput="this.value = this.value.replace(/\D/g, '').slice(0, 3)"
                     >
 
                 </div>
@@ -285,6 +288,9 @@ button:disabled {
                         type="number"
                         id="page"
                         min="1"
+                        max="999"
+                        inputmode="numeric"
+                        oninput="this.value = this.value.replace(/\D/g, '').slice(0, 3)"
                     >
 
                 </div>
@@ -1076,6 +1082,24 @@ async function updateLead() {
         return;
     }
 
+    /* DIARY / PAGE VALIDATION - MAX 3 DIGITS */
+
+    if (!/^\d{1,3}$/.test(diary)) {
+        showMessage(
+            "Diary number must be between 1 and 3 digits.",
+            false
+        );
+        return;
+    }
+
+    if (!/^\d{1,3}$/.test(page)) {
+        showMessage(
+            "Page number must be between 1 and 3 digits.",
+            false
+        );
+        return;
+    }
+
     if (!validateDateTime(stage, nextDate, nextTime)) {
         return;
     }
@@ -1091,9 +1115,9 @@ async function updateLead() {
 
             customer_name: customerName,
 
-            diary: parseInt(diary || 1),
+            diary: Math.min(parseInt(diary || 1, 10), 999),
 
-            page: parseInt(page || 1),
+            page: Math.min(parseInt(page || 1, 10), 999),
 
             loan_type: process,
 
