@@ -240,6 +240,27 @@ tr:hover {
     color: #111827;
 }
 
+    .filters {
+    display: flex;
+    gap: 12px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.filters select {
+    padding: 10px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    background: white;
+    font-size: 13px;
+    min-width: 180px;
+    cursor: pointer;
+}
+
+.clear-filter-btn {
+    background: #6b7280;
+    color: white;
+}
 </style>
 
 </head>
@@ -339,6 +360,23 @@ tr:hover {
         >
             Loading today's leads...
         </div>
+        <div class="filters">
+
+    <select
+        id="filterAgent"
+        onchange="applyTodayFilters()"
+    >
+        <option value="">All Agents</option>
+    </select>
+
+    <select
+        id="filterStage"
+        onchange="applyTodayFilters()"
+    >
+        <option value="">All Stages</option>
+    </select>
+
+</div>
 
     </div>
 
@@ -452,7 +490,8 @@ tr:hover {
 let currentUser = null;
 
 let currentEmployee = null;
-
+let todayAllLeads = [];
+let todayFilteredLeads = [];
 
 
 /* =========================
@@ -923,9 +962,11 @@ async function loadTodayLeads() {
                         )
                 );
 
+todayAllLeads = visibleLeads;
+todayFilteredLeads = [...todayAllLeads];
 
-
-        loading.style.display =
+populateTodayFilters();
+loading.style.display =
             "none";
 
 
@@ -965,7 +1006,10 @@ async function loadTodayLeads() {
                 .map(
                     lead => `
 
-<tr>
+<tr
+    data-agent="${escapeHtml(lead.agent_name || "")}"
+    data-stage="${escapeHtml(lead.stage || "")}"
+>
 
     <td>
 
@@ -1122,6 +1166,136 @@ async function loadTodayLeads() {
     }
 
 }
+
+/* =========================
+   TODAY LEAD FILTERS
+========================= */
+
+function populateTodayFilters() {
+
+    const agentFilter =
+        document.getElementById("filterAgent");
+
+    const stageFilter =
+        document.getElementById("filterStage");
+
+    if (!agentFilter || !stageFilter) {
+        return;
+    }
+
+    const agents = [
+        ...new Set(
+            todayAllLeads
+                .map(lead =>
+                    String(
+                        lead.agent_name || ""
+                    ).trim()
+                )
+                .filter(Boolean)
+        )
+    ].sort();
+
+    const stages = [
+        ...new Set(
+            todayAllLeads
+                .map(lead =>
+                    String(
+                        lead.stage || ""
+                    ).trim()
+                )
+                .filter(Boolean)
+        )
+    ].sort();
+
+    agentFilter.innerHTML =
+        '<option value="">All Agents</option>' +
+        agents
+            .map(agent =>
+                `<option value="${escapeHtml(agent)}">${escapeHtml(agent)}</option>`
+            )
+            .join("");
+
+    stageFilter.innerHTML =
+        '<option value="">All Stages</option>' +
+        stages
+            .map(stage =>
+                `<option value="${escapeHtml(stage)}">${escapeHtml(stage)}</option>`
+            )
+            .join("");
+}
+
+
+function applyTodayFilters() {
+
+    const selectedAgent =
+        document.getElementById(
+            "filterAgent"
+        ).value
+            .trim()
+            .toLowerCase();
+
+    const selectedStage =
+        document.getElementById(
+            "filterStage"
+        ).value
+            .trim()
+            .toLowerCase();
+
+    const rows =
+        document.querySelectorAll(
+            "#todayLeadBody tr"
+        );
+
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+
+        const agent =
+            String(
+                row.dataset.agent || ""
+            )
+                .trim()
+                .toLowerCase();
+
+        const stage =
+            String(
+                row.dataset.stage || ""
+            )
+                .trim()
+                .toLowerCase();
+
+        const agentMatch =
+            !selectedAgent ||
+            agent === selectedAgent;
+
+        const stageMatch =
+            !selectedStage ||
+            stage === selectedStage;
+
+        if (
+            agentMatch &&
+            stageMatch
+        ) {
+
+            row.style.display = "";
+
+            visibleCount++;
+
+        } else {
+
+            row.style.display = "none";
+
+        }
+
+    });
+
+    document.getElementById(
+        "count"
+    ).innerText =
+        visibleCount +
+        " lead(s) generated today";
+}
+
 
 
 
