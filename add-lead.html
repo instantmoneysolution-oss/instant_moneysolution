@@ -188,12 +188,12 @@ button:disabled {
 
             <div class="field">
                 <label>Diary</label>
-                <input type="number" id="diary" value="1" min="1">
+                <input type="number" id="diary" value="1" min="1" max="999" inputmode="numeric" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 3)">
             </div>
 
             <div class="field">
                 <label>Page</label>
-                <input type="number" id="page" value="1" min="1">
+                <input type="number" id="page" value="1" min="1" max="999" inputmode="numeric" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 3)">
             </div>
 
             <div class="field">
@@ -731,6 +731,24 @@ const loanType =
         return;
     }
 
+    /* DIARY / PAGE VALIDATION - MAX 3 DIGITS */
+
+    if (!/^\d{1,3}$/.test(diary)) {
+        showMessage(
+            "Diary number must be between 1 and 3 digits.",
+            false
+        );
+        return;
+    }
+
+    if (!/^\d{1,3}$/.test(page)) {
+        showMessage(
+            "Page number must be between 1 and 3 digits.",
+            false
+        );
+        return;
+    }
+
 if (!stage) {
     showMessage("Please select Stage.", false);
     return;
@@ -785,9 +803,9 @@ if (stage === "Login" || stage === "NI") {
 
             loan_type: loanType,
 
-            diary: parseInt(diary || 1),
+            diary: Math.min(parseInt(diary || 1, 10), 999),
 
-            page: parseInt(page || 1),
+            page: Math.min(parseInt(page || 1, 10), 999),
 
             agent_name:
                 employees.find(
