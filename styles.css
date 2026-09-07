@@ -950,8 +950,8 @@ a:link {
 .Interest-rate-label {
     font-size: 20px;
     font-weight: 500;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 #Interest-rate-input {
