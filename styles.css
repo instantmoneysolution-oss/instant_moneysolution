@@ -916,7 +916,7 @@ a:link {
     text-align: center;
     border-style: groove;
     width: 500px;
-    height: 620px;
+    height: 630px;
     margin-left: 200px;
     border-width: 1px;
     box-shadow: 0px 0px 8px rgb(245, 244, 244);
@@ -933,7 +933,7 @@ a:link {
     font-family: Inter;
     font-size: 20px;
     font-weight: 500;
-    margin-top: 30px;
+    margin-top: 20px;
     margin-bottom: 20px;
 }
 
