@@ -1015,6 +1015,10 @@ a:link {
     padding: 10px 15px 10px 10px;
 }
 
+#total-interest{
+    margin-left: 10px;
+}
+
 #about-section-back {
     background: linear-gradient(to right, #c2e1f8, #e6eef4);
     width: 100%;
