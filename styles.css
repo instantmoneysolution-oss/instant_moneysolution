@@ -433,6 +433,9 @@ a:link {
     color: #008cff;
     background-color: hsl(207, 100%, 80%);
     border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .Service-section {
