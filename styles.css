@@ -412,7 +412,9 @@ a:link {
 
 
 #personal-loan-container {
-    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 80%;
     border-radius: 20px;
     box-shadow: #555;
