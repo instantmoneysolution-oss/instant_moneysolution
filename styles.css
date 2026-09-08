@@ -439,6 +439,22 @@ a:link {
     padding: 10px;
 }
 
+.find-right-loan{
+    font-size: 30px;
+    font-weight: 500;
+    text-align: center;
+
+}
+
+.find-right-loan h1{
+    text-align: center;
+
+}
+
+.find-right-loan span{
+    color: #008cff;
+}
+
 .Service-section {
     text-align: center;
     color: rgb(0, 0, 255);
