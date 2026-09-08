@@ -478,7 +478,8 @@ a:link {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 30px;
+    gap: 40px;
+    margin-top: 20px;
 }
 
 .eligibility-btn-ind{
@@ -487,6 +488,13 @@ a:link {
     padding: 10px;
     background-color: #008cff;
     color: #fff;
+    border-radius: 30px;
+    transition: 0.8s ease;
+}
+
+.eligibility-btn-ind:hover{
+    color: #008cff;
+    background-color: #fff;
 }
 
 .Service-section {
