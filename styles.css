@@ -479,12 +479,12 @@ a:link {
     justify-content: center;
     align-items: center;
     gap: 40px;
-    margin-top: 20px;
+    margin-top: 40px;
 }
 
 .eligibility-btn-ind{
-    font-size: 24px;
-    font-weight: bold;
+    font-size: 22px;
+    font-weight: 700;
     padding: 10px;
     background-color: #008cff;
     color: #fff;
