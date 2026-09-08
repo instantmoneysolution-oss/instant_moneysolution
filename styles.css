@@ -448,7 +448,9 @@ a:link {
 
 .find-right-loan h1{
     text-align: center;
-
+    position: absolute;
+    top: 30px;
+    
 }
 
 .find-right-loan span{
