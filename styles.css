@@ -490,7 +490,7 @@ a:link {
     color: #fff;
     border-radius: 30px;
     transition: 0.3s ease;
-    border: none;
+    border: 1px #008cff solid;
 }
 
 .eligibility-btn-ind:hover{
