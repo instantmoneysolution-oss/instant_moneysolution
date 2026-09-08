@@ -433,7 +433,7 @@ a:link {
 .personal-loan-header h1 {
     font-size: 20px;
     color: #008cff;
-    background-color: hsl(207, 100%, 75%);
+    background-color: hsl(207, 100%, 82%);
     border-radius: 30px;
     display: flex;
     align-items: center;
@@ -459,7 +459,7 @@ a:link {
 }
 
 .PROVIDE-INTEREST-RATE{
-    font-size: 70px;
+    font-size: 40px;
     font-weight: 500;
     text-align: center;
 
