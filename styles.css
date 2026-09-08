@@ -416,7 +416,7 @@ a:link {
     width: 90%;
     border-radius: 20px;
     box-shadow: 0px 0px 8px rgb(186, 186, 186);
-    height: 520px;
+    height: 540px;
     font-family: sans-serif;
     background-color: #c3e1f7;
 }
@@ -436,7 +436,7 @@ a:link {
 .personal-loan-header h1 {
     font-size: 20px;
     color: #008cff;
-    background-color: hsl(0, 0%, 100%);
+    background-color: hsl(198, 100%, 94%);
     box-shadow: 0px 0px 8px rgb(186, 186, 186);
     border-radius: 30px;
     display: flex;
