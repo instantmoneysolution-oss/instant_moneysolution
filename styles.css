@@ -489,7 +489,8 @@ a:link {
     background-color: #008cff;
     color: #fff;
     border-radius: 30px;
-    transition: 0.8s ease;
+    transition: 0.3s ease;
+    border: none;
 }
 
 .eligibility-btn-ind:hover{
