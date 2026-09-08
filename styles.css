@@ -420,7 +420,7 @@ a:link {
 
 .personal-loan-header {
     /* position: absolute; */
-    margin-top: 20px;
+    
     /* left: 40%; */
     width: 200px;
     margin: 10px auto;
@@ -456,6 +456,10 @@ a:link {
 
 .find-right-loan span{
     color: #008cff;
+}
+
+.PROVIDE-INTEREST-RATE{
+    
 }
 
 .Service-section {
