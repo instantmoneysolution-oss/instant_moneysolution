@@ -991,8 +991,8 @@ a:link {
 
 .EMI-calculator-bg{
     background: linear-gradient(to right, #c2e1f8, #e6eef4);
-    padding: 20px;
-    margin-top: 20px;
+    padding: 30px;
+    margin-top: 30px;
 }
 
 .EMI-calculator-under-survices {
@@ -1000,7 +1000,7 @@ a:link {
     font-weight: 400;
     font-size: 50px;
     text-align: center;
-    margin-top: 50px;
+    margin-top: 30px;
 }
 
 .EMI-style {
