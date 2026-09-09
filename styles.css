@@ -1000,7 +1000,7 @@ a:link {
     font-weight: 400;
     font-size: 50px;
     text-align: center;
-    margin-top: 30px;
+    margin-top: 10px;
 }
 
 .EMI-style {
@@ -1136,8 +1136,9 @@ a:link {
 
 
 .calculator-image {
-    margin-left: 780px;
-    margin-top: -570px;
+    margin-left: 700px;
+    margin-top: -620px;
+
 }
 
 .instant-style {
