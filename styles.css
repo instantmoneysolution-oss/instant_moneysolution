@@ -2017,9 +2017,9 @@ input[type="range"] {
 }
 
 .result-box {
-
     border-radius: 6px;
-    padding: 14px 16px;
+    padding: 10px;
+    background-color: #000000;
 }
 
 .result-box .label {
