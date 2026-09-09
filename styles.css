@@ -1015,6 +1015,10 @@ a:link {
     box-shadow: 0px 0px 8px rgb(245, 244, 244);
 }
 
+#total-interest{
+    color: #fec006;
+}
+
 .Calculate-header {
     font-size: 27px;
     font-weight: 500;
@@ -1065,11 +1069,12 @@ a:link {
 
 #month-to-pay-input {
     margin-top: 10px;
+    border-width: 1px;
     border: none;
     box-shadow: 0px 0px 8px rgb(230, 229, 229);
     padding: 10px 50px 10px 50px;
     font-size: 17px;
-    margin-bottom: 10px;
+    margin-bottom: 40px;
 }
 
 #calculate {
