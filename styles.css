@@ -1022,10 +1022,6 @@ a:link {
     background-color: #ffffff;
 }
 
-#total-interest {
-    color: #fec006;
-}
-
 .Calculate-header {
     font-size: 27px;
     font-weight: 500;
@@ -1113,7 +1109,6 @@ a:link {
 }
 
 #emi {
-    color: #fec006;
     font-size: 20px;
     margin-left: 5px;
     width: 50px;
