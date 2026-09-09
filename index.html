@@ -373,37 +373,39 @@
         </div>
     </div>
     <!--EMI Calculator-->
-    <div class="EMI-calculator-under-survices" id="EMI-calculation">
-        <p>
-            <mark class="EMI-style">EMI</mark> Calculator
-        </p>
-    </div>
-    <div class="EMI-header">
-        <p class="Calculate-header">Calculate Your EMI</p>
-        <label class="Loan-amount" for="Loan-Amount">Loan Amount ₹</label> <br>
-        <input type="number" id="loan-amount-input" placeholder="Enter Your Loan Amount "><br>
-        <label class="Interest-rate-label" for="Interest rate">Interest Rate %</label><br>
-        <input type="number" id="Interest-rate-input" placeholder="Enter Your Interest Rate"><br><label
-            class="Months-To-Pay-label" for="month-to-pay-input">Years To Pay</label><br>
-
-        <select id="month-to-pay-input">
-            <option value="12">1 Years</option>
-            <option value="24">2 Years</option>
-            <option value="36">3 Years</option>
-            <option value="48">4 Years</option>
-            <option value="60">5 Years</option>
-            <option value="72">6 Years</option>
-            <option value="84">7 Years</option>
-            <option value="96">8 Years</option>
-            <option value="108">9 Years</option>
-            <option value="120" selected>10 Years</option>
-        </select><br>
-        <div class="Calculate-btn">
-            <button id="calculate">Calculate</button>
+    <div class="EMI-calculator-bg">
+        <div class="EMI-calculator-under-survices" id="EMI-calculation">
+            <p>
+                <mark class="EMI-style">EMI</mark> Calculator
+            </p>
         </div>
-        <div class="Result">
-            <p class="emi-intrest-space">Your EMI is -<span id="emi"></span></p>
-            <p class="emi-intrest-space">Total Interest -<span id="total-interest"></span></p>
+        <div class="EMI-header">
+            <p class="Calculate-header">Calculate Your EMI</p>
+            <label class="Loan-amount" for="Loan-Amount">Loan Amount ₹</label> <br>
+            <input type="number" id="loan-amount-input" placeholder="Enter Your Loan Amount "><br>
+            <label class="Interest-rate-label" for="Interest rate">Interest Rate %</label><br>
+            <input type="number" id="Interest-rate-input" placeholder="Enter Your Interest Rate"><br><label
+                class="Months-To-Pay-label" for="month-to-pay-input">Years To Pay</label><br>
+
+            <select id="month-to-pay-input">
+                <option value="12">1 Years</option>
+                <option value="24">2 Years</option>
+                <option value="36">3 Years</option>
+                <option value="48">4 Years</option>
+                <option value="60">5 Years</option>
+                <option value="72">6 Years</option>
+                <option value="84">7 Years</option>
+                <option value="96">8 Years</option>
+                <option value="108">9 Years</option>
+                <option value="120" selected>10 Years</option>
+            </select><br>
+            <div class="Calculate-btn">
+                <button id="calculate">Calculate</button>
+            </div>
+            <div class="Result">
+                <p class="emi-intrest-space">Your EMI is -<span id="emi"></span></p>
+                <p class="emi-intrest-space">Total Interest -<span id="total-interest"></span></p>
+            </div>
         </div>
     </div>
     <div class="calculator-image">

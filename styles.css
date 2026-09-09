@@ -989,6 +989,10 @@ a:link {
     color: #008cff;
 }
 
+.EMI-calculator-bg{
+    background: linear-gradient(to right, #c2e1f8, #e6eef4);
+}
+
 .EMI-calculator-under-survices {
     background: linear-gradient(to right, #c2e1f8, #e6eef4);
     font-family: Inter;
@@ -999,6 +1003,7 @@ a:link {
 }
 
 .EMI-style {
+
     color: #008cff;
 }
 
@@ -1013,7 +1018,6 @@ a:link {
     margin-left: 200px;
     border-width: 1px;
     box-shadow: 0px 0px 8px rgb(245, 244, 244);
-    background: linear-gradient(to right, #c2e1f8, #e6eef4);
 }
 
 #total-interest {
