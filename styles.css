@@ -2017,15 +2017,11 @@ input[type="range"] {
 }
 
 .result-box {
-    border-radius: 6px;
     padding: 10px;
-    background-color: #000000;
 }
 
 .result-box .label {
     font-size: 12px;
-
-    margin-bottom: 4px;
 }
 
 .result-box .value {
