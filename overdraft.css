@@ -3,6 +3,7 @@ body {
     width: 100%;
     scroll-behavior: smooth;
 }
+
 .navbar {
     position: static;
     background-color: #fff;
@@ -174,7 +175,7 @@ a:link {
     cursor: pointer;
 }
 
-.personal-loan-image-right:hover{
+.personal-loan-image-right:hover {
     opacity: 0.8;
 }
 
@@ -215,21 +216,18 @@ a:link {
 }
 
 .money-solution-offers-personal-loan-in-it {
+    display: flex;
+    align-items: center;
     margin-left: 80px;
     margin-top: 40px;
     font-family: Inter;
-    font-size: 22px;
-    color: #474f8f;
-    line-height: 30px;
 }
 
-.unlimited-partpayment{
+.unlimited-partpayment {
     margin-left: 100px;
-    margin-top: 40px;
     font-family: Inter;
     font-size: 22px;
     color: #474f8f;
-    line-height: 30px;
 }
 
 #Apply-button {
