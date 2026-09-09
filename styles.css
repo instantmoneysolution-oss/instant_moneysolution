@@ -1771,12 +1771,12 @@ a:link {
     cursor: pointer;
 }
 
-.label::before {
+/* .label::before {
     content: '+';
     margin-right: 10px;
     font-size: 24px;
     font-weight: 600;
-}
+} */
 
 .accordion[type="radio"] {
     display: none;
