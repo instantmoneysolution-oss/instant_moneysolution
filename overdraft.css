@@ -223,6 +223,15 @@ a:link {
     line-height: 30px;
 }
 
+.unlimited-partpayment{
+    margin-left: 100px;
+    margin-top: 40px;
+    font-family: Inter;
+    font-size: 22px;
+    color: #474f8f;
+    line-height: 30px;
+}
+
 #Apply-button {
     margin-left: 180px;
     margin-top: 30px;
