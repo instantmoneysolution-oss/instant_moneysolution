@@ -1113,7 +1113,7 @@ a:link {
     margin-left: 5px;
     width: 50px;
     border: none;
-    box-shadow: 0px 0px 8px rgb(230, 229, 229);
+    /* box-shadow: 0px 0px 8px rgb(230, 229, 229); */
     padding: 10px 15px 10px 10px;
 }
 
