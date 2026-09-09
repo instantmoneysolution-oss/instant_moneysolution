@@ -2029,6 +2029,10 @@ input[type="range"] {
     font-weight: 600;
 }
 
+#eligible-amount{
+    margin-top: 10px;
+}
+
 .status {
     display: flex;
     align-items: center;
