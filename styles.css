@@ -990,6 +990,7 @@ a:link {
 }
 
 .EMI-calculator-under-survices {
+    background: linear-gradient(to right, #c2e1f8, #e6eef4);
     font-family: Inter;
     font-weight: 400;
     font-size: 50px;
