@@ -232,16 +232,15 @@ a:link {
     width: 100%;
     height: 700px;
     margin-top: 150px;
-    padding: 20px;
+    padding: 40px;
 }
 
 .Apply-now-form{
     padding-top: 80px;
     margin-left: 480px;
-     
     font-family: Inter;
     background-color: #fff;
-    width: 500px;
+    width: 470px;
     border-style: groove;
     border-radius: 15px;
     border: 1px solid;
