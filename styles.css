@@ -1811,7 +1811,7 @@ a:link {
 
 
 .Apply-loan-box {
-    margin-left: 240px;
+    margin-left: 290px;
     font-size: 25px;
     font-family: Inter;
     font-weight: 500;
@@ -1917,8 +1917,8 @@ a:link {
     font-family: Inter;
     font-size: 30px;
     position: absolute;
-    top: 30px;
-    right: 100px;
+    top: 40px;
+    right: 150px;
 }
 
 .container-2 {
@@ -2029,7 +2029,7 @@ input[type="range"] {
     font-weight: 600;
 }
 
-#eligible-amount{
+#eligible-amount {
     margin-top: 10px;
 }
 
