@@ -423,6 +423,14 @@ a:link {
     height: 50px;
 }
 
+
+.overdraft-button-in-personal-loan{
+    text-align: center;
+    font-size: 22px;
+    font-weight: 600;
+    
+}
+
 #apply-button-in-personal-loan-in-personal {
     display: flex;
     justify-content: center;
