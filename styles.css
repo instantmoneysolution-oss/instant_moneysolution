@@ -2260,6 +2260,10 @@ input[type="range"] {
   z-index: 9999;
 }
 
+#wa-btn::before{
+    content: " (Contact us on Whatsapp)";
+}
+
 #wa-btn img {
   width: 34px;
   height: 34px;
