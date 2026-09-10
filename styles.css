@@ -497,9 +497,7 @@ a:link {
 #personal-loan-in-home-page {
     font-family: sans-serif;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
+    
 }
 
 .low-interest-rates {
