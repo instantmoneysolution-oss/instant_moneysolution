@@ -480,14 +480,15 @@ a:link {
 }
 
 .interest-rates-charges {
+    border-bottom: 1px solid #000000;
+    width: 430px;
+    margin: 0px auto;
+}
+
+.interest-rates-charges p {
     font-family: sans-serif;
     font-size: 21px;
-    font-weight: 500;
-    border-bottom: 1px solid #000000;
-    text-align: center;
-    width: 400px;
-    margin: 0px auto;
-
+    font-weight: 600;
 }
 
 .check-elegibility-btn-all {
