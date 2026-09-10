@@ -223,9 +223,14 @@ a:link {
     font-family: Inter;
 }
 
-.money-solution-offers-personal-loan-in-it p img{
+.money-solution-offers-personal-loan-in-it p {
     margin-left: 10px;
     
+}
+
+.money-solution-offers-personal-loan-in-it img{
+    margin-left: 10px;
+    margin-top: -10px;
 }
 
 .unlimited-partpayment {
