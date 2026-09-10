@@ -485,6 +485,8 @@ a:link {
     font-weight: 500;
     border-bottom: 1px solid #000000;
     text-align: center;
+    width: 400px;
+    margin: 0px auto;
 
 }
 
