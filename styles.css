@@ -2260,8 +2260,12 @@ input[type="range"] {
   z-index: 9999;
 }
 
-#wa-btn::before{
-    content: " (Contact us on Whatsapp)";
+#wa-btn:hover:before{
+    content: "Contact us on Whatsapp";
+    color: #000000;
+    font-size: 18px;
+    font-weight: 600;
+
 }
 
 #wa-btn img {
