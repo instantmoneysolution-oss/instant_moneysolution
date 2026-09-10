@@ -504,13 +504,9 @@ a:link {
 .low-interest-rates{
     font-size: 18px;
     width: 300px;
-    height: 200px;
-    margin: 10px auto;
+    height: 150px;
     padding: 10px;
-    border: none;
-    background-color: #d0e5f5;
-    box-shadow: #698fae;
-    border-radius: 20px;
+    border: none;  
 }
 
 .check-elegibility-btn-all {
