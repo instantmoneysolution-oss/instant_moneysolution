@@ -220,12 +220,12 @@ a:link {
     display: flex;
     align-items: center;
     margin-left: 100px;
-    margin-top: -10px;
     font-family: Inter;
 }
 
-.money-solution-offers-personal-loan-in-it p{
+.money-solution-offers-personal-loan-in-it .img .p{
     margin-left: 10px;
+    margin-top: -10px;
 }
 
 .unlimited-partpayment {
