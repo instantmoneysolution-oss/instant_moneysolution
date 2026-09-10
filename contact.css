@@ -173,7 +173,7 @@ a:link {
 }
 
 .contact-us-hero-section {
-    margin-left: 80px;
+    margin-left: 100px;
     margin-top: -520px;
     border-radius: 20px;
     padding: 0px 2px 0px 8px;
@@ -229,7 +229,7 @@ a:link {
 
 .submit-button-in-contactus {
     background-image: url(background-image-for-overview.jpg);
-    width: 100%;
+    width: 90%;
     height: 700px;
     margin-top: 150px;
     padding: 40px;
