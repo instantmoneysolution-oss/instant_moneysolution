@@ -496,6 +496,8 @@ a:link {
 
 #personal-loan-in-home-page{
     font-family: sans-serif;
+    display: flex;
+    align-items: center;
 
 }
 
@@ -505,6 +507,8 @@ a:link {
     margin: 10px auto;
     padding: 10px;
     border: 1px solid black;
+    background-color: #d0e5f5;
+    box-shadow: #698fae;
     border-radius: 20px;
 }
 
