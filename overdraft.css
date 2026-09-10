@@ -203,7 +203,7 @@ a:link {
 
 .turn-your-dream-content-in-personal-loan {
     margin-left: 80px;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
     font-family: Inter;
     font-size: 50px;
     color: #222e47;
@@ -219,8 +219,12 @@ a:link {
 .money-solution-offers-personal-loan-in-it {
     display: flex;
     align-items: center;
-    margin-left: 80px;
+    margin-left: 100px;
     font-family: Inter;
+}
+
+.money-solution-offers-personal-loan-in-it .p{
+    margin-left: 10px;
 }
 
 .unlimited-partpayment {
