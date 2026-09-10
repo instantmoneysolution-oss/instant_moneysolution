@@ -2245,8 +2245,24 @@ input[type="range"] {
     margin-top: 90px;
 }
 
-.WhatsApp-chatbot{
-    
+#wa-btn {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #25D366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+}
+
+#wa-btn img {
+  width: 34px;
+  height: 34px;
 }
 
 
