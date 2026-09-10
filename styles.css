@@ -416,7 +416,7 @@ a:link {
     width: 90%;
     border-radius: 20px;
     box-shadow: 0px 0px 8px rgb(186, 186, 186);
-    height: 540px;
+    height: 580px;
     font-family: sans-serif;
     background-color: #c3e1f7;
 }
@@ -512,6 +512,14 @@ a:link {
     background-color: #d0e5f5;
     box-shadow: 0px 0px 8px rgb(186, 186, 186);
     border-radius: 20px;
+}
+
+.low-interest-rates h3 p{
+    text-align: center;
+}
+
+.low-interest-rates p{
+    color: #d5e8f5;
 }
 
 .check-elegibility-btn-all {
