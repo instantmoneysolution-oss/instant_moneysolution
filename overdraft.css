@@ -225,13 +225,14 @@ a:link {
 
 .money-solution-offers-personal-loan-in-it p img{
     margin-left: 10px;
-    margin-top: -10px;
+    
 }
 
 .unlimited-partpayment {
     font-family: Inter;
-    font-size: 22px;
+    font-size: 20px;
     color: #474f8f;
+    margin-top: -10px;
 }
 
 #Apply-button {
