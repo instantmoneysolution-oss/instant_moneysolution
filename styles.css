@@ -494,6 +494,20 @@ a:link {
     font-weight: 500;
 }
 
+#personal-loan-in-home-page{
+    font-family: sans-serif;
+
+}
+
+.low-interest-rates{
+    font-size: 18px;
+    width: 300px;
+    margin: 10px auto;
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 20px;
+}
+
 .check-elegibility-btn-all {
     display: flex;
     justify-content: center;
