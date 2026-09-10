@@ -479,6 +479,12 @@ a:link {
 
 }
 
+.interest-rates-&-charges{
+    font-family: sans-serif;
+    font-size: 18px;
+    border-bottom: 1px solid #000000;
+}
+
 .check-elegibility-btn-all {
     display: flex;
     justify-content: center;
