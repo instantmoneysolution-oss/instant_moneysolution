@@ -2260,12 +2260,25 @@ input[type="range"] {
   z-index: 9999;
 }
 
-#wa-btn:hover:before{
-    content: "Contact us on Whatsapp";
-    color: #000000;
-    font-size: 18px;
-    font-weight: 600;
+#wa-btn::before {
+  content: "Contact us on WhatsApp";
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #1B1D1B;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
 
+#wa-btn:hover::before {
+  opacity: 1;
 }
 
 #wa-btn img {
