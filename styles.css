@@ -505,8 +505,12 @@ a:link {
     font-size: 18px;
     width: 300px;
     height: 150px;
+    margin: 10px auto;
     padding: 10px;
-    border: none;  
+    border: none;
+    background-color: #d0e5f5;
+    box-shadow: #698fae;
+    border-radius: 20px;
 }
 
 .check-elegibility-btn-all {
