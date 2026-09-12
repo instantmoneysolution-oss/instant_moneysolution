@@ -532,7 +532,7 @@ a:link {
     height: 610px;
     margin-bottom: 20px;
     margin-top: 40px;
-    margin-left: 480px;
+    margin-left: 150px;
     font-family: Inter;
     background-color: #fff;
     width: 500px;
@@ -612,7 +612,7 @@ a:link {
     font-family: Inter;
     font-size: 30px;
     position: absolute;
-    top: 40px;
+    top: 50px;
     right: 150px;
 } 
 
