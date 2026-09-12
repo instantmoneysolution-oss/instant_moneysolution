@@ -608,9 +608,9 @@ a:link {
 .elegibility-section {
     font-family: Inter;
     font-size: 30px;
-    position: absolute;
+    /* position: absolute;
     top: 40px;
-    right: 150px;
+    right: 150px; */
 }
 
 .container-2 {
