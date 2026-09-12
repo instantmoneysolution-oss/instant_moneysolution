@@ -161,6 +161,70 @@
             </div>
         </div>
     </div>
+
+
+    <div class="elegibility-section" id="eligibility-sections">
+        <div class="container-2">
+            <div class="card-2">
+                <h1 class="eligible-h1">Personal loan eligibility calculator</h1>
+                <p class="subtitle">Estimate how much you might be able to borrow based on your income and existing
+                    obligations.</p>
+                <div class="field-grid">
+                    <div class="field-2">
+                        <label for="income">Monthly net income (₹)</label>
+                        <input type="number" class="eligibility-input" id="income-2" value="60000" min="0" step="1000">
+                    </div>
+                    <div class="field-2">
+                        <label for="emis">Existing EMIs (₹/month)</label>
+                        <input type="number" class="eligibility-input" id="emis-2" value="5000" min="0" step="500">
+                    </div>
+                </div>
+                <div class="field-2">
+                    <label for="home-loan">Home Loan / EMI Closing</label>
+                    <select id="home-loan">
+                        <option value="no">No</option>
+                        <option value="yes">Yes</option>
+                    </select>
+                </div>
+
+                <div class="slider-field">
+                    <div class="slider-label-row">
+                        <label for="rate">Interest rate (% p.a.)</label>
+                        <span class="value" id="rate-out">11.5</span>
+                    </div>
+                    <input type="range" id="rate" min="8" max="24" step="0.1" value="11.5">
+                </div>
+
+                <div class="slider-field">
+                    <div class="slider-label-row">
+                        <label for="tenure">Tenure (years)</label>
+                        <span class="value" id="tenure-out">5</span>
+                    </div>
+                    <input type="range" id="tenure" min="1" max="7" step="1" value="5">
+                </div>
+
+                <hr class="divider">
+
+                <div class="results-2">
+                    <div class="result-box">
+                        <div class="label" style="font-size: 22px; font-weight: 700;">Congratulations!</div>
+                        <div class="value" id="eligible-amount">₹0</div>
+                        <div class="estimated-text" style="font-size: 16px;">Estimated Loan Eligibility</div>
+                    </div>
+
+                    <div class="result-box">
+                        <div class="label" style="font-size: 22px; font-weight: 700;">Estimated Monthly EMI</div>
+                        <div class="value" id="max-emi">₹0</div>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+
     <div class="Question-section">
         <p class="Question-header"><mark id="Want-to-style">Want To Ask</mark> Somthing From Us</p>
         <div class="question-box">
@@ -188,7 +252,7 @@
 
 
             <input class="accordion" type="radio" name="accordion" id="Tenth" checked>
-            <label class="label" for="Second">
+            <label class="label" for="Tenth">
                 Personal Loan vs Overdraft</label>
             <div class="content">
                 <!-- Personal Loan vs Overdraft Comparison -->
