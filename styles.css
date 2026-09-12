@@ -1152,9 +1152,12 @@ a:link {
     margin-bottom: 10px;
 }
 
+.Result p{
+    margin-left: 5px;
+}
+
 #emi {
     font-size: 20px;
-    margin-left: 5px;
     width: 50px;
     border: none;
     /* box-shadow: 0px 0px 8px rgb(230, 229, 229); */
@@ -1282,7 +1285,7 @@ a:link {
 #Why-choose-us-header {
     font-size: 25px;
     font-family: Inter, sans-serif;
-    font-weight: 500;
+    font-weight: 600;
     padding-top: 50px;
 }
 
