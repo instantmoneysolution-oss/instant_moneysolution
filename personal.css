@@ -1186,3 +1186,8 @@ input[type="range"] {
         box-sizing: border-box;
     }
 }
+
+
+.content{
+    font-size: 16px;
+}
