@@ -521,13 +521,16 @@ a:link {
 
 #Apply-button-in-personal-loan {
     position: relative;
-    /* background: linear-gradient(to right, #c2e1f8, #e6eef4); */
+    background: linear-gradient(to right, #c2e1f8, #e6eef4);
     padding-top: 20px;
     padding-bottom: 40px;
+    display: flex;
+    align-items: end;
 }
 
 .Apply-now-form {
     height: 610px;
+    margin-bottom: 20px;
     margin-top: 40px;
     margin-left: 480px;
     font-family: Inter;
