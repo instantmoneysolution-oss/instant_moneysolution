@@ -569,7 +569,7 @@ a:link {
 }
 
 .comparison-table th{
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 500;
 }
 
@@ -580,6 +580,10 @@ a:link {
     vertical-align: middle;
     border-bottom: 1px solid #e5e7eb;
     border-right: 1px solid #e5e7eb;
+}
+
+.comparison-table td{
+    font-size: 20px;
 }
 
 .comparison-table th:last-child,
