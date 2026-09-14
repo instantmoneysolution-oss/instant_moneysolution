@@ -501,14 +501,14 @@ a:link {
     align-items: center;
     justify-content: center;
     margin-top: 20px;
-    
+
 }
 
 .low-interest-rates {
     font-size: 18px;
     width: 300px;
     height: 150px;
-    margin: 10px ;
+    margin: 10px;
     gap: 20px;
     padding: 10px;
     border: none;
@@ -517,11 +517,11 @@ a:link {
     border-radius: 20px;
 }
 
-.personal-loan-in-home-page h3 p{
+.personal-loan-in-home-page h3 p {
     text-align: center;
 }
 
-.personal-loan-in-home-page p{
+.personal-loan-in-home-page p {
     color: #d5e8f5;
 }
 
@@ -1154,7 +1154,7 @@ a:link {
     margin-bottom: 10px;
 }
 
-.Result p{
+.Result p {
     margin-left: 5px;
 }
 
@@ -2591,5 +2591,40 @@ input[type="range"] {
 @media screen and (max-width: 350px) {
     .personal-loan-content {
         font-size: 30px;
+    }
+}
+
+@media (max-width: 767px) {
+
+    .whatsapp-float {
+        right: 18px;
+        bottom: 18px;
+
+        width: 68px;
+        height: 68px;
+
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.30);
+    }
+
+    .whatsapp-icon {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 380px) {
+
+    .whatsapp-float {
+        right: 15px;
+        bottom: 15px;
+
+        width: 64px;
+        height: 64px;
+    }
+
+    .whatsapp-icon {
+        width: 38px;
+        height: 38px;
     }
 }
