@@ -441,7 +441,7 @@ a:link {
     color: #2294f2;
 }
 
-.PAN-card-in-personal {
+/* .PAN-card-in-personal {
     margin-top: 20px;
     box-shadow: 0px 0px 8px rgb(186, 186, 186);
     display: flex;
@@ -508,7 +508,7 @@ a:link {
     margin-left: 500px;
     border-radius: 15px;
     padding: 10px 15px 10px 15px;
-}
+} */
 
 #Apply-button-in-personal-loan {
     background: linear-gradient(to right, #c2e1f8, #e6eef4);
