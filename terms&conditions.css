@@ -13,6 +13,180 @@
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
+.navbar {
+    position: static;
+    background-color: #fff;
+    width: 100%;
+    height: 70px;
+    margin-top: -7px;
+    border-radius: 5px;
+    box-shadow: 1px 1px 10px rgb(158, 152, 152);
+}
+
+.manu-button {
+    display: none;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+.logo {
+    margin-left: 160px;
+    margin-top: 16px;
+}
+
+.C-logo {
+
+    display: flex;
+}
+
+.logo-name-color {
+    color: black;
+}
+
+.logo-name {
+    margin-top: 0px;
+    font-family: Arimo;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    font-size: 13px;
+    line-height: 18px;
+}
+
+.logo-name-style {
+    font-weight: bold;
+    font-weight: 500;
+}
+
+#money {
+    background-color: #fff;
+    color: #2294f2;
+}
+
+.Menu-links {
+    font-size: 15px;
+    font-family: Arimo;
+    align-items: center;
+    display: flex;
+    margin-left: 350px;
+    margin-top: 0px;
+    margin-right: 10px;
+    gap: 40px;
+}
+
+
+#Home-buttons-more {
+    font-size: 25px;
+    color: coral;
+    font-weight: 400;
+    transition: 0.3s;
+    text-shadow: 0px 1px 1px grey
+}
+
+#Home-buttons-more:hover {
+    color: coral;
+    text-shadow: 0px 1px 1px grey;
+}
+
+#About-us-buttons-more {
+    font-size: 25px;
+    color: #2294f2;
+    font-weight: 400;
+    transition: 0.3s;
+}
+
+#About-us-buttons-more:hover {
+    color: coral;
+    text-shadow: 0px 1px 1px grey;
+}
+
+#services-buttons-more {
+    font-size: 25px;
+    color: #2294f2;
+    font-weight: 400;
+    transition: 0.3s;
+}
+
+#services-buttons-more:hover {
+    color: coral;
+    text-shadow: 0px 1px 1px grey;
+}
+
+
+.drop-down-in-nav {
+    display: inline-block;
+}
+
+.drop-down-in-nav a {
+    display: block;
+    color: black;
+    text-decoration: none;
+    padding: 10px 15px;
+    transition: 0.3s;
+}
+
+.drop-down-in-nav .content-of-services {
+    font-size: 22px;
+    transition: 0.3s;
+    display: inline-block;
+    display: none;
+    position: absolute;
+    background-color: #d5e8f5;
+    min-width: 100px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 8px rgb(186, 186, 186);
+}
+
+.drop-down-in-nav:hover .content-of-services {
+    display: block;
+}
+
+.drop-down-in-nav .content-link-link:hover {
+    background-color: #008cff;
+    color: white;
+}
+
+
+#Contact-us-buttons-more {
+    font-size: 25px;
+    color: #2294f2;
+    font-weight: 400;
+    transition: 0.3s;
+}
+
+#Contact-us-buttons-more:hover {
+    color: coral;
+    text-shadow: 0px 1px 1px grey;
+}
+
+#apply-now-reach {
+    font-family: Arimo;
+    font-size: 20px;
+    font-weight: 700;
+    padding: 13px 23px 13px 23px;
+    border-radius: 6px;
+    border-style: solid;
+    border-style: groove;
+    border-width: 1px;
+    background-color: #2294f2;
+    color: #fff;
+    border-color: #8cc8f9;
+    transition: 0.3s;
+}
+
+#apply-now-reach:hover {
+    background-color: #008cff;
+    transform: scale(1.1);
+}
+
+.Apply-button-reach {
+    margin-top: 12px;
+    margin-left: 30px;
+}
+
+
 * {
     box-sizing: border-box;
 }
@@ -488,4 +662,225 @@ footer.site a:hover {
 
 .legal-toc a:hover {
     color: var(--primary);
+}
+
+
+.Footer-background {
+    background-color: #114779;
+    width: 100%;
+    height: 500px;
+    margin-top: 20px;
+}
+
+.Container {
+    font-family: Inter;
+    font-size: 30px;
+    color: #008cff;
+    font-weight: 700;
+    display: flex;
+    margin-left: 160px;
+}
+
+.quick-links-footer {
+    justify-content: centers;
+    margin-left: 120px;
+}
+
+.Home-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 23px;
+    margin-bottom: 10px;
+}
+
+.Contact-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 23px;
+    margin-bottom: 10px;
+}
+
+.Overview-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 23px;
+    margin-bottom: 10px;
+}
+
+.Services-footer {
+    margin-left: 120px;
+}
+
+.Personal-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 23px;
+    margin-bottom: 10px;
+}
+
+.Home-loan-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 23px;
+    margin-bottom: 10px;
+}
+
+.Over-draft-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 23px;
+    margin-bottom: 10px;
+}
+
+.Life-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 23px;
+    margin-bottom: 10px;
+}
+
+.Health-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 23px;
+    margin-bottom: 10px;
+}
+
+.Credit-card-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 23px;
+    margin-bottom: 10px;
+}
+
+.Contact-footerf {
+    margin-left: 120px;
+    font-family: Inter;
+    font-size: 25px;
+    color: #008cff;
+    font-weight: 700;
+}
+
+.phone-no-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 23px;
+    margin-bottom: 10px;
+    margin-top: -30px;
+}
+
+#phone-icons-footer {
+    background-color: #fff;
+    padding: 6px;
+    margin-right: 10px;
+    margin-top: -8px;
+    border-radius: 20px;
+}
+
+.e-mail-footer {
+    font-weight: 400;
+    display: flex;
+    color: #fff;
+    font-size: 23px;
+    margin-bottom: 10px;
+    margin-top: 30px;
+    margin-right: 10px;
+}
+
+#e-mail-icons-footer {
+    background-color: #fff;
+    padding: 6px;
+    margin-right: 10px;
+    margin-top: -8px;
+    border-radius: 20px;
+}
+
+#location-icons-footer {
+    background-color: #fff;
+    padding: 6px;
+    margin-right: 10px;
+    margin-top: -8px;
+    border-radius: 20px;
+}
+
+.footer-main-content {
+    color: #fff;
+    font-family: Inter;
+    margin-left: 160px;
+    margin-top: -250px;
+}
+
+.linkedin-icons {
+    border-radius: 25px;
+    background-color: #fff;
+    padding: 5px;
+    margin-top: 30px;
+}
+
+.instagram-icons {
+    border-radius: 25px;
+    background-color: #fff;
+    padding: 5px;
+    margin-top: 30px;
+    margin-left: 20px;
+}
+
+.Copyright-footer {
+    text-align: center;
+    font-family: Inter;
+    font-size: 18px;
+    color: #fff;
+    margin-top: 90px;
+}
+
+#wa-btn {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #25D366;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+}
+
+#wa-btn::before {
+    content: "Contact us on WhatsApp";
+    position: absolute;
+    right: 70px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #1B1D1B;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 15px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    font-family: sans-serif;
+}
+
+#wa-btn:hover::before {
+    opacity: 1;
+}
+
+#wa-btn img {
+    width: 34px;
+    height: 34px;
 }
