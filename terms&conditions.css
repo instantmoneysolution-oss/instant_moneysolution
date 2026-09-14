@@ -1189,7 +1189,7 @@
 
 
  .content {
-     font-size: 16px;
+     font-size: 22px;
  }
 
 
@@ -1225,7 +1225,7 @@
 
  .legal-hero h1 {
      font-family: var(--font-serif);
-     font-size: 2.1rem;
+     font-size: 3rem;
      color: var(--primary-dark);
      margin: 8px 0 8px;
  }
@@ -1245,6 +1245,7 @@
  }
 
  .legal-toc p {
+    font-size: 22px;
      margin: 0 0 10px;
      font-weight: 600;
      color: var(--primary-dark);
@@ -1257,6 +1258,7 @@
 
  .legal-toc li {
      margin-bottom: 6px;
+     font-size: 18px;
  }
 
  .legal-toc a {
@@ -1277,7 +1279,7 @@
 
  .legal-body h2 {
      font-family: var(--font-serif);
-     font-size: 1.35rem;
+     font-size: 2rem;
      color: var(--primary-dark);
      margin: 34px 0 12px;
  }
@@ -1289,6 +1291,7 @@
  .legal-body p {
      color: var(--ink);
      margin: 0 0 14px;
+     font-size: 18px;
  }
 
  .legal-body ul {
