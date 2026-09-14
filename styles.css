@@ -130,6 +130,7 @@ a:link {
     min-width: 100px;
     border-radius: 5px;
     box-shadow: 0px 0px 8px rgb(186, 186, 186);
+    margin-top: 0px;
 }
 
 .drop-down-in-nav:hover .content-of-services {
@@ -2296,9 +2297,9 @@ input[type="range"] {
 #wa-btn {
     position: fixed;
     right: 24px;
-    bottom: 24px;
-    width: 60px;
-    height: 60px;
+    bottom: 20px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     background-color: #25D366;
     display: flex;
@@ -2331,8 +2332,8 @@ input[type="range"] {
 }
 
 #wa-btn img {
-    width: 34px;
-    height: 34px;
+    width: 44px;
+    height: 44px;
 }
 
 

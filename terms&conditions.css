@@ -5,8 +5,8 @@
     --line: #e1edf7;
     --paper: #ffffff;
     --ink: #222e47;
-    --font-serif: Inter, Arial, sans-serif;
-    --font-sans: Inter, Arial, sans-serif;
+    --font-serif: sans-serif;
+    --font-sans: sans-serif;
 }
 
 
@@ -450,12 +450,13 @@ a:link {
 .legal-toc ol {
     margin: 0;
     padding-left: 20px;
-     font-size: 18px;
+    font-size: 18px;
 }
 
 .legal-toc li {
     margin-bottom: 6px;
-   
+    font-size: 18px;
+
 }
 
 .legal-toc a {
@@ -493,14 +494,14 @@ a:link {
 
 .legal-body ul {
     margin: 0 0 14px;
-     font-size: 18px;
+    font-size: 18px;
     padding-left: 20px;
 }
 
 .legal-body li {
     margin-bottom: 8px;
     color: var(--ink);
-     font-size: 18px;
+    font-size: 18px;
 }
 
 .legal-body a.inline {
