@@ -528,6 +528,7 @@ a:link {
 .comparison-section {
     padding: 60px 20px;
     font-family: sans-serif;
+    margin-bottom: 20px;
 
 }
 
@@ -546,11 +547,11 @@ a:link {
     font-size: 36px;
     color: #111827;
     margin-bottom: 10px;
-     font-weight: 600;
+    font-weight: 600;
 }
 
 .comparison-title p {
-    font-size: 22px;
+    font-size: 25px;
     color: #6b7280;
 }
 
@@ -568,8 +569,8 @@ a:link {
     border-collapse: collapse;
 }
 
-.comparison-table th{
-    font-size: 24px;
+.comparison-table th {
+    font-size: 27px;
     font-weight: 500;
 }
 
@@ -582,8 +583,8 @@ a:link {
     border-right: 1px solid #e5e7eb;
 }
 
-.comparison-table td{
-    font-size: 20px;
+.comparison-table td {
+    font-size: 24px;
 }
 
 .comparison-table th:last-child,
@@ -594,7 +595,7 @@ a:link {
 .comparison-table thead th {
     background: #111827;
     color: #ffffff;
-    font-size: 17px;
+    font-size: 27px;
     font-weight: 600;
 }
 
@@ -608,7 +609,7 @@ a:link {
 }
 
 .comparison-table tbody td {
-    font-size: 15px;
+    font-size: 24px;
     line-height: 1.6;
     color: #4b5563;
 }

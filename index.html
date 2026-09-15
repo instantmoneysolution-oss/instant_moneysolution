@@ -701,6 +701,60 @@
 
     </div>
 
+    <!-- Customer review section -->
+    <!-- Paste this section where you want customer reviews to appear -->
+    <section class="customer-reviews" id="customer-reviews">
+        <div class="reviews-container">
+            <div class="reviews-heading">
+                <h2>What Our Customers Say</h2>
+                <p>Real experiences from our customers</p>
+            </div>
+            <div class="rating-summary">
+                <div class="rating-number">
+                    <span id="average-rating">0.0</span>
+                    <div id="average-stars">☆☆☆☆☆</div>
+                    <p><span id="review-count">0</span> Customer Reviews</p>
+                </div>
+                <button type="button" class="write-review-btn" id="open-review-btn">⭐ Write a Review</button>
+            </div>
+            <div class="reviews-grid" id="reviews-list">
+                <p class="reviews-loading">Loading reviews...</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="review-modal" id="review-modal" aria-hidden="true">
+        <div class="review-modal-box" role="dialog" aria-modal="true">
+            <button type="button" class="review-close" id="close-review-btn">&times;</button>
+            <h2>Write a Review</h2>
+            <p class="review-subtitle">Share your experience with Instant Money Solution.</p>
+            <form id="review-form">
+                <label for="review-name">Your Name</label>
+                <input type="text" id="review-name" maxlength="80" placeholder="Enter your name" required>
+
+                <label>Your Rating</label>
+                <div class="star-rating" id="star-rating">
+                    <button type="button" data-rating="1">★</button>
+                    <button type="button" data-rating="2">★</button>
+                    <button type="button" data-rating="3">★</button>
+                    <button type="button" data-rating="4">★</button>
+                    <button type="button" data-rating="5">★</button>
+                </div>
+                <input type="hidden" id="review-rating" value="0">
+
+                <label for="review-text">Your Review</label>
+                <textarea id="review-text" rows="5" maxlength="1000" placeholder="Write your experience..."
+                    required></textarea>
+
+                <button type="submit" class="submit-review-btn" id="submit-review-btn">Submit Review</button>
+                <p class="review-message" id="review-message"></p>
+            </form>
+            <p class="review-note">Reviews are checked before appearing on our website.</p>
+        </div>
+    </div>
+
+
+
     <!--Footer section-->
     <div class="Footer-background">
         <div class="Container">
