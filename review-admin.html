@@ -1,6 +1,40 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Review Admin - Instant Money Solution</title><link rel="stylesheet" href="review-admin.css"></head>
-<body><main class="admin-page">
-<section id="login-section" class="admin-card"><h1>Review Admin</h1><p>Login to manage customer reviews.</p><form id="login-form"><input id="admin-email" type="email" placeholder="Admin email" required><input id="admin-password" type="password" placeholder="Password" required><button type="submit">Login</button></form><p id="login-message"></p></section>
-<section id="dashboard-section" class="dashboard" hidden><div class="dashboard-header"><div><h1>Customer Reviews</h1><p>Approve, reject or delete reviews.</p></div><button id="logout-btn" class="secondary-btn">Logout</button></div><div class="tabs"><button class="tab active" data-status="pending">Pending</button><button class="tab" data-status="approved">Approved</button><button class="tab" data-status="rejected">Rejected</button></div><div id="admin-message"></div><div id="admin-reviews"></div></section>
-</main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="review-admin.js"></script></body></html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Review Admin - Instant Money Solution</title>
+    <link rel="stylesheet" href="review-admin.css">
+</head>
+
+<body>
+    <main class="admin-page">
+        <section id="login-section" class="admin-card">
+            <h1>Review Admin</h1>
+            <p>Login to manage customer reviews.</p>
+            <form id="login-form"><input id="admin-email" type="email" placeholder="Admin email" required><input
+                    id="admin-password" type="password" placeholder="Password" required><button
+                    type="submit">Login</button></form>
+            <p id="login-message"></p>
+        </section>
+        <section id="dashboard-section" class="dashboard" hidden>
+            <div class="dashboard-header">
+                <div>
+                    <h1>Customer Reviews</h1>
+                    <p>Approve, reject or delete reviews.</p>
+                </div><button id="logout-btn" class="secondary-btn">Logout</button>
+            </div>
+            <div class="tabs"><button class="tab active" data-status="pending">Pending</button><button class="tab"
+                    data-status="approved">Approved</button><button class="tab" data-status="rejected">Rejected</button>
+            </div>
+            <div id="admin-message"></div>
+            <div id="admin-reviews"></div>
+        </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="database.js"></script>
+    <script src="review-admin.js"></script>
+</body>
+
+</html>
