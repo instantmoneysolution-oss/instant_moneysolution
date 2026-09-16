@@ -3,7 +3,7 @@
     font-family: sans-serif;
     width: 100%;
     padding: 70px 20px;
-    background: #f8f9fa;
+    background: #f5f5f5;
     box-sizing: border-box;
     clear: both;
     position: relative;
@@ -40,6 +40,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 25px;
+    font-family: sans-serif;
     width: 100%;
     padding: 25px;
     margin-bottom: 30px;
