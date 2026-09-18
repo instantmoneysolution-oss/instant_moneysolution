@@ -707,23 +707,41 @@
 
     <!-- Customer review section -->
     <!-- Paste this section where you want customer reviews to appear -->
-    <div class="reviews-slider">
+    <section class="customer-reviews" id="customer-reviews">
+        <div class="reviews-container">
+            <div class="reviews-heading">
+                <h2>What Our Customers Say</h2>
+                <p>Real experiences from our customers</p>
+            </div>
+            <div class="rating-summary">
+                <div class="rating-number">
+                    <span id="average-rating">0.0</span>
+                    <div id="average-stars">☆☆☆☆☆</div>
+                    <p><span id="review-count">0</span> Customer Reviews</p>
+                </div>
+                <button type="button" class="write-review-btn" id="open-review-btn">⭐ Write a Review</button>
+            </div>
+            <div class="reviews-slider">
 
-        <button type="button" class="review-nav review-prev" id="reviews-prev" aria-label="Previous reviews">
-            &#10094;
-        </button>
+                <button type="button" class="review-nav review-prev" id="reviews-prev" aria-label="Previous reviews">
+                    &#10094;
+                </button>
 
-        <div class="reviews-grid" id="reviews-list">
-            <div class="reviews-track" id="reviews-track">
-                <p class="reviews-loading">Loading reviews...</p>
+                <div class="reviews-grid" id="reviews-list">
+                    <div class="reviews-track" id="reviews-track">
+                        <p class="reviews-loading">Loading reviews...</p>
+                    </div>
+                </div>
+
+                <button type="button" class="review-nav review-next" id="reviews-next" aria-label="Next reviews">
+                    &#10095;
+                </button>
+
             </div>
         </div>
+    </section>
 
-        <button type="button" class="review-nav review-next" id="reviews-next" aria-label="Next reviews">
-            &#10095;
-        </button>
 
-    </div>
 
     <div class="review-modal" id="review-modal" aria-hidden="true">
         <div class="review-modal-box" role="dialog" aria-modal="true">
