@@ -1,50 +1,89 @@
 /* =========================================
    CUSTOMER REVIEW SYSTEM
-   INFINITE SLIDER + SUPABASE
+   NON-INFINITE SLIDER
 ========================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
+
 
     /* =========================================
        ELEMENTS
     ========================================= */
 
-    const modal = document.getElementById("review-modal");
-    const openBtn = document.getElementById("open-review-btn");
-    const closeBtn = document.getElementById("close-review-btn");
-    const form = document.getElementById("review-form");
+    const modal =
+        document.getElementById("review-modal");
 
-    const nameInput = document.getElementById("review-name");
-    const textInput = document.getElementById("review-text");
-    const ratingInput = document.getElementById("review-rating");
+    const openBtn =
+        document.getElementById("open-review-btn");
 
-    const submitBtn = document.getElementById("submit-review-btn");
-    const message = document.getElementById("review-message");
+    const closeBtn =
+        document.getElementById("close-review-btn");
 
-    const stars = document.querySelectorAll("#star-rating button");
+    const form =
+        document.getElementById("review-form");
 
-    const list = document.getElementById("reviews-list");
-    const track = document.getElementById("reviews-track");
 
-    const avg = document.getElementById("average-rating");
-    const avgStars = document.getElementById("average-stars");
-    const count = document.getElementById("review-count");
+    const nameInput =
+        document.getElementById("review-name");
 
-    const prevBtn = document.getElementById("reviews-prev");
-    const nextBtn = document.getElementById("reviews-next");
+    const textInput =
+        document.getElementById("review-text");
+
+    const ratingInput =
+        document.getElementById("review-rating");
+
+
+    const submitBtn =
+        document.getElementById("submit-review-btn");
+
+    const message =
+        document.getElementById("review-message");
+
+
+    const stars =
+        document.querySelectorAll(
+            "#star-rating button"
+        );
+
+
+    const list =
+        document.getElementById("reviews-list");
+
+    const track =
+        document.getElementById("reviews-track");
+
+
+    const avg =
+        document.getElementById("average-rating");
+
+    const avgStars =
+        document.getElementById("average-stars");
+
+    const count =
+        document.getElementById("review-count");
+
+
+    const prevBtn =
+        document.getElementById("reviews-prev");
+
+    const nextBtn =
+        document.getElementById("reviews-next");
 
 
     /* =========================================
-       SUPABASE CHECK
+       CHECK SUPABASE
     ========================================= */
 
     if (!window.supabaseClient) {
 
         console.error(
-            "Supabase client was not found. Check supabase-config.js"
+            "Supabase client was not found. " +
+            "Check supabase-config.js"
         );
 
+
         if (list) {
+
             list.innerHTML = `
                 <p class="no-reviews">
                     Review system is not connected.
@@ -55,7 +94,10 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    console.log("Supabase connected successfully.");
+
+    console.log(
+        "Supabase connected successfully."
+    );
 
 
     /* =========================================
@@ -68,26 +110,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let reviewsPerView = 3;
 
-    let autoSlideTimer = null;
-
-    let isAnimating = false;
-
 
     /* =========================================
-       HOW MANY REVIEWS ARE VISIBLE
+       GET REVIEWS PER VIEW
     ========================================= */
 
     function getReviewsPerView() {
 
-        const width = window.innerWidth;
+        const width =
+            window.innerWidth;
+
 
         if (width <= 650) {
+
             return 1;
         }
 
+
         if (width <= 900) {
+
             return 2;
         }
+
 
         return 3;
     }
@@ -99,9 +143,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function escapeHTML(value) {
 
-        const div = document.createElement("div");
+        const div =
+            document.createElement("div");
 
-        div.textContent = value ?? "";
+        div.textContent =
+            value ?? "";
 
         return div.innerHTML;
     }
@@ -111,14 +157,22 @@ document.addEventListener("DOMContentLoaded", () => {
        MESSAGE
     ========================================= */
 
-    function setMessage(text, error = false) {
+    function setMessage(
+        text,
+        error = false
+    ) {
 
         if (!message) return;
 
-        message.textContent = text;
+
+        message.textContent =
+            text;
+
 
         message.style.color =
-            error ? "#d93025" : "#16803c";
+            error
+                ? "#d93025"
+                : "#16803c";
     }
 
 
@@ -126,39 +180,71 @@ document.addEventListener("DOMContentLoaded", () => {
        UPDATE RATING SUMMARY
     ========================================= */
 
-    function updateSummary(reviews) {
+    function updateSummary(
+        reviews
+    ) {
 
-        if (!count || !avg || !avgStars) return;
+        if (
+            !count ||
+            !avg ||
+            !avgStars
+        ) {
+            return;
+        }
 
-        count.textContent = reviews.length;
+
+        count.textContent =
+            reviews.length;
+
 
         if (!reviews.length) {
 
-            avg.textContent = "0.0";
+            avg.textContent =
+                "0.0";
 
-            avgStars.textContent = "☆☆☆☆☆";
+            avgStars.textContent =
+                "☆☆☆☆☆";
 
             return;
         }
 
-        const total = reviews.reduce(
-            (sum, review) =>
-                sum + Number(review.rating),
-            0
-        );
+
+        const total =
+            reviews.reduce(
+                (sum, review) => {
+
+                    return (
+                        sum +
+                        Number(
+                            review.rating
+                        )
+                    );
+
+                },
+                0
+            );
+
 
         const average =
-            total / reviews.length;
+            total /
+            reviews.length;
+
 
         const rounded =
-            Math.round(average);
+            Math.round(
+                average
+            );
+
 
         avg.textContent =
             average.toFixed(1);
 
+
         avgStars.textContent =
             "★".repeat(rounded) +
-            "☆".repeat(5 - rounded);
+            "☆".repeat(
+                5 - rounded
+            );
     }
 
 
@@ -166,77 +252,111 @@ document.addEventListener("DOMContentLoaded", () => {
        CREATE REVIEW CARD
     ========================================= */
 
-    function createReviewCard(item) {
+    function createReviewCard(
+        item
+    ) {
 
-        const rating = Math.max(
-            0,
-            Math.min(5, Number(item.rating))
-        );
+        const rating =
+            Math.max(
+                0,
+                Math.min(
+                    5,
+                    Number(
+                        item.rating
+                    )
+                )
+            );
 
-        const date = new Date(
-            item.created_at
-        ).toLocaleDateString("en-IN", {
-            day: "numeric",
-            month: "short",
-            year: "numeric"
-        });
+
+        const date =
+            new Date(
+                item.created_at
+            ).toLocaleDateString(
+                "en-IN",
+                {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric"
+                }
+            );
+
 
         return `
+
             <article class="review-card">
 
                 <div class="review-card-header">
 
                     <h3 class="review-card-name">
-                        ${escapeHTML(item.name)}
+                        ${escapeHTML(
+                            item.name
+                        )}
                     </h3>
 
                     <div
                         class="review-card-stars"
                         aria-label="${rating} out of 5 stars">
 
-                        ${"★".repeat(rating)}
-                        ${"☆".repeat(5 - rating)}
+                        ${"★".repeat(
+                            rating
+                        )}
+
+                        ${"☆".repeat(
+                            5 - rating
+                        )}
 
                     </div>
 
                 </div>
 
+
                 <p class="review-card-text">
-                    ${escapeHTML(item.review)}
+
+                    ${escapeHTML(
+                        item.review
+                    )}
+
                 </p>
 
+
                 <small class="review-card-date">
+
                     ${date}
+
                 </small>
 
             </article>
+
         `;
     }
 
 
     /* =========================================
-       BUILD SLIDER
+       RENDER REVIEWS
     ========================================= */
 
-    function buildSlider() {
+    function renderReviews() {
 
         if (!track) return;
+
 
         reviewsPerView =
             getReviewsPerView();
 
-        currentIndex =
-            reviewsPerView;
-
 
         /* No reviews */
 
-        if (!allReviews.length) {
+        if (
+            allReviews.length === 0
+        ) {
 
             track.innerHTML = `
+
                 <div class="no-reviews">
 
-                    <p>No reviews yet.</p>
+                    <p>
+                        No reviews yet.
+                    </p>
 
                     <p>
                         Be the first customer
@@ -244,246 +364,158 @@ document.addEventListener("DOMContentLoaded", () => {
                     </p>
 
                 </div>
+
             `;
 
+
             track.style.transform =
                 "translateX(0)";
+
+
+            updateSliderButtons();
 
             return;
         }
 
 
         /*
-            If there are fewer reviews than
-            the visible number, don't clone.
+            Get only the reviews
+            currently visible.
         */
 
-        if (allReviews.length <= reviewsPerView) {
-
-            track.innerHTML =
-                allReviews
-                    .map(createReviewCard)
-                    .join("");
-
-            track.style.transform =
-                "translateX(0)";
-
-            if (prevBtn) {
-                prevBtn.style.display = "none";
-            }
-
-            if (nextBtn) {
-                nextBtn.style.display = "none";
-            }
-
-            stopAutoSlide();
-
-            return;
-        }
-
-
-        /* Show navigation */
-
-        if (prevBtn) {
-            prevBtn.style.display = "flex";
-        }
-
-        if (nextBtn) {
-            nextBtn.style.display = "flex";
-        }
-
-
-        /*
-            Clone reviews for infinite loop.
-
-            Example:
-
-            Original:
-            1 2 3 4 5
-
-            Result:
-            4 5 | 1 2 3 4 5 | 1 2
-
-            This allows us to move forever.
-        */
-
-        const beforeClones =
-            allReviews.slice(-reviewsPerView);
-
-        const afterClones =
-            allReviews.slice(0, reviewsPerView);
-
-        const sliderReviews = [
-            ...beforeClones,
-            ...allReviews,
-            ...afterClones
-        ];
+        const visibleReviews =
+            allReviews.slice(
+                currentIndex,
+                currentIndex +
+                reviewsPerView
+            );
 
 
         track.innerHTML =
-            sliderReviews
+            visibleReviews
                 .map(createReviewCard)
                 .join("");
 
 
         /*
-            Start at the first real review.
+            Small slide animation
         */
+
+        track.style.transform =
+            "translateX(20px)";
+
+
+        track.style.opacity =
+            "0";
+
 
         requestAnimationFrame(() => {
 
-            moveSlider(false);
+            track.style.transform =
+                "translateX(0)";
+
+            track.style.opacity =
+                "1";
 
         });
+
+
+        updateSliderButtons();
     }
 
 
     /* =========================================
-       MOVE SLIDER
-    ========================================= */
-
-    function moveSlider(animate = true) {
-
-        if (!track) return;
-
-        const cards =
-            track.querySelectorAll(".review-card");
-
-        if (!cards.length) return;
-
-
-        /*
-            Card width + gap
-        */
-
-        const cardWidth =
-            cards[0].getBoundingClientRect().width;
-
-        const gap =
-            parseFloat(
-                getComputedStyle(track).gap
-            ) || 0;
-
-        const moveAmount =
-            cardWidth + gap;
-
-
-        if (!animate) {
-
-            track.style.transition =
-                "none";
-
-        } else {
-
-            track.style.transition =
-                "transform 0.5s ease";
-        }
-
-
-        const translateAmount =
-            currentIndex * moveAmount;
-
-        track.style.transform =
-            `translateX(-${translateAmount}px)`;
-    }
-
-
-    /* =========================================
-       NEXT REVIEW
+       NEXT
     ========================================= */
 
     function showNextReview() {
 
+        reviewsPerView =
+            getReviewsPerView();
+
+
+        /*
+            Stop at the end.
+        */
+
         if (
-            allReviews.length <= reviewsPerView ||
-            isAnimating
+            currentIndex +
+            reviewsPerView >=
+            allReviews.length
         ) {
+
             return;
         }
 
-        isAnimating = true;
 
         currentIndex++;
 
-        moveSlider(true);
+
+        renderReviews();
     }
 
 
     /* =========================================
-       PREVIOUS REVIEW
+       PREVIOUS
     ========================================= */
 
     function showPreviousReview() {
 
+
+        /*
+            Stop at the beginning.
+        */
+
         if (
-            allReviews.length <= reviewsPerView ||
-            isAnimating
+            currentIndex <= 0
         ) {
+
             return;
         }
 
-        isAnimating = true;
 
         currentIndex--;
 
-        moveSlider(true);
+
+        renderReviews();
     }
 
 
     /* =========================================
-       HANDLE INFINITE LOOP
+       UPDATE BUTTONS
     ========================================= */
 
-    track?.addEventListener(
-        "transitionend",
-        () => {
+    function updateSliderButtons() {
 
-            if (
-                allReviews.length <=
-                reviewsPerView
-            ) {
-                isAnimating = false;
-                return;
-            }
-
-
-            /*
-                We reached the cloned reviews
-                at the end.
-            */
-
-            if (
-                currentIndex >=
-                allReviews.length +
-                reviewsPerView
-            ) {
-
-                currentIndex =
-                    reviewsPerView;
-
-                moveSlider(false);
-            }
-
-
-            /*
-                We reached the cloned reviews
-                at the beginning.
-            */
-
-            if (
-                currentIndex < reviewsPerView
-            ) {
-
-                currentIndex =
-                    allReviews.length +
-                    currentIndex;
-
-                moveSlider(false);
-            }
-
-            isAnimating = false;
+        if (
+            !prevBtn ||
+            !nextBtn
+        ) {
+            return;
         }
-    );
+
+
+        reviewsPerView =
+            getReviewsPerView();
+
+
+        /*
+            Previous
+        */
+
+        prevBtn.disabled =
+            currentIndex <= 0;
+
+
+        /*
+            Next
+        */
+
+        nextBtn.disabled =
+            currentIndex +
+            reviewsPerView >=
+            allReviews.length;
+    }
 
 
     /* =========================================
@@ -492,170 +524,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
     nextBtn?.addEventListener(
         "click",
-        () => {
-
-            showNextReview();
-
-            restartAutoSlide();
-        }
+        showNextReview
     );
 
 
     prevBtn?.addEventListener(
         "click",
-        () => {
-
-            showPreviousReview();
-
-            restartAutoSlide();
-        }
+        showPreviousReview
     );
-
-
-    /* =========================================
-       AUTO SLIDE
-    ========================================= */
-
-    function startAutoSlide() {
-
-        stopAutoSlide();
-
-        if (
-            allReviews.length <=
-            reviewsPerView
-        ) {
-            return;
-        }
-
-        autoSlideTimer =
-            setInterval(() => {
-
-                showNextReview();
-
-            }, 4000);
-    }
-
-
-    function stopAutoSlide() {
-
-        if (autoSlideTimer) {
-
-            clearInterval(
-                autoSlideTimer
-            );
-
-            autoSlideTimer = null;
-        }
-    }
-
-
-    function restartAutoSlide() {
-
-        stopAutoSlide();
-
-        startAutoSlide();
-    }
-
-
-    /* =========================================
-       PAUSE AUTO SLIDE ON HOVER
-    ========================================= */
-
-    list?.addEventListener(
-        "mouseenter",
-        stopAutoSlide
-    );
-
-    list?.addEventListener(
-        "mouseleave",
-        startAutoSlide
-    );
-
-
-    /* =========================================
-       TOUCH / SWIPE
-    ========================================= */
-
-    let touchStartX = 0;
-
-    let touchEndX = 0;
-
-
-    list?.addEventListener(
-        "touchstart",
-        (event) => {
-
-            touchStartX =
-                event.changedTouches[0].screenX;
-
-            stopAutoSlide();
-        },
-        { passive: true }
-    );
-
-
-    list?.addEventListener(
-        "touchend",
-        (event) => {
-
-            touchEndX =
-                event.changedTouches[0].screenX;
-
-            handleSwipe();
-
-            startAutoSlide();
-        },
-        { passive: true }
-    );
-
-
-    function handleSwipe() {
-
-        const difference =
-            touchStartX - touchEndX;
-
-
-        /* Swipe left */
-
-        if (difference > 50) {
-
-            showNextReview();
-
-        }
-
-
-        /* Swipe right */
-
-        if (difference < -50) {
-
-            showPreviousReview();
-
-        }
-    }
 
 
     /* =========================================
        WINDOW RESIZE
     ========================================= */
 
-    let resizeTimer;
-
     window.addEventListener(
         "resize",
         () => {
 
-            clearTimeout(
-                resizeTimer
-            );
+            const newPerView =
+                getReviewsPerView();
 
-            resizeTimer =
-                setTimeout(() => {
 
-                    buildSlider();
+            if (
+                newPerView !==
+                reviewsPerView
+            ) {
 
-                    startAutoSlide();
+                reviewsPerView =
+                    newPerView;
 
-                }, 250);
+
+                const maxIndex =
+                    Math.max(
+                        0,
+                        allReviews.length -
+                        reviewsPerView
+                    );
+
+
+                currentIndex =
+                    Math.min(
+                        currentIndex,
+                        maxIndex
+                    );
+
+
+                renderReviews();
+            }
         }
     );
 
@@ -668,12 +584,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!modal) return;
 
-        modal.classList.add("active");
+
+        modal.classList.add(
+            "active"
+        );
+
 
         modal.setAttribute(
             "aria-hidden",
             "false"
         );
+
 
         document.body.style.overflow =
             "hidden";
@@ -684,12 +605,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!modal) return;
 
-        modal.classList.remove("active");
+
+        modal.classList.remove(
+            "active"
+        );
+
 
         modal.setAttribute(
             "aria-hidden",
             "true"
         );
+
 
         document.body.style.overflow =
             "";
@@ -715,6 +641,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (
                 event.target === modal
             ) {
+
                 closeModal();
             }
         }
@@ -742,42 +669,51 @@ document.addEventListener("DOMContentLoaded", () => {
        STAR RATING
     ========================================= */
 
-    stars.forEach((star) => {
+    stars.forEach(
+        (star) => {
 
-        star.addEventListener(
-            "click",
-            () => {
+            star.addEventListener(
+                "click",
+                () => {
 
-                const rating =
-                    Number(
-                        star.dataset.rating
-                    );
-
-                if (ratingInput) {
-                    ratingInput.value =
-                        rating;
-                }
-
-
-                stars.forEach((s) => {
-
-                    const starRating =
+                    const rating =
                         Number(
-                            s.dataset.rating
+                            star.dataset.rating
                         );
 
-                    s.classList.toggle(
-                        "active",
-                        starRating <= rating
+
+                    if (ratingInput) {
+
+                        ratingInput.value =
+                            rating;
+                    }
+
+
+                    stars.forEach(
+                        (s) => {
+
+                            const starRating =
+                                Number(
+                                    s.dataset.rating
+                                );
+
+
+                            s.classList.toggle(
+                                "active",
+                                starRating <=
+                                rating
+                            );
+
+                        }
                     );
-                });
-            }
-        );
-    });
+                }
+            );
+        }
+    );
 
 
     /* =========================================
-       LOAD REVIEWS FROM SUPABASE
+       LOAD REVIEWS
     ========================================= */
 
     async function loadReviews() {
@@ -790,21 +726,22 @@ document.addEventListener("DOMContentLoaded", () => {
         const {
             data,
             error
-        } = await window.supabaseClient
-            .from("reviews")
-            .select(
-                "id,name,rating,review,created_at"
-            )
-            .eq(
-                "status",
-                "approved"
-            )
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            );
+        } =
+            await window.supabaseClient
+                .from("reviews")
+                .select(
+                    "id,name,rating,review,created_at"
+                )
+                .eq(
+                    "status",
+                    "approved"
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
 
 
         if (error) {
@@ -818,11 +755,14 @@ document.addEventListener("DOMContentLoaded", () => {
             if (track) {
 
                 track.innerHTML = `
+
                     <div class="no-reviews">
                         Unable to load reviews.
                     </div>
+
                 `;
             }
+
 
             return;
         }
@@ -838,15 +778,16 @@ document.addEventListener("DOMContentLoaded", () => {
             data || [];
 
 
+        currentIndex =
+            0;
+
+
         updateSummary(
             allReviews
         );
 
 
-        buildSlider();
-
-
-        startAutoSlide();
+        renderReviews();
     }
 
 
@@ -862,11 +803,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             const name =
-                nameInput?.value.trim() || "";
+                nameInput?.value.trim() ||
+                "";
 
 
             const review =
-                textInput?.value.trim() || "";
+                textInput?.value.trim() ||
+                "";
 
 
             const rating =
@@ -875,9 +818,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-            /* Validate name */
+            /* Name validation */
 
-            if (name.length < 2) {
+            if (
+                name.length < 2
+            ) {
 
                 setMessage(
                     "Please enter your name.",
@@ -888,7 +833,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            /* Validate rating */
+            /* Rating validation */
 
             if (
                 rating < 1 ||
@@ -904,9 +849,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            /* Validate review */
+            /* Review validation */
 
-            if (review.length < 5) {
+            if (
+                review.length < 5
+            ) {
 
                 setMessage(
                     "Please write a longer review.",
@@ -934,16 +881,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const {
                 error
-            } = await window.supabaseClient
-                .from("reviews")
-                .insert([
-                    {
-                        name: name,
-                        rating: rating,
-                        review: review,
-                        status: "pending"
-                    }
-                ]);
+            } =
+                await window.supabaseClient
+                    .from("reviews")
+                    .insert([
+                        {
+                            name:
+                                name,
+
+                            rating:
+                                rating,
+
+                            review:
+                                review,
+
+                            status:
+                                "pending"
+                        }
+                    ]);
 
 
             if (error) {
@@ -970,28 +925,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 if (ratingInput) {
-                    ratingInput.value = 0;
+
+                    ratingInput.value =
+                        0;
                 }
 
 
-                stars.forEach((star) => {
+                stars.forEach(
+                    (star) => {
 
-                    star.classList.remove(
-                        "active"
-                    );
-                });
-
-
-                setTimeout(() => {
-
-                    closeModal();
-
-                    if (message) {
-                        message.textContent =
-                            "";
+                        star.classList.remove(
+                            "active"
+                        );
                     }
+                );
 
-                }, 2500);
+
+                setTimeout(
+                    () => {
+
+                        closeModal();
+
+
+                        if (message) {
+
+                            message.textContent =
+                                "";
+                        }
+
+                    },
+                    2500
+                );
             }
 
 
@@ -1003,6 +967,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 submitBtn.textContent =
                     "Submit Review";
             }
+
         }
     );
 
