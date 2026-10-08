@@ -150,6 +150,178 @@ body {
         display: none;
     }
 }
+
+    /* =========================
+   TEAM PRODUCTIVITY
+========================= */
+
+.productivity-section {
+    margin-top: 30px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+.productivity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.productivity-header h2 {
+    margin: 0 0 5px;
+    font-size: 22px;
+}
+
+.productivity-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.productivity-filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.period-btn {
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    color: #374151;
+    padding: 9px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.period-btn:hover {
+    background: #f3f4f6;
+}
+
+.period-btn.active {
+    background: #111827;
+    color: #ffffff;
+    border-color: #111827;
+}
+
+.custom-date-box {
+    display: flex;
+    align-items: end;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 18px;
+}
+
+    .custom-date-box.hidden {
+    display: none;
+}
+
+.custom-date-box div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.custom-date-box label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.custom-date-box input {
+    padding: 9px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+    font-size: 13px;
+}
+
+#viewCustomProductivity {
+    border: none;
+    background: #111827;
+    color: #ffffff;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.productivity-loading {
+    text-align: center;
+    padding: 30px;
+    color: #6b7280;
+}
+
+.productivity-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+#productivityTable {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 950px;
+}
+
+#productivityTable th {
+    background: #111827;
+    color: #ffffff;
+    padding: 12px 10px;
+    text-align: center;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+#productivityTable th:first-child {
+    text-align: left;
+}
+
+#productivityTable td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: center;
+    font-size: 13px;
+}
+
+#productivityTable td:first-child {
+    text-align: left;
+    font-weight: 600;
+}
+
+#productivityTable tbody tr:hover {
+    background: #f9fafb;
+}
+
+#productivityTable tfoot td {
+    font-weight: 700;
+    background: #f3f4f6;
+    border-top: 2px solid #d1d5db;
+}
+
+@media (max-width: 700px) {
+
+    .productivity-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .productivity-section {
+        padding: 15px;
+    }
+
+    .period-btn {
+        padding: 8px 10px;
+    }
+}
 </style>
 </head>
 
@@ -365,6 +537,122 @@ body {
 
     </div>
 
+    <!-- =========================
+     TEAM PRODUCTIVITY
+========================= -->
+
+<div id="productivitySection" class="productivity-section hidden">
+
+    <div class="productivity-header">
+
+        <div>
+            <h2>📊 Team Productivity</h2>
+            <p id="productivityPeriodText">
+                This Week
+            </p>
+        </div>
+
+        <div class="productivity-filters">
+
+            <button
+                type="button"
+                class="period-btn active"
+                data-period="week"
+            >
+                This Week
+            </button>
+
+            <button
+                type="button"
+                class="period-btn"
+                data-period="month"
+            >
+                This Month
+            </button>
+
+            <button
+                type="button"
+                class="period-btn"
+                data-period="custom"
+            >
+                Custom
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="customDateBox"
+        class="custom-date-box hidden"
+    >
+
+        <div>
+            <label>From Date</label>
+            <input
+                type="date"
+                id="productivityFromDate"
+            >
+        </div>
+
+        <div>
+            <label>To Date</label>
+            <input
+                type="date"
+                id="productivityToDate"
+            >
+        </div>
+
+        <button
+            type="button"
+            id="viewCustomProductivity"
+        >
+            View Productivity
+        </button>
+
+    </div>
+
+
+    <div
+        id="productivityLoading"
+        class="productivity-loading"
+    >
+        Loading productivity...
+    </div>
+
+
+    <div class="productivity-table-wrap">
+
+        <table id="productivityTable">
+
+            <thead>
+                <tr>
+                    <th>Employee / Team</th>
+                    <th>Customers</th>
+                    <th>Total Leads</th>
+                    <th>Callback</th>
+                    <th>Follow Up</th>
+                    <th>Login</th>
+                    <th>NI</th>
+                    <th>Pending</th>
+                    <th>Overdue</th>
+                    <th>Login %</th>
+                </tr>
+            </thead>
+
+            <tbody id="productivityTableBody">
+            </tbody>
+
+            <tfoot id="productivityTableFoot">
+            </tfoot>
+
+        </table>
+
+    </div>
+
+</div>
+
 </div>
 
 
@@ -564,7 +852,1042 @@ document
 
 }
 
+/* =========================
+   TEAM PRODUCTIVITY LOGIC
+========================= */
 
+let productivityEmployee = null;
+
+
+/* =========================
+   DATE RANGE
+========================= */
+
+function getProductivityRange(period) {
+
+    const now = new Date();
+
+    let start;
+    let end = new Date();
+
+
+    if (period === "week") {
+
+        start = new Date(now);
+
+        const day =
+            start.getDay();
+
+        const diff =
+            day === 0
+                ? -6
+                : 1 - day;
+
+        start.setDate(
+            start.getDate() + diff
+        );
+
+        start.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+        end = new Date();
+
+    }
+
+
+    else if (period === "month") {
+
+        start = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            1
+        );
+
+        start.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+        end = new Date();
+
+    }
+
+
+    else {
+
+        return null;
+
+    }
+
+
+    return {
+        start,
+        end
+    };
+}
+
+
+/* =========================
+   FETCH ALL LEADS
+   PAGINATION > 1000
+========================= */
+
+async function fetchProductivityLeads(
+    start,
+    end
+) {
+
+    const allLeads = [];
+
+    const pageSize = 1000;
+
+    let from = 0;
+
+
+    while (true) {
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+
+            .from("leads")
+
+            .select(
+                "id, lead_id, customer_name, agent_name, tl_name, manager_name, stage, next_date, next_time, current_status, created_at"
+            )
+
+            .gte(
+                "created_at",
+                start.toISOString()
+            )
+
+            .lte(
+                "created_at",
+                end.toISOString()
+            )
+
+            .order(
+                "id",
+                {
+                    ascending: true
+                }
+            )
+
+            .range(
+                from,
+                from + pageSize - 1
+            );
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        const rows =
+            data || [];
+
+
+        allLeads.push(
+            ...rows
+        );
+
+
+        if (
+            rows.length < pageSize
+        ) {
+            break;
+        }
+
+
+        from += pageSize;
+    }
+
+
+    return allLeads;
+}
+
+
+/* =========================
+   NORMALIZE TEXT
+========================= */
+
+function normalizeProductivityText(
+    value
+) {
+
+    return String(
+        value || ""
+    )
+    .replace(
+        /\s+/g,
+        " "
+    )
+    .trim();
+
+}
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
+
+function escapeProductivityHtml(
+    value
+) {
+
+    return String(
+        value || ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* =========================
+   OVERDUE CHECK
+========================= */
+
+function isProductivityOverdue(
+    lead
+) {
+
+    const stage =
+        normalizeProductivityText(
+            lead.stage
+        ).toLowerCase();
+
+
+    if (
+        stage !== "callback" &&
+        stage !== "follow up"
+    ) {
+        return false;
+    }
+
+
+    if (!lead.next_date) {
+        return false;
+    }
+
+
+    const time =
+        normalizeProductivityText(
+            lead.next_time
+        ) || "23:59:59";
+
+
+    const value =
+        new Date(
+            lead.next_date +
+            "T" +
+            time
+        );
+
+
+    if (
+        Number.isNaN(
+            value.getTime()
+        )
+    ) {
+        return false;
+    }
+
+
+    return (
+        value.getTime() <
+        Date.now()
+    );
+}
+
+
+/* =========================
+   GROUP NAME
+========================= */
+
+function getProductivityGroupName(
+    lead,
+    role
+) {
+
+    if (role === "agent") {
+
+        return (
+            productivityEmployee.name ||
+            "My Productivity"
+        );
+
+    }
+
+
+    if (role === "tl") {
+
+        return (
+            normalizeProductivityText(
+                lead.agent_name
+            ) ||
+            "Unassigned Agent"
+        );
+
+    }
+
+
+    if (role === "manager") {
+
+        return (
+            normalizeProductivityText(
+                lead.tl_name
+            ) ||
+            "Unassigned TL"
+        );
+
+    }
+
+
+    if (role === "admin") {
+
+        return (
+            normalizeProductivityText(
+                lead.manager_name
+            ) ||
+            "Unassigned Manager"
+        );
+
+    }
+
+
+    return "Unknown";
+
+}
+
+
+/* =========================
+   CALCULATE ROW
+========================= */
+
+function calculateProductivityRow(
+    name,
+    leads
+) {
+
+    let callback = 0;
+    let followUp = 0;
+    let login = 0;
+    let ni = 0;
+    let pending = 0;
+    let overdue = 0;
+
+
+    const customers =
+        new Set();
+
+
+    leads.forEach(lead => {
+
+        const customer =
+            normalizeProductivityText(
+                lead.customer_name
+            )
+            .toLowerCase();
+
+
+        if (customer) {
+            customers.add(customer);
+        }
+
+
+        const stage =
+            normalizeProductivityText(
+                lead.stage
+            )
+            .toLowerCase();
+
+
+        if (
+            stage === "callback"
+        ) {
+            callback++;
+            pending++;
+        }
+
+
+        else if (
+            stage === "follow up"
+        ) {
+            followUp++;
+            pending++;
+        }
+
+
+        else if (
+            stage === "login"
+        ) {
+            login++;
+        }
+
+
+        else if (
+            stage === "ni"
+        ) {
+            ni++;
+        }
+
+
+        if (
+            isProductivityOverdue(
+                lead
+            )
+        ) {
+            overdue++;
+        }
+
+    });
+
+
+    const totalLeads =
+        leads.length;
+
+
+    const conversion =
+        totalLeads > 0
+            ? (
+                (
+                    login /
+                    totalLeads
+                ) * 100
+            ).toFixed(1)
+            : "0.0";
+
+
+    return {
+
+        name,
+
+        customers:
+            customers.size,
+
+        totalLeads,
+
+        callback,
+
+        followUp,
+
+        login,
+
+        ni,
+
+        pending,
+
+        overdue,
+
+        conversion
+
+    };
+}
+
+
+/* =========================
+   RENDER TABLE
+========================= */
+
+function renderProductivityTable(
+    leads
+) {
+
+    const role =
+        String(
+            productivityEmployee.role ||
+            ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    const groups =
+        new Map();
+
+
+    leads.forEach(lead => {
+
+        const name =
+            getProductivityGroupName(
+                lead,
+                role
+            );
+
+
+        if (
+            !groups.has(name)
+        ) {
+            groups.set(
+                name,
+                []
+            );
+        }
+
+
+        groups
+            .get(name)
+            .push(lead);
+
+    });
+
+
+    /*
+     * Agent with zero leads should
+     * still see own row.
+     */
+
+    if (
+        role === "agent" &&
+        groups.size === 0
+    ) {
+
+        groups.set(
+            productivityEmployee.name ||
+            "My Productivity",
+            []
+        );
+
+    }
+
+
+    const rows =
+        Array.from(
+            groups.entries()
+        )
+        .map(
+            ([name, groupLeads]) =>
+                calculateProductivityRow(
+                    name,
+                    groupLeads
+                )
+        )
+        .sort(
+            (a, b) =>
+                b.totalLeads -
+                a.totalLeads
+        );
+
+
+    const body =
+        document.getElementById(
+            "productivityTableBody"
+        );
+
+
+    const foot =
+        document.getElementById(
+            "productivityTableFoot"
+        );
+
+
+    body.innerHTML = "";
+
+    foot.innerHTML = "";
+
+
+    if (
+        rows.length === 0
+    ) {
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="10">
+                    No productivity data found for this period.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    rows.forEach(row => {
+
+        body.innerHTML += `
+            <tr>
+                <td>${escapeProductivityHtml(row.name)}</td>
+                <td>${row.customers}</td>
+                <td>${row.totalLeads}</td>
+                <td>${row.callback}</td>
+                <td>${row.followUp}</td>
+                <td>${row.login}</td>
+                <td>${row.ni}</td>
+                <td>${row.pending}</td>
+                <td>${row.overdue}</td>
+                <td>${row.conversion}%</td>
+            </tr>
+        `;
+
+    });
+
+
+    /*
+     * TOTAL
+     */
+
+    const total =
+        calculateProductivityRow(
+            "TEAM TOTAL",
+            leads
+        );
+
+
+    foot.innerHTML = `
+        <tr>
+            <td>TEAM TOTAL</td>
+            <td>${total.customers}</td>
+            <td>${total.totalLeads}</td>
+            <td>${total.callback}</td>
+            <td>${total.followUp}</td>
+            <td>${total.login}</td>
+            <td>${total.ni}</td>
+            <td>${total.pending}</td>
+            <td>${total.overdue}</td>
+            <td>${total.conversion}%</td>
+        </tr>
+    `;
+
+}
+
+
+/* =========================
+   LOAD PRODUCTIVITY
+========================= */
+
+async function loadProductivity(
+    period = "week",
+    customStart = null,
+    customEnd = null
+) {
+
+    const section =
+        document.getElementById(
+            "productivitySection"
+        );
+
+
+    const loading =
+        document.getElementById(
+            "productivityLoading"
+        );
+
+
+    const body =
+        document.getElementById(
+            "productivityTableBody"
+        );
+
+
+    const foot =
+        document.getElementById(
+            "productivityTableFoot"
+        );
+
+
+    section.classList.remove(
+        "hidden"
+    );
+
+
+    loading.classList.remove(
+        "hidden"
+    );
+
+
+    body.innerHTML = "";
+
+    foot.innerHTML = "";
+
+
+    try {
+
+        let range;
+
+
+        if (
+            period === "custom"
+        ) {
+
+            if (
+                !customStart ||
+                !customEnd
+            ) {
+                throw new Error(
+                    "Please select From Date and To Date."
+                );
+            }
+
+
+            const start =
+                new Date(
+                    customStart +
+                    "T00:00:00"
+                );
+
+
+            const end =
+                new Date(
+                    customEnd +
+                    "T23:59:59"
+                );
+
+
+            if (
+                start > end
+            ) {
+                throw new Error(
+                    "From Date cannot be after To Date."
+                );
+            }
+
+
+            range = {
+                start,
+                end
+            };
+
+        }
+
+        else {
+
+            range =
+                getProductivityRange(
+                    period
+                );
+
+        }
+
+
+const allLeads =
+    await fetchProductivityLeads(
+        range.start,
+        range.end
+    );
+
+
+const role =
+    String(
+        productivityEmployee.role || ""
+    )
+    .trim()
+    .toLowerCase();
+
+
+const employeeName =
+    normalizeProductivityText(
+        productivityEmployee.name
+    )
+    .toLowerCase();
+
+
+const leads =
+    allLeads.filter(lead => {
+
+        const agentName =
+            normalizeProductivityText(
+                lead.agent_name
+            )
+            .toLowerCase();
+
+        const tlName =
+            normalizeProductivityText(
+                lead.tl_name
+            )
+            .toLowerCase();
+
+        const managerName =
+            normalizeProductivityText(
+                lead.manager_name
+            )
+            .toLowerCase();
+
+
+        if (role === "agent") {
+            return agentName === employeeName;
+        }
+
+
+        if (
+            role === "tl" ||
+            role === "team leader"
+        ) {
+            return tlName === employeeName;
+        }
+
+
+        if (role === "manager") {
+            return managerName === employeeName;
+        }
+
+
+        if (role === "admin") {
+            return true;
+        }
+
+
+        return false;
+    });
+
+
+renderProductivityTable(
+    leads
+);
+
+
+        const periodText =
+            document.getElementById(
+                "productivityPeriodText"
+            );
+
+
+        if (
+            period === "week"
+        ) {
+
+            periodText.innerText =
+                "This Week";
+
+        }
+
+        else if (
+            period === "month"
+        ) {
+
+            periodText.innerText =
+                "This Month";
+
+        }
+
+        else {
+
+            periodText.innerText =
+                customStart +
+                " to " +
+                customEnd;
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Productivity error:",
+            error
+        );
+
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="10">
+                    ${escapeProductivityHtml(
+                        error.message ||
+                        "Unable to load productivity."
+                    )}
+                </td>
+            </tr>
+        `;
+
+    }
+
+    finally {
+
+        loading.classList.add(
+            "hidden"
+        );
+
+    }
+}
+
+
+/* =========================
+   INIT PRODUCTIVITY
+========================= */
+
+async function initProductivity() {
+
+    const employeeId =
+        sessionStorage.getItem(
+            "employee_id"
+        );
+
+
+    if (!employeeId) {
+        return;
+    }
+
+
+    const {
+        data,
+        error
+    } = await supabaseClient
+
+        .from("employees")
+
+        .select(
+            "employee_id, name, role, active"
+        )
+
+        .eq(
+            "employee_id",
+            employeeId
+        )
+
+        .eq(
+            "active",
+            true
+        )
+
+        .maybeSingle();
+
+
+    if (
+        error ||
+        !data
+    ) {
+
+        console.error(
+            "Productivity employee error:",
+            error
+        );
+
+        return;
+    }
+
+
+    productivityEmployee =
+        data;
+
+
+    document
+        .querySelectorAll(
+            ".period-btn"
+        )
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                async function() {
+
+                    const period =
+                        this.dataset.period;
+
+
+                    document
+                        .querySelectorAll(
+                            ".period-btn"
+                        )
+                        .forEach(btn => {
+
+                            btn.classList.remove(
+                                "active"
+                            );
+
+                        });
+
+
+                    this.classList.add(
+                        "active"
+                    );
+
+
+                    const customBox =
+                        document.getElementById(
+                            "customDateBox"
+                        );
+
+
+                    if (
+                        period === "custom"
+                    ) {
+
+                        customBox.classList.remove(
+                            "hidden"
+                        );
+
+                        return;
+
+                    }
+
+
+                    customBox.classList.add(
+                        "hidden"
+                    );
+
+
+                    await loadProductivity(
+                        period
+                    );
+
+                }
+            );
+
+        });
+
+
+    document
+        .getElementById(
+            "viewCustomProductivity"
+        )
+        .addEventListener(
+            "click",
+            async function() {
+
+                const from =
+                    document.getElementById(
+                        "productivityFromDate"
+                    ).value;
+
+
+                const to =
+                    document.getElementById(
+                        "productivityToDate"
+                    ).value;
+
+
+                await loadProductivity(
+                    "custom",
+                    from,
+                    to
+                );
+
+            }
+        );
+
+
+    await loadProductivity(
+        "week"
+    );
+
+}
 /* =========================
    OPEN PAGE
 ========================= */
@@ -595,7 +1918,9 @@ async function logout() {
    START
 ========================= */
 
-loadDashboard();
+loadDashboard().then(() => {
+    initProductivity();
+});
 
 </script>
 
