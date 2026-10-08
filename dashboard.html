@@ -307,6 +307,123 @@ body {
     border-top: 2px solid #d1d5db;
 }
 
+    /* =========================
+   PRODUCTIVITY CLICK BUTTONS
+========================= */
+
+.productivity-count-btn {
+    border: none;
+    background: #eef2ff;
+    color: #1e40af;
+    min-width: 34px;
+    padding: 6px 9px;
+    border-radius: 7px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.productivity-count-btn:hover {
+    background: #dbeafe;
+    transform: translateY(-1px);
+}
+
+.productivity-count-btn.overdue {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.productivity-count-btn.overdue:hover {
+    background: #fecaca;
+}
+
+
+/* =========================
+   PRODUCTIVITY LEAD DETAILS
+========================= */
+
+.productivity-details {
+    margin-top: 25px;
+    border-top: 2px solid #e5e7eb;
+    padding-top: 20px;
+}
+
+.productivity-details.hidden {
+    display: none;
+}
+
+.productivity-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.productivity-details-header h3 {
+    margin: 0 0 5px;
+    font-size: 18px;
+}
+
+.productivity-details-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+#closeProductivityDetails {
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    color: #374151;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+#closeProductivityDetails:hover {
+    background: #f3f4f6;
+}
+
+.productivity-details-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+#productivityDetailsTable {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 950px;
+}
+
+#productivityDetailsTable th {
+    background: #374151;
+    color: #ffffff;
+    padding: 11px 10px;
+    font-size: 12px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+#productivityDetailsTable td {
+    padding: 11px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 12px;
+    vertical-align: top;
+}
+
+#productivityDetailsTable tbody tr:hover {
+    background: #f9fafb;
+}
+
+@media (max-width: 700px) {
+
+    .productivity-details-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
 @media (max-width: 700px) {
 
     .productivity-header {
@@ -629,7 +746,6 @@ body {
             <thead>
                 <tr>
                     <th>Employee / Team</th>
-                    <th>Customers</th>
                     <th>Total Leads</th>
                     <th>Callback</th>
                     <th>Follow Up</th>
@@ -650,6 +766,60 @@ body {
         </table>
 
     </div>
+
+    <!-- =========================
+     PRODUCTIVITY LEAD DETAILS
+========================= -->
+
+<div id="productivityDetails" class="productivity-details hidden">
+
+    <div class="productivity-details-header">
+
+        <div>
+            <h3 id="productivityDetailsTitle">
+                Lead Details
+            </h3>
+
+            <p id="productivityDetailsCount">
+                0 Leads
+            </p>
+        </div>
+
+        <button
+            type="button"
+            id="closeProductivityDetails"
+        >
+            ✕ Close
+        </button>
+
+    </div>
+
+
+    <div class="productivity-details-table-wrap">
+
+        <table id="productivityDetailsTable">
+
+            <thead>
+                <tr>
+                    <th>Lead ID</th>
+                    <th>Customer Name</th>
+                    <th>Agent</th>
+                    <th>TL</th>
+                    <th>Stage</th>
+                    <th>Next Date</th>
+                    <th>Next Time</th>
+                    <th>Remark</th>
+                </tr>
+            </thead>
+
+            <tbody id="productivityDetailsBody">
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
 
 </div>
 
@@ -857,6 +1027,7 @@ document
 ========================= */
 
 let productivityEmployee = null;
+let currentProductivityLeads = [];
 
 
 /* =========================
@@ -960,7 +1131,7 @@ async function fetchProductivityLeads(
             .from("leads")
 
             .select(
-                "id, lead_id, customer_name, agent_name, tl_name, manager_name, stage, next_date, next_time, current_status, created_at"
+                "id, lead_id, customer_name, agent_name, tl_name, manager_name, stage, next_date, next_time, last_remark, current_status, created_at"
             )
 
             .gte(
@@ -1419,7 +1590,7 @@ function renderProductivityTable(
 
         body.innerHTML = `
             <tr>
-                <td colspan="10">
+                <td colspan="9">
                     No productivity data found for this period.
                 </td>
             </tr>
@@ -1431,20 +1602,103 @@ function renderProductivityTable(
 
     rows.forEach(row => {
 
-        body.innerHTML += `
-            <tr>
-                <td>${escapeProductivityHtml(row.name)}</td>
-                <td>${row.customers}</td>
-                <td>${row.totalLeads}</td>
-                <td>${row.callback}</td>
-                <td>${row.followUp}</td>
-                <td>${row.login}</td>
-                <td>${row.ni}</td>
-                <td>${row.pending}</td>
-                <td>${row.overdue}</td>
-                <td>${row.conversion}%</td>
-            </tr>
-        `;
+body.innerHTML += `
+    <tr>
+
+        <td>
+            ${escapeProductivityHtml(row.name)}
+        </td>
+
+        <td>
+            <button
+                type="button"
+                class="productivity-count-btn"
+                data-group="${escapeProductivityHtml(row.name)}"
+                data-filter="total"
+            >
+                ${row.totalLeads}
+            </button>
+        </td>
+
+        <td>
+            <button
+                type="button"
+                class="productivity-count-btn"
+                data-group="${escapeProductivityHtml(row.name)}"
+                data-filter="callback"
+            >
+                ${row.callback}
+            </button>
+        </td>
+
+        <td>
+            <button
+                type="button"
+                class="productivity-count-btn"
+                data-group="${escapeProductivityHtml(row.name)}"
+                data-filter="followup"
+            >
+                ${row.followUp}
+            </button>
+        </td>
+
+        <td>
+            <button
+                type="button"
+                class="productivity-count-btn"
+                data-group="${escapeProductivityHtml(row.name)}"
+                data-filter="login"
+            >
+                ${row.login}
+            </button>
+        </td>
+
+        <td>
+            <button
+                type="button"
+                class="productivity-count-btn"
+                data-group="${escapeProductivityHtml(row.name)}"
+                data-filter="ni"
+            >
+                ${row.ni}
+            </button>
+        </td>
+
+        <td>
+            <button
+                type="button"
+                class="productivity-count-btn"
+                data-group="${escapeProductivityHtml(row.name)}"
+                data-filter="pending"
+            >
+                ${row.pending}
+            </button>
+        </td>
+
+        <td>
+            <button
+                type="button"
+                class="productivity-count-btn overdue"
+                data-group="${escapeProductivityHtml(row.name)}"
+                data-filter="overdue"
+            >
+                ${row.overdue}
+            </button>
+        </td>
+
+        <td>
+            <button
+                type="button"
+                class="productivity-count-btn"
+                data-group="${escapeProductivityHtml(row.name)}"
+                data-filter="login"
+            >
+                ${row.conversion}%
+            </button>
+        </td>
+
+    </tr>
+`;
 
     });
 
@@ -1460,24 +1714,544 @@ function renderProductivityTable(
         );
 
 
-    foot.innerHTML = `
-        <tr>
-            <td>TEAM TOTAL</td>
-            <td>${total.customers}</td>
-            <td>${total.totalLeads}</td>
-            <td>${total.callback}</td>
-            <td>${total.followUp}</td>
-            <td>${total.login}</td>
-            <td>${total.ni}</td>
-            <td>${total.pending}</td>
-            <td>${total.overdue}</td>
-            <td>${total.conversion}%</td>
-        </tr>
-    `;
+foot.innerHTML = `
+    <tr>
+
+        <td>TEAM TOTAL</td>
+
+        <td>
+            <button
+                type="button"
+                class="productivity-count-btn"
+                data-group="__TEAM_TOTAL__"
+                data-filter="total"
+            >
+                ${total.totalLeads}
+            </button>
+        </td>
+
+        <td>
+            <button
+                type="button"
+                class="productivity-count-btn"
+                data-group="__TEAM_TOTAL__"
+                data-filter="callback"
+            >
+                ${total.callback}
+            </button>
+        </td>
+
+        <td>
+            <button
+                type="button"
+                class="productivity-count-btn"
+                data-group="__TEAM_TOTAL__"
+                data-filter="followup"
+            >
+                ${total.followUp}
+            </button>
+        </td>
+
+        <td>
+            <button
+                type="button"
+                class="productivity-count-btn"
+                data-group="__TEAM_TOTAL__"
+                data-filter="login"
+            >
+                ${total.login}
+            </button>
+        </td>
+
+        <td>
+            <button
+                type="button"
+                class="productivity-count-btn"
+                data-group="__TEAM_TOTAL__"
+                data-filter="ni"
+            >
+                ${total.ni}
+            </button>
+        </td>
+
+        <td>
+            <button
+                type="button"
+                class="productivity-count-btn"
+                data-group="__TEAM_TOTAL__"
+                data-filter="pending"
+            >
+                ${total.pending}
+            </button>
+        </td>
+
+        <td>
+            <button
+                type="button"
+                class="productivity-count-btn overdue"
+                data-group="__TEAM_TOTAL__"
+                data-filter="overdue"
+            >
+                ${total.overdue}
+            </button>
+        </td>
+
+        <td>
+            <button
+                type="button"
+                class="productivity-count-btn"
+                data-group="__TEAM_TOTAL__"
+                data-filter="login"
+            >
+                ${total.conversion}%
+            </button>
+        </td>
+
+    </tr>
+`;
+
+}
+
+/* =========================
+   PRODUCTIVITY LEAD DETAILS
+========================= */
+
+function getProductivityDetailLeads(
+    group,
+    filter
+) {
+
+    const role =
+        String(
+            productivityEmployee?.role || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    let leads =
+        currentProductivityLeads;
+
+
+    /*
+     * INDIVIDUAL GROUP
+     */
+
+    if (
+        group !== "__TEAM_TOTAL__"
+    ) {
+
+        const groupKey =
+            normalizeProductivityText(
+                group
+            )
+            .toLowerCase();
+
+
+        leads =
+            leads.filter(lead => {
+
+                const leadGroup =
+                    normalizeProductivityText(
+                        getProductivityGroupName(
+                            lead,
+                            role
+                        )
+                    )
+                    .toLowerCase();
+
+
+                return (
+                    leadGroup === groupKey
+                );
+
+            });
+
+    }
+
+
+    /*
+     * FILTER
+     */
+
+    if (
+        filter === "total"
+    ) {
+
+        return leads;
+
+    }
+
+
+    if (
+        filter === "callback"
+    ) {
+
+        return leads.filter(lead =>
+
+            normalizeProductivityText(
+                lead.stage
+            )
+            .toLowerCase() ===
+            "callback"
+
+        );
+
+    }
+
+
+    if (
+        filter === "followup"
+    ) {
+
+        return leads.filter(lead =>
+
+            normalizeProductivityText(
+                lead.stage
+            )
+            .toLowerCase() ===
+            "follow up"
+
+        );
+
+    }
+
+
+    if (
+        filter === "login"
+    ) {
+
+        return leads.filter(lead =>
+
+            normalizeProductivityText(
+                lead.stage
+            )
+            .toLowerCase() ===
+            "login"
+
+        );
+
+    }
+
+
+    if (
+        filter === "ni"
+    ) {
+
+        return leads.filter(lead =>
+
+            normalizeProductivityText(
+                lead.stage
+            )
+            .toLowerCase() ===
+            "ni"
+
+        );
+
+    }
+
+
+    if (
+        filter === "pending"
+    ) {
+
+        return leads.filter(lead => {
+
+            const stage =
+                normalizeProductivityText(
+                    lead.stage
+                )
+                .toLowerCase();
+
+
+            return (
+                stage === "callback" ||
+                stage === "follow up"
+            );
+
+        });
+
+    }
+
+
+    if (
+        filter === "overdue"
+    ) {
+
+        return leads.filter(
+            lead =>
+                isProductivityOverdue(
+                    lead
+                )
+        );
+
+    }
+
+
+    return leads;
+}
+
+
+/* =========================
+   DETAIL TITLE
+========================= */
+
+function getProductivityFilterTitle(
+    filter
+) {
+
+    const titles = {
+
+        total:
+            "Total Leads",
+
+        callback:
+            "Callback Leads",
+
+        followup:
+            "Follow Up Leads",
+
+        login:
+            "Login Leads",
+
+        ni:
+            "NI Leads",
+
+        pending:
+            "Pending Leads",
+
+        overdue:
+            "Overdue Leads"
+
+    };
+
+
+    return (
+        titles[filter] ||
+        "Lead Details"
+    );
+}
+
+
+/* =========================
+   SHOW LEAD DETAILS
+========================= */
+
+function showProductivityDetails(
+    group,
+    filter
+) {
+
+    const details =
+        document.getElementById(
+            "productivityDetails"
+        );
+
+
+    const title =
+        document.getElementById(
+            "productivityDetailsTitle"
+        );
+
+
+    const count =
+        document.getElementById(
+            "productivityDetailsCount"
+        );
+
+
+    const body =
+        document.getElementById(
+            "productivityDetailsBody"
+        );
+
+
+    const leads =
+        getProductivityDetailLeads(
+            group,
+            filter
+        );
+
+
+    const groupTitle =
+        group === "__TEAM_TOTAL__"
+            ? "TEAM TOTAL"
+            : group;
+
+
+    title.innerText =
+        getProductivityFilterTitle(
+            filter
+        ) +
+        " - " +
+        groupTitle;
+
+
+    count.innerText =
+        leads.length +
+        (
+            leads.length === 1
+                ? " Lead"
+                : " Leads"
+        );
+
+
+    body.innerHTML = "";
+
+
+    if (
+        leads.length === 0
+    ) {
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="8">
+                    No leads found.
+                </td>
+            </tr>
+        `;
+
+    }
+
+    else {
+
+        leads.forEach(lead => {
+
+            body.innerHTML += `
+                <tr>
+
+                    <td>
+                        ${escapeProductivityHtml(
+                            lead.lead_id || "-"
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeProductivityHtml(
+                            lead.customer_name || "-"
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeProductivityHtml(
+                            lead.agent_name || "-"
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeProductivityHtml(
+                            lead.tl_name || "-"
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeProductivityHtml(
+                            lead.stage || "-"
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeProductivityHtml(
+                            lead.next_date || "-"
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeProductivityHtml(
+                            lead.next_time || "-"
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeProductivityHtml(
+                            lead.last_remark || "-"
+                        )}
+                    </td>
+
+                </tr>
+            `;
+
+        });
+
+    }
+
+
+    details.classList.remove(
+        "hidden"
+    );
+
+
+    details.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
 
 }
 
 
+/* =========================
+   CLICK HANDLER
+========================= */
+
+document
+    .getElementById(
+        "productivityTable"
+    )
+    .addEventListener(
+        "click",
+        function(event) {
+
+            const button =
+                event.target.closest(
+                    ".productivity-count-btn"
+                );
+
+
+            if (!button) {
+                return;
+            }
+
+
+            const group =
+                button.dataset.group;
+
+
+            const filter =
+                button.dataset.filter;
+
+
+            showProductivityDetails(
+                group,
+                filter
+            );
+
+        }
+    );
+
+
+/* =========================
+   CLOSE DETAILS
+========================= */
+
+document
+    .getElementById(
+        "closeProductivityDetails"
+    )
+    .addEventListener(
+        "click",
+        function() {
+
+            document
+                .getElementById(
+                    "productivityDetails"
+                )
+                .classList.add(
+                    "hidden"
+                );
+
+        }
+    );
+    
 /* =========================
    LOAD PRODUCTIVITY
 ========================= */
@@ -1656,6 +2430,7 @@ const leads =
         return false;
     });
 
+currentProductivityLeads = leads;
 
 renderProductivityTable(
     leads
@@ -1707,7 +2482,7 @@ renderProductivityTable(
 
         body.innerHTML = `
             <tr>
-                <td colspan="10">
+                <td colspan="9">
                     ${escapeProductivityHtml(
                         error.message ||
                         "Unable to load productivity."
