@@ -303,15 +303,50 @@ async function loadLeads() {
            LOAD LEADS
         ========================= */
 
-        const {
-            data,
-            error
-        } = await supabaseClient
-            .from("leads")
-            .select("*")
-            .order("created_at", {
-                ascending: false
-            });
+let leadsQuery =
+    supabaseClient
+        .from("leads")
+        .select("*");
+
+
+if (employeeRole === "agent") {
+
+    leadsQuery =
+        leadsQuery.eq(
+            "agent_name",
+            employeeName
+        );
+
+}
+
+else if (employeeRole === "tl") {
+
+    leadsQuery =
+        leadsQuery.eq(
+            "tl_name",
+            employeeName
+        );
+
+}
+
+else if (employeeRole === "manager") {
+
+    leadsQuery =
+        leadsQuery.eq(
+            "manager_name",
+            employeeName
+        );
+
+}
+
+
+const {
+    data,
+    error
+} = await leadsQuery
+    .order("created_at", {
+        ascending: false
+    });
 
 
         if (error) {
