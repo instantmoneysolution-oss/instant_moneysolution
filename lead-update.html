@@ -431,6 +431,27 @@ button:disabled {
                     >
 
                 </div>
+                
+                <!-- MONTHLY SALARY -->
+
+                <div
+                    class="field"
+                    id="salaryField"
+                    style="display:none;"
+                >
+
+                    <label>Monthly Salary</label>
+
+                    <input
+                        type="number"
+                        id="monthlySalary"
+                        placeholder="Enter monthly salary"
+                        min="0"
+                        step="1"
+                        inputmode="numeric"
+                    >
+
+                </div>
 
 
                 <!-- REMARK -->
@@ -873,6 +894,11 @@ async function loadLead() {
     ).value =
         lead.next_time || "";
 
+    document.getElementById(
+        "monthlySalary"
+    ).value =
+        lead.monthly_salary || "";
+
 
     document.getElementById(
         "lastRemark"
@@ -921,6 +947,12 @@ function updateStageFields() {
         );
 
 
+    const salaryField =
+        document.getElementById(
+            "salaryField"
+        );
+
+
     if (
         stage === "Callback" ||
         stage === "Follow Up"
@@ -948,8 +980,19 @@ function updateStageFields() {
             "nextTime"
         ).value = "";
     }
-}
 
+
+    if (stage === "Follow Up") {
+
+        salaryField.style.display =
+            "";
+
+    } else {
+
+        salaryField.style.display =
+            "none";
+    }
+}
 
 document.getElementById(
     "stage"
@@ -1063,6 +1106,9 @@ async function updateLead() {
     const nextTime =
         document.getElementById("nextTime").value;
 
+    const monthlySalary =
+        document.getElementById("monthlySalary").value;
+
     const lastRemark =
         document.getElementById("lastRemark").value.trim();
 
@@ -1098,6 +1144,25 @@ async function updateLead() {
             false
         );
         return;
+    }
+
+    if (stage === "Follow Up") {
+
+        if (!monthlySalary) {
+            showMessage(
+                "Monthly Salary is required for Follow Up.",
+                false
+            );
+            return;
+        }
+
+        if (Number(monthlySalary) <= 0) {
+            showMessage(
+                "Please enter a valid Monthly Salary.",
+                false
+            );
+            return;
+        }
     }
 
     if (!validateDateTime(stage, nextDate, nextTime)) {
@@ -1140,6 +1205,11 @@ async function updateLead() {
                 )
                     ? nextTime
                     : null,
+
+            monthly_salary:
+                stage === "Follow Up"
+                    ? Number(monthlySalary)
+                    : (currentLead.monthly_salary ?? null),
 
             last_remark: lastRemark,
 
