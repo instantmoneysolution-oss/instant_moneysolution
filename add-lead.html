@@ -242,6 +242,18 @@ button:disabled {
                 <input type="time" id="nextTime">
             </div>
 
+            <div class="field" id="salaryField" style="display:none;">
+                <label>Monthly Salary</label>
+                <input
+                    type="number"
+                    id="monthlySalary"
+                    placeholder="Enter monthly salary"
+                    min="0"
+                    step="1"
+                    inputmode="numeric"
+                >
+            </div>
+            
             <div class="field full">
                 <label>Last Remark</label>
                 <textarea id="lastRemark" placeholder="Enter remark"></textarea>
@@ -591,34 +603,49 @@ document.getElementById("agent").addEventListener("change", function() {
 });
 
     function updateStageFields() {
-    const stage = document.getElementById("stage").value;
 
-    const nextDateField =
-        document.getElementById("nextDate").closest(".field");
+        const stage =
+            document.getElementById("stage").value;
 
-    const nextTimeField =
-        document.getElementById("nextTime").closest(".field");
+        const nextDateField =
+            document.getElementById("nextDate").closest(".field");
 
-    if (stage === "Callback" || stage === "Follow Up") {
+        const nextTimeField =
+            document.getElementById("nextTime").closest(".field");
 
-        nextDateField.style.display = "";
-        nextTimeField.style.display = "";
+        const salaryField =
+            document.getElementById("salaryField");
 
-    } else if (stage === "Login" || stage === "NI") {
 
-        nextDateField.style.display = "none";
-        nextTimeField.style.display = "none";
+        if (stage === "Callback" || stage === "Follow Up") {
 
-        document.getElementById("nextDate").value = "";
-        document.getElementById("nextTime").value = "";
+            nextDateField.style.display = "";
+            nextTimeField.style.display = "";
 
-    } else {
+        } else if (stage === "Login" || stage === "NI") {
 
-        nextDateField.style.display = "";
-        nextTimeField.style.display = "";
+            nextDateField.style.display = "none";
+            nextTimeField.style.display = "none";
+
+            document.getElementById("nextDate").value = "";
+            document.getElementById("nextTime").value = "";
+
+        } else {
+
+            nextDateField.style.display = "";
+            nextTimeField.style.display = "";
+        }
+
+
+        if (stage === "Follow Up") {
+
+            salaryField.style.display = "";
+
+        } else {
+
+            salaryField.style.display = "none";
+        }
     }
-}
-
 document.getElementById("stage").addEventListener(
     "change",
     updateStageFields
@@ -702,6 +729,9 @@ const loanType =
     const nextTime =
         document.getElementById("nextTime").value;
 
+    const monthlySalary =
+        document.getElementById("monthlySalary").value;
+    
     const lastRemark =
         document.getElementById("lastRemark").value.trim();
 
@@ -763,6 +793,26 @@ if ((stage === "Callback" || stage === "Follow Up") && !nextTime) {
     showMessage("Please select Next Time.", false);
     return;
 }
+
+if (stage === "Follow Up") {
+
+    if (!monthlySalary) {
+        showMessage(
+            "Monthly Salary is required for Follow Up.",
+            false
+        );
+        return;
+    }
+
+    if (Number(monthlySalary) <= 0) {
+        showMessage(
+            "Please enter a valid Monthly Salary.",
+            false
+        );
+        return;
+    }
+}
+    
 /* PAST DATE / TIME VALIDATION */
 
 if (stage === "Callback" || stage === "Follow Up") {
@@ -823,6 +873,10 @@ stage: stage,
 next_date: (stage === "Callback" || stage === "Follow Up") ? nextDate : null,
 
 next_time: (stage === "Callback" || stage === "Follow Up") ? nextTime : null,
+
+monthly_salary: stage === "Follow Up"
+    ? Number(monthlySalary)
+    : null,    
 
 last_remark: lastRemark,
 
