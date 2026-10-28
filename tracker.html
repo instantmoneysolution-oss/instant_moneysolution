@@ -187,6 +187,13 @@ tr:hover td {
             <option value="">All Stages</option>
         </select>
 
+        <select id="salaryFilter" onchange="filterLeads()">
+            <option value="">All Salaries</option>
+            <option value="50000">₹50,000+</option>
+            <option value="100000">₹1,00,000+</option>
+            <option value="150000">₹1,50,000+</option>
+        </select>
+
         <button onclick="loadLeads()">Refresh</button>
 
     </div>
@@ -214,6 +221,7 @@ tr:hover td {
                         <th>Manager</th>
                         <th>Process</th>
                         <th>Stage</th>
+                        <th>Monthly Salary</th>
                         <th>Next Date</th>
                         <th>Next Time</th>
                         <th>Last Remark</th>
@@ -225,7 +233,7 @@ tr:hover td {
 
                 <tbody id="leadTable">
                     <tr>
-                        <td colspan="17" class="loading">
+                        <td colspan="18" class="loading">
                             Loading leads...
                         </td>
                     </tr>
@@ -271,7 +279,7 @@ async function loadLeads() {
 
     table.innerHTML = `
         <tr>
-            <td colspan="17" class="loading">
+            <td colspan="18" class="loading">
                 Loading leads...
             </td>
         </tr>
@@ -355,7 +363,7 @@ const {
 
             table.innerHTML = `
                 <tr>
-                    <td colspan="17" class="message">
+                    <td colspan="18" class="message">
                         Error loading leads:
                         ${escapeHtml(error.message)}
                     </td>
@@ -497,7 +505,7 @@ const {
 
         table.innerHTML = `
             <tr>
-                <td colspan="17" class="message">
+                <td colspan="18" class="message">
                     Something went wrong while loading leads.
                 </td>
             </tr>
@@ -593,6 +601,9 @@ function filterLeads() {
     const stage =
         document.getElementById("stageFilter").value;
 
+    const salary =
+        document.getElementById("salaryFilter").value;
+
 
     filteredLeads = allLeads.filter(lead => {
 
@@ -625,13 +636,19 @@ function filterLeads() {
             !stage ||
             lead.stage === stage;
 
+        const salaryMatch =
+            !salary ||
+            Number(lead.monthly_salary || 0) >=
+            Number(salary);
+
 
         return (
             searchMatch &&
             agentMatch &&
             tlMatch &&
             statusMatch &&
-            stageMatch
+            stageMatch &&
+            salaryMatch
         );
 
     });
@@ -659,7 +676,7 @@ function renderLeads() {
 
         table.innerHTML = `
             <tr>
-                <td colspan="17" class="message">
+                <td colspan="18" class="message">
                     No leads found
                 </td>
             </tr>
@@ -715,6 +732,14 @@ function renderLeads() {
 
             <td>
                 ${escapeHtml(lead.stage)}
+            </td>
+
+            <td>
+                ${
+                    lead.monthly_salary
+                        ? "₹" + Number(lead.monthly_salary).toLocaleString("en-IN")
+                        : "-"
+                }
             </td>
 
             <td>
