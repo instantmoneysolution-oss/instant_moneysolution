@@ -109,9 +109,10 @@
             <p class="help">Only Meta-approved templates will be allowed for the actual bulk send.</p>
             <div class="form-row">
               <label for="template">Template</label>
-              <select id="template">
-                <option value="ims_bulk_interest_stop_v1">IMS Bulk Interest / Stop · English · Awaiting Meta approval</option>
+              <select id="template" disabled>
+                <option value="">Checking templates with secure CRM backend...</option>
               </select>
+              <p id="templateStatus" class="muted" role="status" aria-live="polite">Connecting to WhatsApp Admin backend...</p>
             </div>
             <div class="notice">
               <strong>Message flow:</strong> Customer replies <b>INTERESTED</b> or <b>STOP</b>. After INTERESTED we ask <b>CHAT</b> or <b>CALL</b>. Reply handling is not connected yet.
@@ -154,7 +155,7 @@
             </label>
             <button type="button" class="btn btn-primary" id="sendBtn" disabled title="Sending backend is not configured">Send Campaign (Not Yet Enabled)</button>
           </div>
-          <p class="muted" style="margin-top:12px">No messages can be sent from this page yet. Next steps: RLS security, verified Admin backend, approved template check, consent/opt-out filtering, sending queue, Meta webhook, and CRM reply routing.</p>
+          <p class="muted" style="margin-top:12px">No messages can be sent from this page yet. Database protection and Admin backend are connected; server-side consent/opt-out filtering, sending queue, Meta webhook, and CRM reply routing are still required.</p>
         </section>
       </section>
 
@@ -180,25 +181,72 @@
     }
     function clearError() { byId('error').classList.add('hide'); }
 
+    // All WhatsApp data access must go through a server-verified Admin function.
+    // The server verifies the logged-in user's JWT and their CRM Admin role.
+    async function adminRequest(action) {
+      const { data, error } = await supabaseClient.functions.invoke(
+        'ims-whatsapp-admin', { body: { action } }
+      );
+      if (error) {
+        const status = error.context?.status;
+        if (status === 401) throw new Error('Your login has expired. Please log in again.');
+        if (status === 403) throw new Error('Admin access is required for this page.');
+        throw new Error('WhatsApp Admin backend unavailable: ' + (error.message || 'Request failed'));
+      }
+      if (!data || data.success !== true || data.admin !== true) {
+        throw new Error(data?.error || 'Admin authorization could not be verified.');
+      }
+      return data;
+    }
+
+    async function loadTemplates() {
+      const select = byId('template');
+      const status = byId('templateStatus');
+      select.disabled = true;
+      select.replaceChildren(new Option('Loading available templates...', ''));
+      try {
+        const data = await adminRequest('templates');
+        if (!Array.isArray(data.templates)) throw new Error('Invalid template list returned by backend.');
+        select.replaceChildren();
+        const ready = data.templates.filter(t => t.active === true);
+        if (ready.length) {
+          select.add(new Option('— Select an enabled template —', ''));
+          ready.forEach(t => select.add(new Option(
+            `${t.display_name || t.template_name} · ${t.language_code || 'en'}`,
+            t.template_name
+          )));
+          select.disabled = false;
+          status.textContent = `${ready.length} template(s) enabled in CRM. Meta Active status must still be checked before any sending is enabled.`;
+        } else {
+          select.add(new Option('No enabled templates — Meta approval pending', ''));
+          select.disabled = true;
+          const registered = data.templates.map(t => t.template_name).join(', ');
+          status.textContent = registered
+            ? `Registered: ${registered}. Sending remains disabled until Meta approval is confirmed and the database entry is activated.`
+            : 'No templates have been registered yet.';
+        }
+      } catch (error) {
+        select.replaceChildren(new Option('Unable to load templates', ''));
+        status.textContent = 'Template loading failed. Reload the page or contact your CRM administrator.';
+        showError(error.message || 'Unable to load WhatsApp templates.');
+      }
+    }
+
     async function verifyAdmin() {
       try {
         if (typeof supabaseClient === 'undefined') throw new Error('Supabase configuration not loaded.');
         const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
         if (userError || !user) { location.replace('login.html'); return; }
-        const employeeId = sessionStorage.getItem('employee_id');
-        if (!employeeId) { location.replace('login.html'); return; }
-        const { data: employee, error: employeeError } = await supabaseClient
-          .from('employees').select('employee_id,name,role,active')
-          .eq('employee_id', employeeId).eq('active', true).maybeSingle();
-        if (employeeError || !employee || String(employee.role || '').trim().toLowerCase() !== 'admin') {
-          location.replace('dashboard.html'); return;
-        }
-        byId('adminName').textContent = employee.name || 'Admin';
+        // Do not trust sessionStorage employee_id for WhatsApp authorization.
+        await adminRequest('status');
+        byId('adminName').textContent = 'Admin';
         byId('loading').classList.add('hide');
         byId('app').classList.remove('hide');
+        await loadTemplates();
       } catch (error) {
         byId('loading').classList.add('hide');
-        showError('Unable to verify Admin session: ' + (error.message || 'Unknown error'));
+        byId('app').classList.add('hide');
+        showError('Unable to verify WhatsApp Admin access: ' + (error.message || 'Unknown error'));
       }
     }
 
