@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WhatsApp Campaign | Instant Money Solutions</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    :root { --dark:#111827; --muted:#6b7280; --line:#e5e7eb; --green:#047857; --bg:#f5f7fb; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--dark); font-family:Arial,Helvetica,sans-serif; }
+    header { background:var(--dark); color:white; padding:18px 24px; display:flex; gap:18px; align-items:center; justify-content:space-between; }
+    header h1 { margin:0 0 5px; font-size:22px; }
+    header p { margin:0; opacity:.72; font-size:13px; }
+    .head-actions { display:flex; gap:9px; align-items:center; }
+    .btn { cursor:pointer; border-radius:8px; border:1px solid var(--line); padding:10px 14px; background:#fff; color:var(--dark); font-size:14px; font-weight:600; }
+    .btn:hover:not(:disabled) { background:#f3f4f6; }
+    .btn:disabled { cursor:not-allowed; opacity:.52; }
+    .btn-primary { background:var(--green); border-color:var(--green); color:#fff; }
+    .btn-primary:hover:not(:disabled) { background:#065f46; }
+    .wrapper { max-width:1230px; margin:27px auto; padding:0 18px 40px; }
+    .hide { display:none !important; }
+    .loading { text-align:center; padding:70px 12px; color:var(--muted); }
+    .headline { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:14px; margin-bottom:18px; }
+    .headline h2 { margin:0 0 4px; font-size:24px; }
+    .headline p { margin:0; color:var(--muted); font-size:14px; }
+    .pill { display:inline-block; padding:7px 10px; font-size:12px; border-radius:99px; background:#fef3c7; color:#92400e; font-weight:700; }
+    .tabs { display:flex; gap:9px; border-bottom:1px solid var(--line); margin-bottom:20px; overflow:auto; }
+    .tab { border:0; background:transparent; border-bottom:3px solid transparent; padding:13px 17px; font-weight:700; color:#64748b; cursor:pointer; white-space:nowrap; }
+    .tab.active { color:var(--green); border-color:var(--green); }
+    .card { background:#fff; border:1px solid var(--line); border-radius:13px; padding:21px; margin-bottom:18px; box-shadow:0 2px 9px #11182709; }
+    .card h3 { margin:0 0 8px; font-size:18px; }
+    .help { margin:0 0 15px; color:var(--muted); font-size:13px; line-height:1.55; }
+    .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+    .form-row { display:flex; flex-direction:column; gap:7px; margin:14px 0; }
+    .form-row label { font-size:13px; font-weight:700; }
+    input[type=text], input[type=file], select { width:100%; padding:11px; border:1px solid #d1d5db; border-radius:8px; font:inherit; background:#fff; min-width:0; }
+    input[type=file] { cursor:pointer; }
+    .mapping { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+    .notice { border-left:4px solid #d97706; background:#fffbeb; padding:13px 15px; font-size:13px; line-height:1.6; border-radius:5px; }
+    .muted { color:var(--muted); font-size:13px; line-height:1.55; }
+    .stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:15px 0; }
+    .stat { padding:14px; background:#f8fafc; border:1px solid var(--line); border-radius:9px; }
+    .stat strong { font-size:23px; display:block; margin-bottom:5px; }
+    .stat span { font-size:12px; color:var(--muted); }
+    .table-wrap { width:100%; overflow-x:auto; }
+    table { border-collapse:collapse; width:100%; min-width:650px; font-size:13px; }
+    th { background:#f8fafc; text-align:left; padding:12px; border-bottom:1px solid var(--line); }
+    td { padding:12px; border-bottom:1px solid var(--line); }
+    .actions { margin-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:15px; }
+    .check { display:flex; gap:10px; align-items:flex-start; font-size:13px; line-height:1.45; max-width:750px; }
+    .check input { margin-top:3px; }
+    .empty { padding:45px 20px; text-align:center; color:var(--muted); border:1px dashed #cbd5e1; border-radius:11px; background:#fff; }
+    #error { background:#fef2f2; color:#991b1b; border:1px solid #fecaca; border-radius:8px; padding:13px; margin-bottom:15px; }
+    @media(max-width:780px) { .grid,.mapping {grid-template-columns:1fr;} .stats {grid-template-columns:repeat(2,minmax(0,1fr));} header {align-items:flex-start; flex-direction:column;} }
+    @media(max-width:430px) { .stats {grid-template-columns:1fr 1fr;} .wrapper {padding:0 11px 30px;} .card {padding:15px;} }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Instant Money Solutions</h1>
+      <p>CRM · WhatsApp Campaigns</p>
+    </div>
+    <div class="head-actions">
+      <span id="adminName" style="font-size:13px"></span>
+      <button type="button" class="btn" id="backBtn">← Dashboard</button>
+    </div>
+  </header>
+
+  <div class="wrapper">
+    <div id="loading" class="loading">Checking Admin access...</div>
+    <div id="error" class="hide" role="alert"></div>
+
+    <main id="app" class="hide">
+      <div class="headline">
+        <div>
+          <h2>WhatsApp Campaign Manager</h2>
+          <p>Upload a customer sheet, map columns, review valid numbers and select a Meta template.</p>
+        </div>
+        <span class="pill">Setup Mode — Sending Disabled</span>
+      </div>
+
+      <nav class="tabs" aria-label="WhatsApp sections">
+        <button class="tab active" data-tab="campaign" type="button">📣 WhatsApp Campaign</button>
+        <button class="tab" data-tab="chat" type="button">💬 Chat Leads</button>
+        <button class="tab" data-tab="call" type="button">📞 Call Leads</button>
+      </nav>
+
+      <section id="campaignTab">
+        <div class="grid">
+          <section class="card">
+            <h3>1. Upload Customers</h3>
+            <p class="help">Excel (.xlsx / .xls) or CSV. Suggested sheet headers: Lead ID, Customer Name, Mobile. The file is parsed in this browser only; it is not yet uploaded to Supabase.</p>
+            <div class="form-row">
+              <label for="campaignName">Campaign name</label>
+              <input id="campaignName" type="text" maxlength="120" placeholder="e.g. PL Interested Campaign - November">
+            </div>
+            <div class="form-row">
+              <label for="sheetFile">Customer Excel / CSV</label>
+              <input id="sheetFile" type="file" accept=".xlsx,.xls,.csv">
+            </div>
+            <p class="muted" id="fileInfo">No sheet selected.</p>
+          </section>
+          <section class="card">
+            <h3>2. Select Message Template</h3>
+            <p class="help">Only Meta-approved templates will be allowed for the actual bulk send.</p>
+            <div class="form-row">
+              <label for="template">Template</label>
+              <select id="template">
+                <option value="ims_bulk_interest_stop_v1">IMS Bulk Interest / Stop · English · Awaiting Meta approval</option>
+              </select>
+            </div>
+            <div class="notice">
+              <strong>Message flow:</strong> Customer replies <b>INTERESTED</b> or <b>STOP</b>. After INTERESTED we ask <b>CHAT</b> or <b>CALL</b>. Reply handling is not connected yet.
+            </div>
+            <p class="muted" style="margin-top:13px">Template variable <b>{{1}}</b> will use the mapped Customer Name column.</p>
+          </section>
+        </div>
+
+        <section id="mapCard" class="card hide">
+          <h3>3. Map Sheet Columns</h3>
+          <p class="help">Check which Excel columns contain each value. Mobile and Customer Name are required for this template.</p>
+          <div class="mapping">
+            <div class="form-row"><label for="leadColumn">Lead ID (optional)</label><select id="leadColumn"></select></div>
+            <div class="form-row"><label for="nameColumn">Customer Name</label><select id="nameColumn"></select></div>
+            <div class="form-row"><label for="phoneColumn">Mobile</label><select id="phoneColumn"></select></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h3>4. Customer Preview</h3>
+          <p class="help">10-digit Indian mobile numbers are standardized to 91XXXXXXXXXX. Duplicate and invalid numbers are excluded from the local preview. Actual consent and global STOP checks must still happen on the server before sending.</p>
+          <div class="stats">
+            <div class="stat"><strong id="totalRows">0</strong><span>Sheet rows</span></div>
+            <div class="stat"><strong id="validRows">0</strong><span>Unique valid mobiles</span></div>
+            <div class="stat"><strong id="duplicateRows">0</strong><span>Duplicates</span></div>
+            <div class="stat"><strong id="invalidRows">0</strong><span>Invalid / missing data</span></div>
+          </div>
+          <div id="previewEmpty" class="empty">Upload an Excel or CSV sheet to see the customer preview.</div>
+          <div id="previewTableWrap" class="table-wrap hide">
+            <table>
+              <thead><tr><th>#</th><th>Lead ID</th><th>Customer Name</th><th>Mobile (normalized)</th></tr></thead>
+              <tbody id="previewBody"></tbody>
+            </table>
+            <p id="previewNote" class="muted"></p>
+          </div>
+          <div class="actions">
+            <label class="check">
+              <input id="optInConfirm" type="checkbox">
+              <span>I confirm that the selected customers gave valid WhatsApp marketing opt-in, and I understand STOP/opted-out numbers must be excluded.</span>
+            </label>
+            <button type="button" class="btn btn-primary" id="sendBtn" disabled title="Sending backend is not configured">Send Campaign (Not Yet Enabled)</button>
+          </div>
+          <p class="muted" style="margin-top:12px">No messages can be sent from this page yet. Next steps: RLS security, verified Admin backend, approved template check, consent/opt-out filtering, sending queue, Meta webhook, and CRM reply routing.</p>
+        </section>
+      </section>
+
+      <section id="chatTab" class="hide">
+        <div class="empty"><h3>Chat Leads</h3><p>Customer conversations will appear here after WhatsApp inbound webhook and secure chat API are connected.</p></div>
+      </section>
+      <section id="callTab" class="hide">
+        <div class="empty"><h3>Call Leads</h3><p>CALL requests will appear here and link to the CRM's existing Callback date/time workflow after integration.</p></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    'use strict';
+    const byId = (id) => document.getElementById(id);
+    let sheetHeaders = [];
+    let sheetRows = [];
+
+    function showError(message) {
+      const element = byId('error');
+      element.textContent = message;
+      element.classList.remove('hide');
+    }
+    function clearError() { byId('error').classList.add('hide'); }
+
+    async function verifyAdmin() {
+      try {
+        if (typeof supabaseClient === 'undefined') throw new Error('Supabase configuration not loaded.');
+        const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+        if (userError || !user) { location.replace('login.html'); return; }
+        const employeeId = sessionStorage.getItem('employee_id');
+        if (!employeeId) { location.replace('login.html'); return; }
+        const { data: employee, error: employeeError } = await supabaseClient
+          .from('employees').select('employee_id,name,role,active')
+          .eq('employee_id', employeeId).eq('active', true).maybeSingle();
+        if (employeeError || !employee || String(employee.role || '').trim().toLowerCase() !== 'admin') {
+          location.replace('dashboard.html'); return;
+        }
+        byId('adminName').textContent = employee.name || 'Admin';
+        byId('loading').classList.add('hide');
+        byId('app').classList.remove('hide');
+      } catch (error) {
+        byId('loading').classList.add('hide');
+        showError('Unable to verify Admin session: ' + (error.message || 'Unknown error'));
+      }
+    }
+
+    function setTab(tabName) {
+      document.querySelectorAll('.tab').forEach(button => {
+        const active = button.dataset.tab === tabName;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-selected', String(active));
+      });
+      byId('campaignTab').classList.toggle('hide', tabName !== 'campaign');
+      byId('chatTab').classList.toggle('hide', tabName !== 'chat');
+      byId('callTab').classList.toggle('hide', tabName !== 'call');
+    }
+
+    function normalizeMobile(value) {
+      let digits = String(value ?? '').replace(/\D/g, '');
+      if (digits.length === 11 && digits.startsWith('0')) digits = digits.slice(1);
+      if (digits.length === 10 && /^[6-9]/.test(digits)) return '91' + digits;
+      if (digits.length === 12 && /^91[6-9]\d{9}$/.test(digits)) return digits;
+      return null;
+    }
+
+    function findColumn(candidates) {
+      const normalize = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const headers = sheetHeaders.map(normalize);
+      for (const candidate of candidates) {
+        const index = headers.indexOf(normalize(candidate));
+        if (index >= 0) return index;
+      }
+      return -1;
+    }
+
+    function fillSelect(id, selected) {
+      const select = byId(id);
+      select.replaceChildren();
+      select.add(new Option('— Select Column —', ''));
+      sheetHeaders.forEach((header, index) => select.add(new Option(header || ('Column ' + (index + 1)), String(index))));
+      if (selected >= 0) select.value = String(selected);
+    }
+
+    function updatePreview() {
+      const lead = byId('leadColumn').value;
+      const name = byId('nameColumn').value;
+      const phone = byId('phoneColumn').value;
+      const hasMappings = name !== '' && phone !== '' && name !== phone;
+      let invalid = 0, duplicates = 0;
+      const seen = new Set();
+      const valid = [];
+      if (hasMappings) {
+        for (const row of sheetRows) {
+          const mobile = normalizeMobile(row[Number(phone)]);
+          const customerName = String(row[Number(name)] ?? '').trim();
+          const leadId = lead === '' ? '' : String(row[Number(lead)] ?? '').trim();
+          if (!mobile || !customerName) { invalid++; continue; }
+          if (seen.has(mobile)) { duplicates++; continue; }
+          seen.add(mobile);
+          valid.push({mobile, customerName, leadId});
+        }
+      }
+      byId('totalRows').textContent = sheetRows.length.toLocaleString('en-IN');
+      byId('validRows').textContent = valid.length.toLocaleString('en-IN');
+      byId('duplicateRows').textContent = duplicates.toLocaleString('en-IN');
+      byId('invalidRows').textContent = invalid.toLocaleString('en-IN');
+      byId('previewEmpty').classList.toggle('hide', hasMappings && valid.length > 0);
+      byId('previewTableWrap').classList.toggle('hide', !(hasMappings && valid.length > 0));
+      if (!hasMappings) byId('previewEmpty').textContent = 'Select distinct Customer Name and Mobile columns above.';
+      else if (!valid.length) byId('previewEmpty').textContent = 'No valid customers found. Check the sheet headers and mobile numbers.';
+      const body = byId('previewBody');
+      body.replaceChildren();
+      valid.slice(0, 100).forEach((item, i) => {
+        const row = document.createElement('tr');
+        [String(i + 1), item.leadId || '—', item.customerName, item.mobile]
+          .forEach(value => { const cell = document.createElement('td'); cell.textContent = value; row.appendChild(cell); });
+        body.appendChild(row);
+      });
+      byId('previewNote').textContent = 'Showing first ' + Math.min(valid.length, 100) + ' of ' + valid.length.toLocaleString('en-IN') + ' unique valid customers. This is a local preview only.';
+    }
+
+    async function handleSheet(event) {
+      clearError();
+      sheetHeaders = [];
+      sheetRows = [];
+      byId('mapCard').classList.add('hide');
+      byId('fileInfo').textContent = 'No sheet selected.';
+      updatePreview();
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const extension = file.name.split('.').pop().toLowerCase();
+      if (!['csv', 'xlsx', 'xls'].includes(extension)) { showError('Please select a CSV, XLSX or XLS file.'); return; }
+      try {
+        if (typeof XLSX === 'undefined') throw new Error('Excel parser did not load. Check your internet connection.');
+        const buffer = await file.arrayBuffer();
+        const workbook = XLSX.read(buffer, {type:'array'});
+        if (!workbook.SheetNames.length) throw new Error('The file has no sheets.');
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(sheet, {header:1, raw:false, defval:'', blankrows:false});
+        if (rows.length < 2) throw new Error('Add a header row and at least one customer row.');
+        sheetHeaders = rows[0].map(v => String(v ?? '').trim());
+        sheetRows = rows.slice(1).filter(row => row.some(value => String(value ?? '').trim() !== ''));
+        if (!sheetHeaders.length) throw new Error('Header row is missing.');
+        fillSelect('leadColumn', findColumn(['lead id','leadid','id']));
+        fillSelect('nameColumn', findColumn(['customer name','customername','name','full name']));
+        fillSelect('phoneColumn', findColumn(['mobile','mobile no','mobile number','phone','phone number','contact number','whatsapp number']));
+        byId('fileInfo').textContent = file.name + ' · ' + sheetRows.length.toLocaleString('en-IN') + ' non-empty rows · First worksheet used';
+        byId('mapCard').classList.remove('hide');
+        updatePreview();
+      } catch (error) {
+        showError('Could not read the sheet: ' + (error.message || 'Unknown error'));
+      }
+    }
+
+    byId('backBtn').addEventListener('click', () => { location.href = 'dashboard.html'; });
+    document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => setTab(tab.dataset.tab)));
+    byId('sheetFile').addEventListener('change', handleSheet);
+    ['leadColumn','nameColumn','phoneColumn'].forEach(id => byId(id).addEventListener('change', updatePreview));
+    verifyAdmin();
+  </script>
+</body>
+</html>
