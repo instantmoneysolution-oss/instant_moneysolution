@@ -153,8 +153,12 @@
               <input id="optInConfirm" type="checkbox">
               <span>I confirm that the selected customers gave valid WhatsApp marketing opt-in, and I understand STOP/opted-out numbers must be excluded.</span>
             </label>
-            <button type="button" class="btn btn-primary" id="sendBtn" disabled title="Sending backend is not configured">Send Campaign (Not Yet Enabled)</button>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+              <button type="button" class="btn" id="saveDraftBtn" disabled>Save Draft (No Sending)</button>
+              <button type="button" class="btn btn-primary" id="sendBtn" disabled title="Sending backend is not configured">Send Campaign (Not Yet Enabled)</button>
+            </div>
           </div>
+          <p id="draftProgress" class="muted" role="status" aria-live="polite" style="margin-top:12px">A draft stores the customer list only. WhatsApp marketing consent is not verified yet; no messages will be sent.</p>
           <p class="muted" style="margin-top:12px">No messages can be sent from this page yet. Database protection and Admin backend are connected; server-side consent/opt-out filtering, sending queue, Meta webhook, and CRM reply routing are still required.</p>
         </section>
       </section>
@@ -173,6 +177,11 @@
     const byId = (id) => document.getElementById(id);
     let sheetHeaders = [];
     let sheetRows = [];
+    let validPreviewRecipients = [];
+    let sheetRevision = 0;
+    let mappingRevision = 0;
+    let currentDraft = null;
+    let savingDraft = false;
 
     function showError(message) {
       const element = byId('error');
@@ -183,20 +192,29 @@
 
     // All WhatsApp data access must go through a server-verified Admin function.
     // The server verifies the logged-in user's JWT and their CRM Admin role.
-    async function adminRequest(action) {
+    async function adminRequest(action, payload = {}) {
       const { data, error } = await supabaseClient.functions.invoke(
-        'ims-whatsapp-admin', { body: { action } }
+        'ims-whatsapp-admin', { body: { action, ...payload } }
       );
       if (error) {
         const status = error.context?.status;
+        let serverError = null;
+        try { serverError = await error.context?.json?.(); } catch (_) { /* Generic HTTP error */ }
         if (status === 401) throw new Error('Your login has expired. Please log in again.');
         if (status === 403) throw new Error('Admin access is required for this page.');
-        throw new Error('WhatsApp Admin backend unavailable: ' + (error.message || 'Request failed'));
+        throw new Error(serverError?.error || ('WhatsApp Admin backend error: ' + (error.message || 'Request failed')));
       }
       if (!data || data.success !== true || data.admin !== true) {
         throw new Error(data?.error || 'Admin authorization could not be verified.');
       }
       return data;
+    }
+
+    function updateDraftButton() {
+      const name = byId('campaignName').value.trim();
+      const validName = name.length >= 3 && name.length <= 120;
+      byId('saveDraftBtn').disabled = savingDraft || !validName ||
+        validPreviewRecipients.length === 0 || !byId('template').value;
     }
 
     async function loadTemplates() {
@@ -209,22 +227,22 @@
         if (!Array.isArray(data.templates)) throw new Error('Invalid template list returned by backend.');
         select.replaceChildren();
         const ready = data.templates.filter(t => t.active === true);
-        if (ready.length) {
-          select.add(new Option('— Select an enabled template —', ''));
-          ready.forEach(t => select.add(new Option(
-            `${t.display_name || t.template_name} · ${t.language_code || 'en'}`,
+        const pending = data.templates.filter(t => t.active !== true);
+        if (data.templates.length) {
+          select.add(new Option('— Select a registered template —', ''));
+          data.templates.forEach(t => select.add(new Option(
+            `${t.display_name || t.template_name} · ${t.language_code || 'en'} · ${t.active ? 'CRM enabled' : 'Pending Meta approval (draft only)'}`,
             t.template_name
           )));
           select.disabled = false;
-          status.textContent = `${ready.length} template(s) enabled in CRM. Meta Active status must still be checked before any sending is enabled.`;
+          if (data.templates.length === 1) select.value = data.templates[0].template_name;
+          status.textContent = `${ready.length} enabled, ${pending.length} pending template(s). Pending templates can be used for a draft only; sending stays disabled.`;
         } else {
-          select.add(new Option('No enabled templates — Meta approval pending', ''));
+          select.add(new Option('No registered templates', ''));
           select.disabled = true;
-          const registered = data.templates.map(t => t.template_name).join(', ');
-          status.textContent = registered
-            ? `Registered: ${registered}. Sending remains disabled until Meta approval is confirmed and the database entry is activated.`
-            : 'No templates have been registered yet.';
+          status.textContent = 'No templates have been registered yet.';
         }
+        updateDraftButton();
       } catch (error) {
         select.replaceChildren(new Option('Unable to load templates', ''));
         status.textContent = 'Template loading failed. Reload the page or contact your CRM administrator.';
@@ -306,6 +324,8 @@
           valid.push({mobile, customerName, leadId});
         }
       }
+      validPreviewRecipients = valid;
+      updateDraftButton();
       byId('totalRows').textContent = sheetRows.length.toLocaleString('en-IN');
       byId('validRows').textContent = valid.length.toLocaleString('en-IN');
       byId('duplicateRows').textContent = duplicates.toLocaleString('en-IN');
@@ -329,6 +349,9 @@
       clearError();
       sheetHeaders = [];
       sheetRows = [];
+      sheetRevision++;
+      currentDraft = null;
+      byId('draftProgress').textContent = 'Draft not saved. Select a sheet to continue.';
       byId('mapCard').classList.add('hide');
       byId('fileInfo').textContent = 'No sheet selected.';
       updatePreview();
@@ -358,10 +381,70 @@
       }
     }
 
+    async function saveDraft() {
+      if (savingDraft) return;
+      clearError();
+      updatePreview();
+      updateDraftButton();
+      const campaignName = byId('campaignName').value.trim();
+      const templateName = byId('template').value;
+      const fileName = byId('sheetFile').files?.[0]?.name || '';
+      if (campaignName.length < 3 || campaignName.length > 120 || !templateName || validPreviewRecipients.length === 0) {
+        showError('Enter a 3–120 character campaign name, select a template and upload valid customers.');
+        return;
+      }
+      if (!confirm(`Save ${validPreviewRecipients.length.toLocaleString('en-IN')} customers as a DRAFT? No WhatsApp messages will be sent.`)) return;
+
+      const signature = JSON.stringify([campaignName, templateName, fileName, sheetRevision, mappingRevision]);
+      savingDraft = true;
+      updateDraftButton();
+      const progress = byId('draftProgress');
+      try {
+        if (!currentDraft || currentDraft.signature !== signature) {
+          const created = await adminRequest('create_draft', {
+            campaign_name: campaignName,
+            template_name: templateName,
+            source_file_name: fileName
+          });
+          if (!created.campaign?.id) throw new Error('Backend did not return a campaign ID.');
+          currentDraft = { id: created.campaign.id, signature };
+        }
+        let saved = 0;
+        let skippedStop = 0;
+        const size = 250;
+        for (let i = 0; i < validPreviewRecipients.length; i += size) {
+          const batch = validPreviewRecipients.slice(i, i + size).map(item => ({
+            lead_id: item.leadId,
+            customer_name: item.customerName,
+            mobile: item.mobile
+          }));
+          progress.textContent = `Saving batch ${Math.floor(i / size) + 1} of ${Math.ceil(validPreviewRecipients.length / size)}. Please keep this page open. No messages are being sent.`;
+          const result = await adminRequest('append_recipients', {
+            campaign_id: currentDraft.id,
+            recipients: batch
+          });
+          saved = result.total_recipients ?? saved;
+          skippedStop += result.blocked_by_stop || 0;
+        }
+        progress.textContent = `Draft saved! Campaign ID: ${currentDraft.id}. Saved recipients: ${saved.toLocaleString('en-IN')}. STOP-blocked in this save: ${skippedStop}. Sending remains disabled; consent must be verified before sending.`;
+      } catch (error) {
+        showError('Draft save interrupted: ' + (error.message || 'Unknown error'));
+        progress.textContent = currentDraft
+          ? `Draft ID: ${currentDraft.id}. Some batches may already be saved. Click Save Draft again to safely retry; no messages were sent.`
+          : 'Draft was not created. No messages were sent.';
+      } finally {
+        savingDraft = false;
+        updateDraftButton();
+      }
+    }
+
     byId('backBtn').addEventListener('click', () => { location.href = 'dashboard.html'; });
     document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => setTab(tab.dataset.tab)));
     byId('sheetFile').addEventListener('change', handleSheet);
-    ['leadColumn','nameColumn','phoneColumn'].forEach(id => byId(id).addEventListener('change', updatePreview));
+    ['leadColumn','nameColumn','phoneColumn'].forEach(id => byId(id).addEventListener('change', () => { mappingRevision++; updatePreview(); }));
+    byId('campaignName').addEventListener('input', updateDraftButton);
+    byId('template').addEventListener('change', updateDraftButton);
+    byId('saveDraftBtn').addEventListener('click', saveDraft);
     verifyAdmin();
   </script>
 </body>
