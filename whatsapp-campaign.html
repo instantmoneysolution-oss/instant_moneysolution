@@ -41,6 +41,13 @@
     .mapping { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
     .notice { border-left:4px solid #d97706; background:#fffbeb; padding:13px 15px; font-size:13px; line-height:1.6; border-radius:5px; }
     .muted { color:var(--muted); font-size:13px; line-height:1.55; }
+    .report-toolbar { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; margin:14px 0; }
+    .report-toolbar .form-row { flex:1 1 360px; margin:0; }
+    .report-status { min-height:20px; margin:12px 0; }
+    .report-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:15px 0; }
+    .report-stat { background:#f8fafc; border:1px solid var(--line); padding:15px; border-radius:10px; }
+    .report-stat strong { display:block; font-size:25px; margin-bottom:5px; font-variant-numeric:tabular-nums; }
+    .report-stat span { color:var(--muted); font-size:12px; }
     .stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:15px 0; }
     .stat { padding:14px; background:#f8fafc; border:1px solid var(--line); border-radius:9px; }
     .stat strong { font-size:23px; display:block; margin-bottom:5px; }
@@ -54,7 +61,7 @@
     .check input { margin-top:3px; }
     .empty { padding:45px 20px; text-align:center; color:var(--muted); border:1px dashed #cbd5e1; border-radius:11px; background:#fff; }
     #error { background:#fef2f2; color:#991b1b; border:1px solid #fecaca; border-radius:8px; padding:13px; margin-bottom:15px; }
-    @media(max-width:780px) { .grid,.mapping {grid-template-columns:1fr;} .stats {grid-template-columns:repeat(2,minmax(0,1fr));} header {align-items:flex-start; flex-direction:column;} }
+    @media(max-width:780px) { .grid,.mapping {grid-template-columns:1fr;} .stats,.report-stats {grid-template-columns:repeat(2,minmax(0,1fr));} header {align-items:flex-start; flex-direction:column;} }
     @media(max-width:430px) { .stats {grid-template-columns:1fr 1fr;} .wrapper {padding:0 11px 30px;} .card {padding:15px;} }
   </style>
 </head>
@@ -90,6 +97,34 @@
       </nav>
 
       <section id="campaignTab">
+        <section class="card" aria-labelledby="reportTitle">
+          <h3 id="reportTitle">Campaign Delivery Report</h3>
+          <p class="help">Read-only report from saved campaign records. No messages are sent by viewing or refreshing this report.</p>
+          <div class="report-toolbar">
+            <div class="form-row">
+              <label for="reportCampaign">Select saved campaign</label>
+              <select id="reportCampaign" disabled><option value="">Loading campaigns...</option></select>
+            </div>
+            <button class="btn" id="refreshReportBtn" type="button" disabled>Refresh Report</button>
+          </div>
+          <p id="reportStatus" class="muted report-status" role="status" aria-live="polite">Loading saved campaigns...</p>
+          <div id="reportBody" class="hide">
+            <div class="report-stats">
+              <div class="report-stat"><strong id="reportTotal">—</strong><span>Total Contacts</span></div>
+              <div class="report-stat"><strong id="reportPending">—</strong><span>Pending</span></div>
+              <div class="report-stat"><strong id="reportAccepted">—</strong><span>Meta Accepted (not delivered)</span></div>
+              <div class="report-stat"><strong id="reportDelivered">—</strong><span>Delivered</span></div>
+              <div class="report-stat"><strong id="reportRead">—</strong><span>Read</span></div>
+              <div class="report-stat"><strong id="reportFailed">—</strong><span>Failed</span></div>
+              <div class="report-stat"><strong id="reportOther">—</strong><span>Other Status</span></div>
+              <div class="report-stat"><strong id="reportReview">—</strong><span>Send Attempts for Review</span></div>
+            </div>
+            <p class="muted" id="reportDetail"></p>
+          </div>
+          <div class="notice" style="margin-top:13px">
+            <b>Sending is LOCKED.</b> These figures come from current database records; Meta accepting a message does not confirm delivery. Delivery events are not applied by this read-only report. Status reconciler and live delivery verification are still pending.
+          </div>
+        </section>
         <div class="grid">
           <section class="card">
             <h3>1. Upload Customers</h3>
@@ -182,6 +217,7 @@
     let mappingRevision = 0;
     let currentDraft = null;
     let savingDraft = false;
+    let reportRequestId = 0;
 
     function showError(message) {
       const element = byId('error');
@@ -208,6 +244,100 @@
         throw new Error(data?.error || 'Admin authorization could not be verified.');
       }
       return data;
+    }
+
+    function reportNumber(value) {
+      const number = Number(value);
+      return Number.isFinite(number) && number >= 0 ? number.toLocaleString('en-IN') : '—';
+    }
+
+    function resetReport() {
+      byId('reportBody').classList.add('hide');
+      ['reportTotal', 'reportPending', 'reportAccepted', 'reportDelivered',
+        'reportRead', 'reportFailed', 'reportOther', 'reportReview']
+        .forEach(id => { byId(id).textContent = '—'; });
+      byId('reportDetail').textContent = '';
+    }
+
+    async function loadCampaignReport() {
+      const campaignId = byId('reportCampaign').value;
+      const requestId = ++reportRequestId;
+      resetReport();
+      if (!campaignId) {
+        byId('reportStatus').textContent = 'Select a saved campaign to view the report.';
+        byId('refreshReportBtn').disabled = true;
+        return;
+      }
+      byId('refreshReportBtn').disabled = true;
+      byId('reportStatus').textContent = 'Loading report...';
+      try {
+        const data = await adminRequest('campaign_report', {campaign_id: campaignId});
+        // Ignore stale responses if the selected campaign was changed meanwhile.
+        if (requestId !== reportRequestId || byId('reportCampaign').value !== campaignId) return;
+        if (data.report_read_only !== true || data.sending_enabled !== false || !data.delivery) {
+          throw new Error('Backend report safety check failed.');
+        }
+        const d = data.delivery;
+        const fields = {
+          reportTotal: data.total_contacts,
+          reportPending: d.pending,
+          reportAccepted: d.meta_accepted,
+          reportDelivered: d.delivered,
+          reportRead: d.read,
+          reportFailed: d.failed,
+          reportOther: d.other,
+          reportReview: data.send_attempts_requiring_review
+        };
+        for (const [id, value] of Object.entries(fields)) byId(id).textContent = reportNumber(value);
+        const campaign = data.campaign || {};
+        byId('reportDetail').textContent =
+          `Campaign: ${campaign.campaign_name || '—'} · Status: ${campaign.status || '—'} · ` +
+          `Last checked: ${new Date().toLocaleString('en-IN')}`;
+        byId('reportStatus').textContent = 'Report loaded (read-only). Sending remains disabled.';
+        byId('reportBody').classList.remove('hide');
+      } catch (error) {
+        if (requestId !== reportRequestId) return;
+        resetReport();
+        byId('reportStatus').textContent = 'Report failed: ' + (error.message || 'Unknown error');
+      } finally {
+        if (requestId === reportRequestId) {
+          byId('refreshReportBtn').disabled = !byId('reportCampaign').value;
+        }
+      }
+    }
+
+    async function loadCampaigns(preferredId = null) {
+      const select = byId('reportCampaign');
+      const previous = preferredId || select.value;
+      select.disabled = true;
+      byId('refreshReportBtn').disabled = true;
+      byId('reportStatus').textContent = 'Loading saved campaigns...';
+      try {
+        const data = await adminRequest('list_campaigns');
+        if (data.sending_enabled !== false || !Array.isArray(data.campaigns)) {
+          throw new Error('Invalid campaign list returned by backend.');
+        }
+        select.replaceChildren();
+        if (!data.campaigns.length) {
+          select.add(new Option('No campaigns saved yet', ''));
+          resetReport();
+          byId('reportStatus').textContent = 'Save a draft campaign to start tracking its report.';
+          return;
+        }
+        data.campaigns.forEach(item => {
+          if (!item || !item.id) return;
+          const name = String(item.campaign_name || 'Unnamed campaign');
+          const state = String(item.status || 'unknown');
+          select.add(new Option(`${name} · ${state}`, String(item.id)));
+        });
+        if (previous && data.campaigns.some(c => c.id === previous)) select.value = previous;
+        select.disabled = false;
+        await loadCampaignReport();
+      } catch (error) {
+        select.replaceChildren(new Option('Unable to load saved campaigns', ''));
+        resetReport();
+        byId('reportStatus').textContent = 'Report unavailable: ' + (error.message || 'Unknown error');
+      }
     }
 
     function updateDraftButton() {
@@ -261,6 +391,7 @@
         byId('loading').classList.add('hide');
         byId('app').classList.remove('hide');
         await loadTemplates();
+        await loadCampaigns();
       } catch (error) {
         byId('loading').classList.add('hide');
         byId('app').classList.add('hide');
@@ -427,6 +558,9 @@
           skippedStop += result.blocked_by_stop || 0;
         }
         progress.textContent = `Draft saved! Campaign ID: ${currentDraft.id}. Saved recipients: ${saved.toLocaleString('en-IN')}. STOP-blocked in this save: ${skippedStop}. Sending remains disabled; consent must be verified before sending.`;
+        // Report failure must never be mistaken for a failed draft save.
+        try { await loadCampaigns(currentDraft.id); }
+        catch (reportError) { console.warn('Report refresh failed after draft save', reportError); }
       } catch (error) {
         showError('Draft save interrupted: ' + (error.message || 'Unknown error'));
         progress.textContent = currentDraft
@@ -439,6 +573,8 @@
     }
 
     byId('backBtn').addEventListener('click', () => { location.href = 'dashboard.html'; });
+    byId('reportCampaign').addEventListener('change', loadCampaignReport);
+    byId('refreshReportBtn').addEventListener('click', loadCampaignReport);
     document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => setTab(tab.dataset.tab)));
     byId('sheetFile').addEventListener('change', handleSheet);
     ['leadColumn','nameColumn','phoneColumn'].forEach(id => byId(id).addEventListener('change', () => { mappingRevision++; updatePreview(); }));
