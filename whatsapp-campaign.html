@@ -60,6 +60,32 @@
     .check { display:flex; gap:10px; align-items:flex-start; font-size:13px; line-height:1.45; max-width:750px; }
     .check input { margin-top:3px; }
     .empty { padding:45px 20px; text-align:center; color:var(--muted); border:1px dashed #cbd5e1; border-radius:11px; background:#fff; }
+
+    /* Step 63 — Admin-only read-only inbox; content is rendered with textContent. */
+    .inbox-toolbar { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:15px; }
+    .inbox-toolbar h3 { margin:0 0 4px; }
+    .inbox-layout { display:grid; grid-template-columns:minmax(245px,340px) minmax(0,1fr); gap:15px; min-height:360px; }
+    .inbox-sidebar, .inbox-thread { border:1px solid var(--line); border-radius:10px; background:#fff; min-width:0; overflow:hidden; }
+    .inbox-sidebar { display:flex; flex-direction:column; }
+    .inbox-list { overflow:auto; max-height:540px; flex:1; }
+    .inbox-item { display:block; width:100%; border:0; border-bottom:1px solid var(--line); background:#fff; text-align:left; cursor:pointer; padding:13px 14px; font:inherit; }
+    .inbox-item:hover, .inbox-item.active { background:#ecfdf5; }
+    .inbox-item.active { box-shadow:inset 3px 0 var(--green); }
+    .inbox-item strong { display:block; font-size:14px; overflow-wrap:anywhere; }
+    .inbox-item small { display:block; margin-top:5px; color:var(--muted); font-size:12px; overflow-wrap:anywhere; }
+    .inbox-pages { display:flex; gap:10px; align-items:center; justify-content:space-between; padding:10px; border-top:1px solid var(--line); }
+    .inbox-pages button { padding:7px 10px; }
+    .inbox-thread-head { padding:13px 16px; border-bottom:1px solid var(--line); background:#f8fafc; }
+    .inbox-thread-head strong, .inbox-thread-head small { display:block; overflow-wrap:anywhere; }
+    .inbox-thread-head small { color:var(--muted); margin-top:5px; }
+    .inbox-thread-body { max-height:490px; min-height:260px; overflow-y:auto; padding:15px; display:flex; flex-direction:column; gap:10px; background:#fbfcfd; }
+    .inbox-bubble { max-width:85%; align-self:flex-start; border-radius:11px; padding:10px 12px; background:#fff; border:1px solid var(--line); overflow-wrap:anywhere; white-space:pre-wrap; font-size:13px; line-height:1.5; }
+    .inbox-bubble.outbound { align-self:flex-end; background:#dcfce7; border-color:#bbf7d0; }
+    .inbox-bubble small { display:block; font-size:11px; color:#64748b; margin-top:6px; }
+    .inbox-blank { padding:24px 15px; color:var(--muted); font-size:13px; text-align:center; }
+    .inbox-readonly { padding:11px 15px; border-top:1px solid var(--line); color:#92400e; background:#fffbeb; font-size:12px; }
+    @media(max-width:780px) { .inbox-layout { grid-template-columns:1fr; } .inbox-list { max-height:265px; } .inbox-thread-body { min-height:200px; max-height:340px; } }
+
     #error { background:#fef2f2; color:#991b1b; border:1px solid #fecaca; border-radius:8px; padding:13px; margin-bottom:15px; }
     @media(max-width:780px) { .grid,.mapping {grid-template-columns:1fr;} .stats,.report-stats {grid-template-columns:repeat(2,minmax(0,1fr));} header {align-items:flex-start; flex-direction:column;} }
     @media(max-width:430px) { .stats {grid-template-columns:1fr 1fr;} .wrapper {padding:0 11px 30px;} .card {padding:15px;} }
@@ -199,10 +225,52 @@
       </section>
 
       <section id="chatTab" class="hide">
-        <div class="empty"><h3>Chat Leads</h3><p>Customer conversations will appear here after WhatsApp inbound webhook and secure chat API are connected.</p></div>
+        <section class="card" aria-label="Chat Leads Inbox">
+          <div class="inbox-toolbar">
+            <div><h3>Chat Leads Inbox</h3><p class="help" style="margin:0">WhatsApp CHAT replies and customer messages. Only confirmed campaign conversations appear here.</p></div>
+            <button class="btn" id="chatRefreshBtn" type="button">Refresh Inbox</button>
+          </div>
+          <p id="chatStatus" class="muted" role="status" aria-live="polite">Open this tab to load conversations.</p>
+          <div class="inbox-layout">
+            <div class="inbox-sidebar">
+              <div id="chatList" class="inbox-list"><div class="inbox-blank">No conversations loaded.</div></div>
+              <div class="inbox-pages">
+                <button class="btn" id="chatPrevBtn" type="button" disabled>Previous</button>
+                <span class="muted" id="chatPage">Page 1</span>
+                <button class="btn" id="chatNextBtn" type="button" disabled>Next</button>
+              </div>
+            </div>
+            <div class="inbox-thread">
+              <div id="chatThreadHead" class="inbox-thread-head"><strong>Select a conversation</strong><small>Read-only customer message history</small></div>
+              <div id="chatThreadBody" class="inbox-thread-body"><div class="inbox-blank">Select a customer from the left to view messages.</div></div>
+              <div class="inbox-readonly">Read-only mode · Admin replies and Callback scheduling are not enabled yet. No messages are sent from this inbox.</div>
+            </div>
+          </div>
+        </section>
       </section>
       <section id="callTab" class="hide">
-        <div class="empty"><h3>Call Leads</h3><p>CALL requests will appear here and link to the CRM's existing Callback date/time workflow after integration.</p></div>
+        <section class="card" aria-label="Call Leads Inbox">
+          <div class="inbox-toolbar">
+            <div><h3>Call Leads Inbox</h3><p class="help" style="margin:0">Customer CALL requests. Callback scheduling will be connected later.</p></div>
+            <button class="btn" id="callRefreshBtn" type="button">Refresh Inbox</button>
+          </div>
+          <p id="callStatus" class="muted" role="status" aria-live="polite">Open this tab to load conversations.</p>
+          <div class="inbox-layout">
+            <div class="inbox-sidebar">
+              <div id="callList" class="inbox-list"><div class="inbox-blank">No conversations loaded.</div></div>
+              <div class="inbox-pages">
+                <button class="btn" id="callPrevBtn" type="button" disabled>Previous</button>
+                <span class="muted" id="callPage">Page 1</span>
+                <button class="btn" id="callNextBtn" type="button" disabled>Next</button>
+              </div>
+            </div>
+            <div class="inbox-thread">
+              <div id="callThreadHead" class="inbox-thread-head"><strong>Select a conversation</strong><small>Read-only customer message history</small></div>
+              <div id="callThreadBody" class="inbox-thread-body"><div class="inbox-blank">Select a customer from the left to view messages.</div></div>
+              <div class="inbox-readonly">Read-only mode · Admin replies and Callback scheduling are not enabled yet. No messages are sent from this inbox.</div>
+            </div>
+          </div>
+        </section>
       </section>
     </main>
   </div>
@@ -218,6 +286,11 @@
     let currentDraft = null;
     let savingDraft = false;
     let reportRequestId = 0;
+    const inboxState = {
+      chat: { page:0, listSeq:0, threadSeq:0, selectedId:null, hasMore:false },
+      call: { page:0, listSeq:0, threadSeq:0, selectedId:null, hasMore:false }
+    };
+
 
     function showError(message) {
       const element = byId('error');
@@ -399,6 +472,142 @@
       }
     }
 
+    // Step 63: Inbox API uses the existing server-verified Admin JWT.
+    // Every visible customer-supplied string is assigned via textContent, never innerHTML.
+    function inboxElement(tag, className, text) {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text !== undefined && text !== null) el.textContent = String(text);
+      return el;
+    }
+    function inboxDate(value) {
+      const date = new Date(value || '');
+      return Number.isNaN(date.getTime()) ? 'No date' : date.toLocaleString('en-IN');
+    }
+    function inboxName(item) {
+      return String(item?.customer_name || item?.lead_id || 'Unknown customer');
+    }
+    function inboxSetThreadPlaceholder(type, message) {
+      const head = byId(type + 'ThreadHead');
+      head.replaceChildren(inboxElement('strong','', 'Select a conversation'),
+        inboxElement('small','', 'Read-only customer message history'));
+      byId(type + 'ThreadBody').replaceChildren(inboxElement('div', 'inbox-blank', message));
+    }
+    function renderInboxList(type, rows) {
+      const state = inboxState[type];
+      const list = byId(type + 'List');
+      list.replaceChildren();
+      if (!rows.length) {
+        list.append(inboxElement('div', 'inbox-blank', 'No ' + (type === 'chat' ? 'CHAT' : 'CALL') +
+          ' conversations found yet. Campaign reply routing is still disabled.'));
+        return;
+      }
+      rows.forEach(item => {
+        const button = inboxElement('button','inbox-item');
+        button.type = 'button';
+        button.classList.toggle('active', item.id === state.selectedId);
+        const title = inboxElement('strong','', inboxName(item));
+        const meta = inboxElement('small','',
+          (item.lead_id ? 'Lead ' + item.lead_id + ' · ' : '') +
+          inboxDate(item.last_message_at) +
+          (Number(item.unread_count || 0) > 0 ? ' · ' + item.unread_count + ' unread (unverified)' : ''));
+        const preview = inboxElement('small','', String(item.last_message || 'No message preview').slice(0,150));
+        button.append(title, meta, preview);
+        button.addEventListener('click', () => openInboxThread(type, item.id, rows));
+        list.append(button);
+      });
+    }
+    async function openInboxThread(type, conversationId, rows = null) {
+      if (!['chat','call'].includes(type)) return;
+      const state = inboxState[type];
+      state.selectedId = conversationId;
+      const requestId = ++state.threadSeq;
+      if (rows) renderInboxList(type, rows);
+      byId(type + 'ThreadBody').replaceChildren(inboxElement('div','inbox-blank','Loading conversation...'));
+      try {
+        const result = await adminRequest('inbox_thread', {
+          inbox_type: type, conversation_id: conversationId
+        });
+        if (requestId !== state.threadSeq || state.selectedId !== conversationId) return;
+        if (result.read_only !== true || result.sending_enabled !== false ||
+          !result.conversation || !Array.isArray(result.messages)) {
+          throw new Error('Unexpected inbox response.');
+        }
+        const conversation = result.conversation;
+        const head = byId(type + 'ThreadHead');
+        head.replaceChildren(
+          inboxElement('strong','',inboxName(conversation)),
+          inboxElement('small','',
+            'Lead ID: ' + (conversation.lead_id || 'Not linked') +
+            ' · Mobile: ' + (conversation.mobile || 'Not available') +
+            ' · Last active: ' + inboxDate(conversation.last_message_at))
+        );
+        const thread = byId(type + 'ThreadBody');
+        thread.replaceChildren();
+        if (!result.messages.length) {
+          thread.append(inboxElement('div','inbox-blank','No messages in this conversation.'));
+        } else {
+          result.messages.forEach(msg => {
+            const direction = msg.direction === 'outbound' ? 'outbound' : 'inbound';
+            const bubble = inboxElement('div','inbox-bubble ' + direction);
+            const bodyText = msg.message_body == null ?
+              '[' + String(msg.message_type || 'message') + ']' : String(msg.message_body);
+            bubble.append(inboxElement('div','',bodyText),
+              inboxElement('small','',
+                (direction === 'outbound' ? 'Business · ' : 'Customer · ') +
+                inboxDate(msg.received_at || msg.sent_at || msg.created_at) +
+                (msg.delivery_status ? ' · ' + msg.delivery_status : '')));
+            thread.append(bubble);
+          });
+          if (result.has_older_messages) thread.prepend(
+            inboxElement('div','inbox-blank','Showing latest 100 messages. Older messages not loaded.'));
+          thread.scrollTop = thread.scrollHeight;
+        }
+      } catch (error) {
+        if (requestId !== state.threadSeq) return;
+        byId(type + 'ThreadBody').replaceChildren(
+          inboxElement('div','inbox-blank','Unable to load messages: ' + (error.message || 'Unknown error')));
+      }
+    }
+    async function loadInbox(type, nextPage = null) {
+      if (!['chat','call'].includes(type)) return;
+      const state = inboxState[type];
+      if (nextPage !== null) state.page = nextPage;
+      const requestId = ++state.listSeq;
+      ++state.threadSeq;
+      const refresh = byId(type + 'RefreshBtn');
+      refresh.disabled = true;
+      byId(type + 'PrevBtn').disabled = true;
+      byId(type + 'NextBtn').disabled = true;
+      byId(type + 'Status').textContent = 'Loading ' + type.toUpperCase() + ' conversations...';
+      try {
+        const result = await adminRequest('inbox_list', {inbox_type:type, page:state.page});
+        if (requestId !== state.listSeq) return;
+        if (result.read_only !== true || result.sending_enabled !== false ||
+          result.inbox_type !== type || !Array.isArray(result.conversations)) {
+          throw new Error('Unexpected inbox response.');
+        }
+        state.hasMore = result.has_more === true;
+        const rows = result.conversations;
+        if (!rows.some(c => c.id === state.selectedId)) state.selectedId = rows[0]?.id || null;
+        byId(type + 'Page').textContent = 'Page ' + (state.page + 1);
+        byId(type + 'PrevBtn').disabled = state.page === 0;
+        byId(type + 'NextBtn').disabled = !state.hasMore;
+        byId(type + 'Status').textContent = rows.length + ' conversation(s) on this page · Read-only';
+        renderInboxList(type, rows);
+        if (state.selectedId) await openInboxThread(type, state.selectedId, rows);
+        else inboxSetThreadPlaceholder(type,'No conversations to show yet.');
+      } catch (error) {
+        if (requestId !== state.listSeq) return;
+        byId(type + 'Status').textContent = 'Inbox unavailable: ' + (error.message || 'Unknown error');
+        byId(type + 'List').replaceChildren(
+          inboxElement('div','inbox-blank','Could not load inbox. Use Refresh Inbox to retry.'));
+        inboxSetThreadPlaceholder(type,'No conversation loaded.');
+      } finally {
+        if (requestId === state.listSeq) refresh.disabled = false;
+      }
+    }
+
     function setTab(tabName) {
       document.querySelectorAll('.tab').forEach(button => {
         const active = button.dataset.tab === tabName;
@@ -408,6 +617,7 @@
       byId('campaignTab').classList.toggle('hide', tabName !== 'campaign');
       byId('chatTab').classList.toggle('hide', tabName !== 'chat');
       byId('callTab').classList.toggle('hide', tabName !== 'call');
+      if (tabName === 'chat' || tabName === 'call') loadInbox(tabName);
     }
 
     function normalizeMobile(value) {
@@ -573,6 +783,15 @@
     }
 
     byId('backBtn').addEventListener('click', () => { location.href = 'dashboard.html'; });
+    ['chat','call'].forEach(type => {
+      byId(type + 'RefreshBtn').addEventListener('click', () => loadInbox(type));
+      byId(type + 'PrevBtn').addEventListener('click', () => {
+        if (inboxState[type].page > 0) loadInbox(type, inboxState[type].page - 1);
+      });
+      byId(type + 'NextBtn').addEventListener('click', () => {
+        if (inboxState[type].hasMore) loadInbox(type, inboxState[type].page + 1);
+      });
+    });
     byId('reportCampaign').addEventListener('change', loadCampaignReport);
     byId('refreshReportBtn').addEventListener('click', loadCampaignReport);
     document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => setTab(tab.dataset.tab)));
