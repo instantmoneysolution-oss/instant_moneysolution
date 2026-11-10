@@ -86,6 +86,19 @@
     .inbox-readonly { padding:11px 15px; border-top:1px solid var(--line); color:#92400e; background:#fffbeb; font-size:12px; }
     @media(max-width:780px) { .inbox-layout { grid-template-columns:1fr; } .inbox-list { max-height:265px; } .inbox-thread-body { min-height:200px; max-height:340px; } }
 
+
+    /* Step 69: preview-only actions. No browser path invokes send/schedule mutations. */
+    .action-preview { padding:14px 16px; border-top:1px solid var(--line); background:#fff; }
+    .action-preview h4 { margin:0 0 6px; font-size:15px; }
+    .action-preview p { margin:0 0 10px; }
+    .action-preview label { display:block; font-size:12px; font-weight:700; margin:8px 0 5px; }
+    .action-preview textarea, .action-preview input[type="datetime-local"] { display:block; width:100%; padding:9px 10px; border:1px solid #cbd5e1; border-radius:8px; font:inherit; font-size:13px; background:#fff; }
+    .action-preview textarea { min-height:66px; max-height:180px; resize:vertical; }
+    .action-preview button { margin:9px 0 4px; }
+    .action-preview .preview-result { color:#475569; font-size:12px; min-height:17px; margin-top:8px; line-height:1.5; overflow-wrap:anywhere; }
+    .action-preview .preview-result.warning { color:#92400e; }
+    .action-preview .preview-result.ok { color:#065f46; }
+
     #error { background:#fef2f2; color:#991b1b; border:1px solid #fecaca; border-radius:8px; padding:13px; margin-bottom:15px; }
     @media(max-width:780px) { .grid,.mapping {grid-template-columns:1fr;} .stats,.report-stats {grid-template-columns:repeat(2,minmax(0,1fr));} header {align-items:flex-start; flex-direction:column;} }
     @media(max-width:430px) { .stats {grid-template-columns:1fr 1fr;} .wrapper {padding:0 11px 30px;} .card {padding:15px;} }
@@ -243,7 +256,15 @@
             <div class="inbox-thread">
               <div id="chatThreadHead" class="inbox-thread-head"><strong>Select a conversation</strong><small>Read-only customer message history</small></div>
               <div id="chatThreadBody" class="inbox-thread-body"><div class="inbox-blank">Select a customer from the left to view messages.</div></div>
-              <div class="inbox-readonly">Read-only mode · Admin replies and Callback scheduling are not enabled yet. No messages are sent from this inbox.</div>
+              <div class="action-preview" aria-label="Admin chat reply preview">
+                <h4>Admin Reply — Preview Only</h4>
+                <p class="muted">Check reply eligibility within Meta's 24-hour customer-service window. Sending stays locked.</p>
+                <label for="chatReplyText">Reply text (maximum 1,000 characters)</label>
+                <textarea id="chatReplyText" maxlength="1000" placeholder="Type the message to preview..." disabled></textarea>
+                <button type="button" class="btn" id="chatPreviewBtn" disabled>Preview Reply</button>
+                <p class="preview-result" id="chatPreviewResult" role="status" aria-live="polite">Select a Chat Lead to preview.</p>
+              </div>
+              <div class="inbox-readonly">Preview only. Admin WhatsApp sending is HARD LOCKED. Nothing typed here will be sent.</div>
             </div>
           </div>
         </section>
@@ -267,7 +288,17 @@
             <div class="inbox-thread">
               <div id="callThreadHead" class="inbox-thread-head"><strong>Select a conversation</strong><small>Read-only customer message history</small></div>
               <div id="callThreadBody" class="inbox-thread-body"><div class="inbox-blank">Select a customer from the left to view messages.</div></div>
-              <div class="inbox-readonly">Read-only mode · Admin replies and Callback scheduling are not enabled yet. No messages are sent from this inbox.</div>
+              <div class="action-preview" aria-label="Campaign callback preview">
+                <h4>Schedule Callback — Preview Only</h4>
+                <p class="muted">Date and time are interpreted in India Standard Time (IST). No callback will be saved.</p>
+                <label for="callCallbackWhen">Callback date &amp; time (IST)</label>
+                <input type="datetime-local" id="callCallbackWhen" disabled>
+                <label for="callCallbackNote">Admin note (optional, maximum 1,000 characters)</label>
+                <textarea id="callCallbackNote" maxlength="1000" placeholder="Note for the callback..." disabled></textarea>
+                <button type="button" class="btn" id="callPreviewBtn" disabled>Preview Callback</button>
+                <p class="preview-result" id="callPreviewResult" role="status" aria-live="polite">Select a Call Lead to preview.</p>
+              </div>
+              <div class="inbox-readonly">Preview only. Callback scheduling is HARD LOCKED. Nothing here saves to CRM or sends WhatsApp.</div>
             </div>
           </div>
         </section>
@@ -487,7 +518,92 @@
     function inboxName(item) {
       return String(item?.customer_name || item?.lead_id || 'Unknown customer');
     }
+    // Preview-only: API calls are chat_reply_preview/callback_preview, NEVER mutations.
+    const previewSequence = { chat:0, call:0 };
+    function resetActionPreview(type, enabled) {
+      previewSequence[type]++;
+      const isChat = type === 'chat';
+      const fields = isChat ? ['chatReplyText'] : ['callCallbackWhen','callCallbackNote'];
+      fields.forEach(id => {
+        byId(id).disabled = !enabled;
+        if (!enabled) byId(id).value = '';
+      });
+      const button = byId(isChat ? 'chatPreviewBtn' : 'callPreviewBtn');
+      button.disabled = !enabled;
+      const result = byId(isChat ? 'chatPreviewResult' : 'callPreviewResult');
+      result.className = 'preview-result';
+      result.textContent = enabled ? 'Ready for preview. No changes will be made.' :
+        'Select a ' + (isChat ? 'Chat' : 'Call') + ' Lead to preview.';
+    }
+    function setPreviewText(type, message, category = '') {
+      const result = byId(type === 'chat' ? 'chatPreviewResult' : 'callPreviewResult');
+      result.className = 'preview-result' + (category ? ' ' + category : '');
+      result.textContent = message;
+    }
+    async function previewChatReply() {
+      const conversationId = inboxState.chat.selectedId;
+      const message = byId('chatReplyText').value.trim();
+      if (!conversationId) return setPreviewText('chat','Select a Chat Lead first.','warning');
+      if (!message || message.length > 1000) return setPreviewText('chat','Enter 1–1,000 characters.','warning');
+      const seq = ++previewSequence.chat;
+      const button = byId('chatPreviewBtn');
+      button.disabled = true;
+      setPreviewText('chat','Checking eligibility (preview only)...');
+      try {
+        const data = await adminRequest('chat_reply_preview', { conversation_id:conversationId, message });
+        if (seq !== previewSequence.chat || inboxState.chat.selectedId !== conversationId) return;
+        if (data.preview_only !== true || data.sending_enabled !== false) throw new Error('Unexpected preview safety response.');
+        const open = data.within_customer_service_window === true;
+        const stopped = data.marketing_stop_blocked === true;
+        setPreviewText('chat', stopped
+          ? 'STOP flag detected. No reply will be sent. Admin review needed.'
+          : open
+            ? 'Within the customer-service window: eligible for manual review only. Sending stays LOCKED.'
+            : '24-hour customer-service window is closed or unverified. No free-form reply allowed.',
+          open && !stopped ? 'ok' : 'warning');
+      } catch (error) {
+        if (seq !== previewSequence.chat) return;
+        setPreviewText('chat','Preview unavailable: ' + (error.message || 'Unknown error'),'warning');
+      } finally {
+        if (seq === previewSequence.chat) button.disabled = false;
+      }
+    }
+    async function previewCampaignCallback() {
+      const conversationId = inboxState.call.selectedId;
+      const when = byId('callCallbackWhen').value;
+      const adminNote = byId('callCallbackNote').value.trim();
+      if (!conversationId) return setPreviewText('call','Select a Call Lead first.','warning');
+      if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(when)) {
+        return setPreviewText('call','Choose a callback date and time in IST.','warning');
+      }
+      const seq = ++previewSequence.call;
+      const button = byId('callPreviewBtn');
+      button.disabled = true;
+      setPreviewText('call','Checking callback (preview only)...');
+      try {
+        // HTML datetime-local has no time zone. Explicitly interpret as IST (+05:30).
+        const data = await adminRequest('callback_preview', {
+          conversation_id:conversationId,
+          scheduled_for:when + ':00+05:30',
+          admin_note:adminNote
+        });
+        if (seq !== previewSequence.call || inboxState.call.selectedId !== conversationId) return;
+        if (data.preview_only !== true || data.scheduling_enabled !== false) throw new Error('Unexpected preview safety response.');
+        setPreviewText('call', data.already_scheduled
+          ? 'An active callback already exists. No new callback was scheduled.'
+          : data.can_schedule
+            ? 'Time and conversation verified. Preview PASS — scheduling remains LOCKED; nothing was saved.'
+            : 'Callback requires Admin review. No changes made.',
+          data.can_schedule ? 'ok' : 'warning');
+      } catch (error) {
+        if (seq !== previewSequence.call) return;
+        setPreviewText('call','Preview unavailable: ' + (error.message || 'Unknown error'),'warning');
+      } finally {
+        if (seq === previewSequence.call) button.disabled = false;
+      }
+    }
     function inboxSetThreadPlaceholder(type, message) {
+      resetActionPreview(type, false);
       const head = byId(type + 'ThreadHead');
       head.replaceChildren(inboxElement('strong','', 'Select a conversation'),
         inboxElement('small','', 'Read-only customer message history'));
@@ -521,6 +637,7 @@
       if (!['chat','call'].includes(type)) return;
       const state = inboxState[type];
       state.selectedId = conversationId;
+      resetActionPreview(type, false);
       const requestId = ++state.threadSeq;
       if (rows) renderInboxList(type, rows);
       byId(type + 'ThreadBody').replaceChildren(inboxElement('div','inbox-blank','Loading conversation...'));
@@ -534,6 +651,7 @@
           throw new Error('Unexpected inbox response.');
         }
         const conversation = result.conversation;
+        resetActionPreview(type, true);
         const head = byId(type + 'ThreadHead');
         head.replaceChildren(
           inboxElement('strong','',inboxName(conversation)),
@@ -565,6 +683,7 @@
         }
       } catch (error) {
         if (requestId !== state.threadSeq) return;
+        resetActionPreview(type, false);
         byId(type + 'ThreadBody').replaceChildren(
           inboxElement('div','inbox-blank','Unable to load messages: ' + (error.message || 'Unknown error')));
       }
@@ -575,6 +694,7 @@
       if (nextPage !== null) state.page = nextPage;
       const requestId = ++state.listSeq;
       ++state.threadSeq;
+      resetActionPreview(type, false);
       const refresh = byId(type + 'RefreshBtn');
       refresh.disabled = true;
       byId(type + 'PrevBtn').disabled = true;
@@ -792,6 +912,19 @@
         if (inboxState[type].hasMore) loadInbox(type, inboxState[type].page + 1);
       });
     });
+    // Step 69: preview buttons only. There are intentionally NO send/schedule listeners.
+    byId('chatPreviewBtn').addEventListener('click', previewChatReply);
+    byId('callPreviewBtn').addEventListener('click', previewCampaignCallback);
+    ['chatReplyText'].forEach(id => byId(id).addEventListener('input', () => {
+      previewSequence.chat++;
+      byId('chatPreviewBtn').disabled = !inboxState.chat.selectedId;
+      setPreviewText('chat','Message changed. Preview again to recheck.');
+    }));
+    ['callCallbackWhen','callCallbackNote'].forEach(id => byId(id).addEventListener('input', () => {
+      previewSequence.call++;
+      byId('callPreviewBtn').disabled = !inboxState.call.selectedId;
+      setPreviewText('call','Callback details changed. Preview again to recheck.');
+    }));
     byId('reportCampaign').addEventListener('change', loadCampaignReport);
     byId('refreshReportBtn').addEventListener('click', loadCampaignReport);
     document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => setTab(tab.dataset.tab)));
