@@ -1,8 +1,8 @@
 
-/* IMS WhatsApp Campaign - Step 110 Send Manager.
+/* IMS WhatsApp Campaign - One-click Send Manager.
    Admin-authenticated calls only.
    No automatic sends on page load.
-   All recipient checks remain in Supabase.
+   STOP, opt-in and duplicate checks remain in Supabase.
 */
 (() => {
   'use strict';
@@ -42,7 +42,9 @@
     }
 
     if (!data || data.success !== true || data.admin !== true) {
-      throw new Error(data?.error || 'Admin authorization failed');
+      throw new Error(
+        data?.error || 'Admin authorization failed'
+      );
     }
 
     return data;
@@ -53,23 +55,23 @@
   }
 
   function setButtons() {
-    const report = state.report;
+    const r = state.report;
     const active = Boolean($('reportCampaign')?.value);
 
-    $('ims-send-refresh').disabled =
-      state.busy || !active;
+    $('ims-send-refresh').disabled = state.busy || !active;
 
     $('ims-send-start').disabled =
-      state.busy ||
-      !report?.can_start ||
-      !report?.has_eligible_test;
+      state.busy || !r?.can_start || !r?.has_eligible_test;
 
     $('ims-send-run').disabled =
-      state.busy || !report?.can_send;
+      state.busy || !r?.can_send;
 
     $('ims-send-stop').disabled = !state.busy;
-
     $('ims-send-quantity').disabled = state.busy;
+
+    $('ims-send-oneclick').disabled =
+      state.busy || !r ||
+      !(r.can_send || (r.can_start && r.has_eligible_test));
   }
 
   async function refresh() {
@@ -91,10 +93,9 @@
     notice('Checking campaign status...');
 
     try {
-      const r = await request(
-        'campaign_sender_status',
-        { campaign_id: id }
-      );
+      const r = await request('campaign_sender_status', {
+        campaign_id: id
+      });
 
       let eligible = false;
 
@@ -106,20 +107,20 @@
         let page = 0;
 
         while (true) {
-          const d = await request(
-            'dry_run_campaign',
-            { campaign_id: id, page }
-          );
+          const d = await request('dry_run_campaign', {
+            campaign_id: id,
+            page
+          });
 
           if ((d.eligible_in_page_for_review || 0) > 0) {
             eligible = true;
             break;
           }
 
-          if (!d.has_more ||
-              !Number.isSafeInteger(d.next_page)) {
-            break;
-          }
+          if (
+            !d.has_more ||
+            !Number.isSafeInteger(d.next_page)
+          ) break;
 
           page = d.next_page;
         }
@@ -141,15 +142,22 @@
       } else if (!r.template_ready) {
         notice('Template is not ready.');
       } else if (r.unresolved_attempts) {
-        notice('Unresolved send attempt. Review required.');
+        notice('Unresolved message attempt. Review before sending.');
       } else if (r.can_start && !eligible) {
         notice('No eligible recipient found in dry run.');
       } else if (r.can_start) {
-        notice('Ready. Click Start Campaign.');
+        notice('Ready. Click Send Now to start and send.');
       } else if (r.can_send) {
-        notice('Choose quantity and click Send Selected.');
+        notice('Ready. Click Send Now to process pending contacts.');
+      } else if (
+        r.campaign_status === 'running' &&
+        r.pending_contacts === 0
+      ) {
+        notice(
+          'All campaign contacts processed. Nothing left to send.'
+        );
       } else {
-        notice('No pending eligible messages or campaign cannot start.');
+        notice('No eligible pending messages to send.');
       }
 
     } catch (e) {
@@ -170,7 +178,8 @@
     ) return;
 
     if (!confirm(
-      'Start this WhatsApp campaign? No messages will be sent yet.'
+      'Start this WhatsApp campaign? ' +
+      'No messages are sent by Start alone.'
     )) return;
 
     state.busy = true;
@@ -182,7 +191,8 @@
         confirmation: 'START_WHATSAPP_CAMPAIGN'
       });
 
-      notice('Campaign started. No message sent yet.');
+      notice('Campaign started.');
+
     } catch (e) {
       notice('Start failed: ' + e.message);
     } finally {
@@ -202,13 +212,12 @@
       count < 1 ||
       count > state.report.pending_contacts
     ) {
-      notice('Enter a valid quantity.');
+      notice('Enter a valid message quantity.');
       return;
     }
 
     if (!confirm(
-      `Send up to ${count} REAL WhatsApp messages? ` +
-      'Meta charges may apply.'
+      `Send up to ${count} REAL WhatsApp message(s)?`
     )) return;
 
     state.busy = true;
@@ -219,37 +228,25 @@
     let reason = '';
 
     try {
-      for (
-        let i = 0;
-        i < count && !state.stop;
-        i++
-      ) {
-        notice(
-          `Processing ${i + 1}/${count}. ` +
-          `Meta accepted: ${accepted}`
-        );
+      for (let i = 0; i < count && !state.stop; i++) {
+        notice(`Sending ${i + 1}/${count}...`);
 
-        const result = await request(
-          'campaign_send_one',
-          {
-            campaign_id: id,
-            confirmation: 'SEND_ONE_CAMPAIGN_MESSAGE'
-          }
-        );
+        const r = await request('campaign_send_one', {
+          campaign_id: id,
+          confirmation: 'SEND_ONE_CAMPAIGN_MESSAGE'
+        });
 
-        if (result.outcome === 'accepted') {
+        if (r.outcome === 'accepted') {
           accepted++;
           continue;
         }
 
-        reason =
-          `Stopped: ${result.outcome || 'no eligible recipient'}.`;
+        reason = `Stopped: ${r.outcome || 'No eligible recipient'}`;
         break;
       }
+
     } catch (e) {
-      reason =
-        `Stopped after ${accepted} acceptance(s): ${e.message}. ` +
-        'Do not retry uncertain messages.';
+      reason = `Stopped: ${e.message}. Do not retry uncertain sends.`;
     } finally {
       const stopped = state.stop;
 
@@ -259,23 +256,118 @@
       await refresh();
 
       notice(
+        `${accepted} accepted by Meta. ` +
+        'Delivery not confirmed. ' +
+        (reason || (stopped ? 'Stopped by Admin.' : 'Done.'))
+      );
+
+      $('refreshReportBtn')?.click();
+    }
+  }
+
+  async function sendNow() {
+    const id = $('reportCampaign')?.value;
+
+    if (!id || state.busy) return;
+
+    const report = state.report;
+
+    if (
+      !report ||
+      !(report.can_send ||
+        (report.can_start && report.has_eligible_test))
+    ) {
+      notice('Campaign has no sendable contacts.');
+      return;
+    }
+
+    const maximum = Number(report.pending_contacts);
+
+    if (!Number.isSafeInteger(maximum) || maximum < 1) return;
+
+    if (!confirm(
+      `Send up to ${maximum} eligible WhatsApp messages ` +
+      `for ${report.campaign_name}?\n\n` +
+      'This makes REAL paid Meta API requests.'
+    )) return;
+
+    state.busy = true;
+    state.stop = false;
+    setButtons();
+
+    let accepted = 0;
+    let reason = '';
+
+    try {
+      if (report.can_start) {
+        await request('campaign_start', {
+          campaign_id: id,
+          confirmation: 'START_WHATSAPP_CAMPAIGN'
+        });
+      }
+
+      for (let i = 0; i < maximum && !state.stop; i++) {
+        if ($('reportCampaign')?.value !== id) {
+          reason = 'Campaign selection changed. Stopped.';
+          break;
+        }
+
+        notice(
+          `Processing ${i + 1}/${maximum}. ` +
+          `Meta accepted: ${accepted}. Keep this tab open.`
+        );
+
+        const r = await request('campaign_send_one', {
+          campaign_id: id,
+          confirmation: 'SEND_ONE_CAMPAIGN_MESSAGE'
+        });
+
+        if (
+          r.outcome === 'accepted' &&
+          r.sends_performed === 1
+        ) {
+          accepted++;
+          continue;
+        }
+
+        if (r.outcome === 'no_eligible') {
+          reason = 'No more eligible contacts.';
+          break;
+        }
+
+        reason =
+          `Stopped: ${r.outcome || 'Unverified result'}. ` +
+          'No automatic retry.';
+        break;
+      }
+
+    } catch (e) {
+      reason =
+        `Stopped: ${e.message}. ` +
+        'Check send attempts before retrying.';
+    } finally {
+      const stopped = state.stop;
+
+      state.stop = false;
+      state.busy = false;
+
+      await refresh();
+
+      notice(
         `${accepted} message(s) accepted by Meta. ` +
         'Delivery not confirmed. ' +
         (reason ||
-          (stopped
-            ? 'Stopped by Admin.'
-            : 'Selected quantity processed.'))
+          (stopped ? 'Stopped by Admin.' : 'Processing finished.'))
       );
 
-      const btn = $('refreshReportBtn');
-
-      if (btn && !btn.disabled) btn.click();
+      $('refreshReportBtn')?.click();
     }
   }
 
   function init() {
-    const toolbar =
-      document.querySelector('#campaignTab .report-toolbar');
+    const toolbar = document.querySelector(
+      '#campaignTab .report-toolbar'
+    );
 
     const campaign = $('reportCampaign');
 
@@ -292,41 +384,48 @@
 
     box.innerHTML = `
       <h3>WhatsApp Campaign Send Manager</h3>
+
       <p id="ims-send-info">
         Choose a saved campaign above.
       </p>
 
-      <div style="display:flex;gap:9px;
-                  align-items:end;flex-wrap:wrap;
-                  margin:12px 0">
+      <div style="display:flex;gap:9px;align-items:end;
+                  flex-wrap:wrap;margin:12px 0">
+
+        <button
+          type="button"
+          id="ims-send-oneclick"
+          style="background:#047857;color:white;
+                 border:0;border-radius:7px;
+                 padding:10px 15px;font-weight:700"
+          disabled>
+          Send Now — All Eligible
+        </button>
 
         <button type="button" id="ims-send-refresh">
           Check Status
         </button>
 
-        <button type="button"
-                id="ims-send-start" disabled>
+        <button type="button" id="ims-send-start" disabled>
           Start Campaign
         </button>
 
         <label>
           Messages to Send
-          <input id="ims-send-quantity"
-                 type="number"
-                 min="1"
-                 step="1"
-                 value="1"
-                 style="display:block;width:110px;
-                        padding:8px">
+          <input
+            id="ims-send-quantity"
+            type="number"
+            min="1"
+            step="1"
+            value="1"
+            style="display:block;width:110px;padding:8px">
         </label>
 
-        <button type="button"
-                id="ims-send-run" disabled>
+        <button type="button" id="ims-send-run" disabled>
           Send Selected
         </button>
 
-        <button type="button"
-                id="ims-send-stop" disabled>
+        <button type="button" id="ims-send-stop" disabled>
           Stop After Current
         </button>
       </div>
@@ -334,7 +433,7 @@
       <p id="ims-send-notice"
          role="status"
          style="white-space:pre-wrap;font-weight:600">
-        Sending remains OFF until activated.
+        Checking campaign status...
       </p>
     `;
 
@@ -346,36 +445,42 @@
     });
 
     $('ims-send-refresh').addEventListener('click', refresh);
+
+    $('ims-send-oneclick').addEventListener(
+      'click', sendNow
+    );
+
     $('ims-send-start').addEventListener('click', start);
-    $('ims-send-run').addEventListener('click', sendSelected);
+
+    $('ims-send-run').addEventListener(
+      'click', sendSelected
+    );
 
     $('ims-send-stop').addEventListener('click', () => {
       state.stop = true;
+
       notice(
-        'Stop requested. Current request may finish.'
+        'Stop requested. Current request may finish. ' +
+        'No further sends will be started.'
       );
     });
 
-    const observe = new MutationObserver(() => {
+    const observer = new MutationObserver(() => {
       if (
         !state.busy &&
         campaign.value &&
         campaign.value !== state.selected
-      ) {
-        refresh();
-      }
+      ) refresh();
     });
 
-    observe.observe(campaign, { childList: true });
+    observer.observe(campaign, { childList: true });
 
     refresh();
   }
 
   if (document.readyState === 'loading') {
     document.addEventListener(
-      'DOMContentLoaded',
-      init,
-      { once: true }
+      'DOMContentLoaded', init, { once: true }
     );
   } else {
     init();
