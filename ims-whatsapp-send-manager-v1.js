@@ -486,3 +486,59 @@
     init();
   }
 })();
+
+
+/* IMS WhatsApp UI Final Cleanup */
+(() => {
+  function fixUI() {
+    const style = document.createElement('style');
+    style.textContent = `
+      #ims-send-oneclick:disabled {
+        background: #cbd5e1 !important;
+        color: #475569 !important;
+        opacity: 1 !important;
+        cursor: not-allowed !important;
+      }
+    `;
+    document.head.appendChild(style);
+
+    function watchText(id, oldText, newText) {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const rewrite = () => {
+        if ((el.textContent || '').includes(oldText)) {
+          el.textContent = newText;
+        }
+      };
+
+      new MutationObserver(rewrite).observe(el, {
+        childList: true,
+        characterData: true,
+        subtree: true
+      });
+
+      rewrite();
+    }
+
+    watchText(
+      'reportStatus',
+      'Sending remains disabled',
+      'Delivery report updated. Use Send Manager above to send eligible messages.'
+    );
+
+    watchText(
+      'ims-send-notice',
+      'No eligible recipient found in dry run',
+      'No eligible pending contacts in this campaign. No message sent.'
+    );
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fixUI, {
+      once: true
+    });
+  } else {
+    fixUI();
+  }
+})();
