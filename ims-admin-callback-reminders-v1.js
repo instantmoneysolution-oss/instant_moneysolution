@@ -143,7 +143,7 @@
         buttons.append(call);
       }
       // Current rollout remains strictly TEST002 owner-test only.
-      if (safeMobile.endsWith('3794')) {
+      if (safeMobile) {
         const completed=elem('button','ims-ca-small-btn ims-ca-primary','Mark Completed');
         completed.type='button';
         completed.addEventListener('click',()=>completeCallback(x));
