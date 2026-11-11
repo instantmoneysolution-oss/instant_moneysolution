@@ -126,7 +126,7 @@
           <h2>WhatsApp Campaign Manager</h2>
           <p>Upload a customer sheet, map columns, review valid numbers and select a Meta template.</p>
         </div>
-        <span class="pill">Setup Mode — Sending Disabled</span>
+        <span class="pill">WhatsApp Campaign Manager — Active</span>
       </div>
 
       <nav class="tabs" aria-label="WhatsApp sections">
@@ -161,7 +161,7 @@
             <p class="muted" id="reportDetail"></p>
           </div>
           <div class="notice" style="margin-top:13px">
-            <b>Sending is LOCKED.</b> These figures come from current database records; Meta accepting a message does not confirm delivery. Delivery events are not applied by this read-only report. Status reconciler and live delivery verification are still pending.
+            <b>Delivery report is read-only. Use Send Manager to send campaigns.</b> These figures come from current database records; Meta accepting a message does not confirm delivery. Delivery events are not applied by this read-only report. Status reconciler and live delivery verification are still pending.
           </div>
         </section>
         <div class="grid">
@@ -189,7 +189,7 @@
               <p id="templateStatus" class="muted" role="status" aria-live="polite">Connecting to WhatsApp Admin backend...</p>
             </div>
             <div class="notice">
-              <strong>Message flow:</strong> Customer replies <b>INTERESTED</b> or <b>STOP</b>. After INTERESTED we ask <b>CHAT</b> or <b>CALL</b>. Reply handling is not connected yet.
+              <strong>Message flow:</strong> Customer replies <b>INTERESTED</b> or <b>STOP</b>. After INTERESTED we ask <b>CHAT</b> or <b>CALL</b>. CHAT/CALL reply routing is active.
             </div>
             <p class="muted" style="margin-top:13px">Template variable <b>{{1}}</b> will use the mapped Customer Name column.</p>
           </section>
@@ -229,7 +229,7 @@
             </label>
             <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
               <button type="button" class="btn" id="saveDraftBtn" disabled>Save Draft (No Sending)</button>
-              <button type="button" class="btn btn-primary" id="sendBtn" disabled title="Sending backend is not configured">Send Campaign (Not Yet Enabled)</button>
+              <button type="button" class="btn btn-primary" id="sendBtn" disabled title="Sending backend is not configured">Use Send Manager Above</button>
             </div>
           </div>
           <p id="draftProgress" class="muted" role="status" aria-live="polite" style="margin-top:12px">A draft stores the customer list only. WhatsApp marketing consent is not verified yet; no messages will be sent.</p>
