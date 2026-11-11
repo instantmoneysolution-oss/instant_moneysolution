@@ -97,6 +97,8 @@
       else if (r.can_send) notice('Campaign running. Click Send Now for remaining eligible contacts.');
       else if (r.campaign_status === 'running' && r.pending_contacts === 0)
         notice('All campaign contacts processed. Meta acceptance does not mean delivery.');
+      else if (r.campaign_status === 'completed')
+        notice('Campaign completed successfully. All contacts processed. No further sending needed.');
       else notice('No pending eligible contacts or campaign is not ready.');
     } catch (e) { notice('Status check failed: ' + e.message); }
     finally { state.busy = false; setButtons(); }
