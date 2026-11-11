@@ -226,16 +226,18 @@
     if (typeof inboxState === 'undefined') return null;
     return inboxState?.call?.selectedId || null;
   }
-  function selectedIsTest() {
-    const head=own('callThreadHead');
-    return !!selectedCallId() && !!head && /Lead ID:\s*TEST002\b/.test(head.textContent||'');
-  }
+  function selectedIsCall() {
+  const id = selectedCallId();
+
+  return typeof id === 'string' &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+ }
   function updateScheduleButton() {
     if (!scheduleButton) return;
     const existing=state.callbacks.some(x=>x.status==='scheduled' && x.conversation_id===selectedCallId());
-    scheduleButton.disabled=state.scheduling || !selectedIsTest() || !!own('callCallbackWhen')?.disabled || existing;
+    scheduleButton.disabled=state.scheduling || !selectedIsCall() || !!own('callCallbackWhen')?.disabled || existing;
     if (existing) scheduleStatus.textContent='An active callback is already scheduled for this conversation.';
-    else if (!selectedIsTest()) scheduleStatus.textContent='Scheduling is currently restricted to TEST002 only.';
+    else if (!selectedIsCall()) scheduleStatus.textContent='Select a Call Lead to schedule a callback.';
     else if (!state.scheduling && scheduleStatus.textContent.startsWith('An active')) scheduleStatus.textContent='';
   }
   function installScheduleUI() {
@@ -244,12 +246,12 @@
     if (!whenInput || !noteInput || !whenInput.closest('.action-preview')) return;
     const card=whenInput.closest('.action-preview');
     const heading=card.querySelector('h4');
-    if (heading) heading.textContent='Schedule Callback — Owner Test Only';
+    if (heading) heading.textContent='Schedule Callback — Call Leads';
     const explanation=card.querySelector('p.muted');
-    if (explanation) explanation.textContent='Preview or schedule a callback for verified TEST002 only (IST). No WhatsApp message will be sent.';
+    if (explanation) explanation.textContent='Schedule a callback for the selected Call Lead (IST). No WhatsApp message will be sent.';
     const lock=card.parentElement?.querySelector('.inbox-readonly');
-    if (lock) lock.textContent='Other customers remain locked. This is Admin-only TEST002 scheduling; no CRM Follow-Up records change.';
-    scheduleButton=elem('button','btn btn-primary','Schedule Callback (TEST002)');
+    if (lock) lock.textContent='Admin-only callback scheduling. Existing CRM Follow-Up records stay unchanged.';
+    scheduleButton=elem('button','btn btn-primary','Schedule Callback');
     scheduleButton.id='ims-ca-schedule-btn'; scheduleButton.type='button'; scheduleButton.disabled=true;
     scheduleStatus=elem('div'); scheduleStatus.id='ims-ca-schedule-status';
     card.append(scheduleButton,scheduleStatus);
@@ -257,7 +259,7 @@
     if (head) new MutationObserver(updateScheduleButton).observe(head,{subtree:true,childList:true,characterData:true});
     new MutationObserver(updateScheduleButton).observe(whenInput,{attributes:true,attributeFilter:['disabled']});
     scheduleButton.addEventListener('click',async()=>{
-      if (!selectedIsTest() || state.scheduling) return;
+      if (!selectedIsCall() || state.scheduling) return;
       const when=whenInput.value;
       const note=noteInput.value.trim();
       if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(when)) {
@@ -269,7 +271,7 @@
       if (!Number.isFinite(ms)||ms<Date.now()+5*60000||ms>Date.now()+90*86400000) {
         scheduleStatus.textContent='Choose a time between 5 minutes and 90 days ahead.';return;
       }
-      if (!window.confirm('Schedule TEST002 callback for '+fmt(iso)+'?')) return;
+      if (!window.confirm('Schedule callback for selected Call Lead at '+fmt(iso)+'?')) return;
       state.scheduling=true; updateScheduleButton();
       scheduleStatus.textContent='Saving callback…';
       try {
