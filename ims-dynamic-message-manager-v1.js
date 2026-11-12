@@ -35,8 +35,8 @@
   }
   function validate(message) {
     if (message.trim().length < 30 || message.trim().length > 1024) return 'Message must be 30–1024 characters.';
-    if ((message.match(/\{\{1\}\}/g) || []).length !== 1) return 'Use {{1}} exactly once for Customer Name.';
-    if (/\{\{(?!1\}\})\d+\}\}/.test(message)) return 'Only {{1}} customer-name variable is supported.';
+    if ((message.match(/\{\{1\}\}/g) || []).length > 1) return 'Use {{1}} at most once, or no variable.';
+    if (/\{\{|\}\}/.test(message.replace(/\{\{1\}\}/g, ''))) return 'Only optional {{1}} is supported.';
     if (!/\bINTERESTED\b/i.test(message) || !/\bSTOP\b/i.test(message))
       return 'Include INTERESTED and STOP so the existing WhatsApp reply flow works.';
     return '';
@@ -72,7 +72,7 @@
     state.currentDraft = draft?.id || null;
     state.savedText = draft ? JSON.stringify({title:draft.title,body_text:draft.body_text,language_code:draft.language_code}) : null;
     el('ims-mm-title').value = draft?.title || '';
-    el('ims-mm-body').value = draft?.body_text || 'Hello {{1}},\n\nGreetings from Instant Money Solution. Are you interested in Personal Loan or Overdraft information?\nReply INTERESTED to continue or STOP to opt out.';
+    el('ims-mm-body').value = draft?.body_text || 'Dear Valued Customer,\n\nGreetings from Instant Money Solution. Explore Personal Loan or Overdraft options.\nReply INTERESTED to continue or STOP to opt out.';
     el('ims-mm-language').value = SUPPORTED_LANG.has(draft?.language_code) ? draft.language_code : 'en_US';
     const sent = !!draft?.meta_template_name;
     el('ims-mm-title').readOnly = sent;
@@ -150,7 +150,7 @@
     wrap.id = 'ims-mm';
     wrap.innerHTML = `
       <h4>Custom WhatsApp Message Manager</h4>
-      <p class="note">Different message for every campaign. Only Meta-approved marketing templates can be sent. Use {{1}} for Customer Name.</p>
+      <p class="note">Different message for every campaign. Meta approval required. Fixed "Dear Valued Customer" text needs no variable; {{1}} is optional for name-based templates.</p>
       <label for="ims-mm-drafts">Saved Messages</label>
       <select id="ims-mm-drafts"><option value="">— New message —</option></select>
       <div class="ims-mm-actions"><button type="button" id="ims-mm-new">+ New Message</button><button type="button" id="ims-mm-sync">Sync Templates from Meta</button></div>
