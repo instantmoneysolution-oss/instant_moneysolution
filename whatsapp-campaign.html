@@ -188,9 +188,13 @@
               </select>
               <p id="templateStatus" class="muted" role="status" aria-live="polite">Connecting to WhatsApp Admin backend...</p>
             </div>
+
             <div class="notice">
-              <strong>Message flow:</strong> Customer replies <b>INTERESTED</b> or <b>STOP</b>. After INTERESTED we ask <b>CHAT</b> or <b>CALL</b>. CHAT/CALL reply routing is active.
+              <strong>Message flow:</strong> Customer taps <b>INTERESTED</b> or <b>STOP</b>.
+              <b>INTERESTED</b> routes directly to Admin <b>Chat Leads</b>, without asking CHAT or CALL.
+              <b>STOP</b> permanently blocks future marketing campaign messages.
             </div>
+
             <p class="muted" style="margin-top:13px">Template variable <b>{{1}}</b> will use the mapped Customer Name column.</p>
           </section>
         </div>
