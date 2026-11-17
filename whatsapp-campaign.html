@@ -247,6 +247,39 @@
             <div><h3>Chat Leads Inbox</h3><p class="help" style="margin:0">WhatsApp CHAT replies and customer messages. Only confirmed campaign conversations appear here.</p></div>
             <button class="btn" id="chatRefreshBtn" type="button">Refresh Inbox</button>
           </div>
+
+          
+<div id="ims-stage-tabs"
+     role="group"
+     aria-label="WhatsApp Lead Sections"
+     style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px">
+
+  <button type="button"
+          id="ims-stage-chat"
+          class="btn btn-primary"
+          aria-pressed="true">
+    💬 Chat Leads
+  </button>
+
+  <button type="button"
+          id="ims-stage-followup"
+          class="btn"
+          aria-pressed="false"
+          disabled>
+    📅 Follow Up Chats
+  </button>
+
+  <button type="button"
+          id="ims-stage-ni"
+          class="btn"
+          aria-pressed="false"
+          disabled>
+    🚫 Not Interested Chats
+  </button>
+
+</div>
+
+          
           <p id="chatStatus" class="muted" role="status" aria-live="polite">Open this tab to load conversations.</p>
           <div class="inbox-layout">
             <div class="inbox-sidebar">
